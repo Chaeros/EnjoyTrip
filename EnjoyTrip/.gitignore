@@ -248,4 +248,5 @@ application
 application-jwt-yml
 application-oaut.yml
 
+
 # End of https://www.toptal.com/developers/gitignore/api/java,intellij,maven,windows,intellij+all
