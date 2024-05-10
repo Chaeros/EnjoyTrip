@@ -14,8 +14,18 @@ const clickNormalLogin = () => {
   console.log(loginInfo.value);
   normalLogin(
     loginInfo.value,
-    ({ response }) => {
-      console.log(response);
+    (response) => {
+      if (response.status === 200) {
+        let accessToken = response.headers["authorization"];
+        let refreshToken = response.headers["authorization-refresh"];
+        console.log("refresh 토큰 :", refreshToken);
+        console.log("access 토큰 :", accessToken);
+        setLocalStorage("access_token", accessToken); // 토큰 localStorage에 저장
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${accessToken}`;
+      }
+      // navigate('/');
     },
     ({ error }) => {
       console.log(error);

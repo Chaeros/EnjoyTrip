@@ -1,6 +1,8 @@
 package com.ssafy.enjoytrip.global.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.util.Arrays;
 import java.util.Collections;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -61,6 +63,8 @@ public class SecurityConfig {
                         config.setAllowedMethods(Collections.singletonList("*"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
+                        config.setExposedHeaders(Collections.singletonList("*"));
+//                        config.setExposedHeaders(Arrays.asList("Authorization", "Authorization-refresh"));
                         config.setMaxAge(3600L); //1시간
                         return config;
                     }

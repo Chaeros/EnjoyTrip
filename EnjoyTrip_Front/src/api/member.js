@@ -34,10 +34,10 @@ function updateUserInfomation(data,success,fail){
 }
 
 function normalLogin(loginInfo,success,fail) {
-    console.log(JSON.stringify(loginInfo));
     const headers = {
         'Content-Type': 'application/json',
     };
+    // local.post(`/login`,loginInfo,{headers}).then(success).catch(fail);
     local.post(`/login`,JSON.stringify(loginInfo),{headers}).then(success).catch(fail);
 }
 
