@@ -10,44 +10,10 @@ import {
   getListContentType,
 } from "@/api/attraction";
 
-const sidos = ref();
+const sidos = ref([]);
+const guguns = ref([]);
+const contentTypes = ref([]);
 
-const guguns = ref();
-
-const contentTypes = ref([
-  {
-    contentTypeCode: 12,
-    contentTypeName: "관광지",
-  },
-  {
-    contentTypeCode: 14,
-    contentTypeName: "문화시설",
-  },
-  {
-    contentTypeCode: 15,
-    contentTypeName: "축제공연행사",
-  },
-  {
-    contentTypeCode: 25,
-    contentTypeName: "여행코스",
-  },
-  {
-    contentTypeCode: 28,
-    contentTypeName: "레포츠",
-  },
-  {
-    contentTypeCode: 32,
-    contentTypeName: "숙박",
-  },
-  {
-    contentTypeCode: 38,
-    contentTypeName: "쇼핑",
-  },
-  {
-    contentTypeCode: 12,
-    contentTypeName: "음식점",
-  },
-]);
 
 const attractions = ref([]);
 
@@ -86,6 +52,7 @@ const selectAttractionReset = () => {
 async function callSidos(sido) {
   getListSido(
     ({ data }) => {
+      console.dir(data);
       sidos.value = data;
     },
     ({ error }) => {
@@ -105,6 +72,18 @@ async function callGuguns(sido) {
       console.log(error);
     }
   );
+}
+
+async function callContentTypes() {
+  getListContentType(
+    ({ data }) => {
+      console.dir(data);
+      contentTypes.value = data;
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  )
 }
 
 // async function callContentType(){
@@ -140,7 +119,9 @@ async function searchAttractions() {
   attractions.value = response.data;
 }
 
+
 callSidos(1);
+callContentTypes();
 </script>
 
 <template>
@@ -177,8 +158,9 @@ callSidos(1);
           <select
             class="custom-select w-100"
             v-model="inputInformation.sidoCode"
+            @change="callGuguns(inputInformation.sidoCode)"
           >
-            <option disabled value="-1">시도</option>
+            <option value="-1">시도</option>
             <option
               v-for="sido in sidos"
               :value="sido.sidoCode"
@@ -209,10 +191,10 @@ callSidos(1);
             <option disabled value="-1">컨텐츠</option>
             <option
               v-for="content in contentTypes"
-              :value="content.contentTypeCode"
-              :key="content.contentTypeCode"
+              :value="content.contentId"
+              :key="content.contentId"
             >
-              {{ content.contentTypeName }}
+              {{ content.contentName }}
             </option>
           </select>
         </div>
