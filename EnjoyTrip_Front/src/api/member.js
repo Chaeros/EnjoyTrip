@@ -33,9 +33,18 @@ function updateUserInfomation(data,success,fail){
     local.post(`/oauth2/sign-up`,data).then(success).catch(fail);
 }
 
+function normalLogin(loginInfo,success,fail) {
+    console.log(JSON.stringify(loginInfo));
+    const headers = {
+        'Content-Type': 'application/json',
+    };
+    local.post(`/login`,JSON.stringify(loginInfo),{headers}).then(success).catch(fail);
+}
+
 export {
     addUserInformation,
     kakaoLogin,
     sendKakaoLoginCode,
-    updateUserInfomation
+    updateUserInfomation,
+    normalLogin
 };
