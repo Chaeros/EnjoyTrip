@@ -15,7 +15,7 @@ function getListGugun(sido, success, fail) {
 }
 
 function getListContentType(success, fail) {
-    local.get(`/attraction/contentType`).then(success).catch(fail);
+    local.get(`/attraction/contenttype`).then(success).catch(fail);
 }
 
 export {
