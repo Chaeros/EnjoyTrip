@@ -47,7 +47,7 @@
 		       tel = #{tel},
 		       address = #{address},
 		       role = "USER",
-		   	   eamil = #{email}
+		   	   email = #{email}
 		 where email = #{confirmEmail}
 	</update>
 

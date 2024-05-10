@@ -14,7 +14,7 @@
     "bootstrap-vue": "^2.23.1",
     "vue": "^3.4.27",
     "vue-kakao-maps": "^0.2.11",
-    "vue-router": "^4.3.0",
+    "vue-router": "^4.3.2",
     "vue3-kakao-maps": "^2.1.0"
   },
   "devDependencies": {
