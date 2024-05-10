@@ -35,7 +35,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
                 response.setHeader("email",oAuth2User.getEmail());
-                response.sendRedirect("http://localhost:5173/oauth2/sign-up"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
+                response.sendRedirect("http://localhost:5173/oauth2/sign-up?email="+oAuth2User.getEmail()); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
                 jwtService.sendAccessAndRefreshToken(response, accessToken, null);
                 Member findMember = memberMapper.findMemberByEmail(oAuth2User.getEmail());
                 if ( findMember == null ) throw new IllegalArgumentException("이메일에 해당하는 유저가 없습니다.");

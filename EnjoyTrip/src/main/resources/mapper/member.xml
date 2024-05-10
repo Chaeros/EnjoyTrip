@@ -46,8 +46,9 @@
 		   set name = #{name},
 		       tel = #{tel},
 		       address = #{address},
-		       role = "USER"
-		 where email = #{email}
+		       role = "USER",
+		   	   eamil = #{email}
+		 where email = #{confirmEmail}
 	</update>
 
 	<insert id="save" parameterType="com.ssafy.enjoytrip.domain.member.Member">

@@ -32,6 +32,7 @@ public class MemberController {
 
     @PostMapping("/oauth2/sign-up")
     public void signUp(@RequestBody MemberUpdateDto memberUpdateDto) throws Exception {
+        log.info("memberUpdateDto : {}",memberUpdateDto);
         memberService.updateMember(memberUpdateDto);
     }
 
