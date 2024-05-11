@@ -1,25 +1,32 @@
 <script setup>
 import { ref } from "vue";
 import { normalLogin } from "@/api/member.js";
+import { getCookie, setCookie } from "@/util/cookie";
+
+const isIdChecked = ref(false);
 
 const clickKakaoLogin = () => {
   window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;
 };
 
 const loginInfo = ref({
-  email: getCookie("email"),
+  email: "",
   password: "",
 });
 
-function getCookie(name) {
-  let matches = document.cookie.match(
-    new RegExp(
-      "(?:^|; )" +
-        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
-        "=([^;]*)"
-    )
-  );
-  return matches ? decodeURIComponent(matches[1]) : undefined;
+function isSavedId() {
+  if (getCookie("idChecked") === "check") {
+    loginInfo.value.email = getCookie("email");
+    isIdChecked.value = true;
+  }
+}
+
+function remakeIdCheckCookie() {
+  if (isIdChecked.value === true) {
+    setCookie("idChecked", "check", "7d");
+  } else {
+    setCookie("idChecked", "unCheck", "7d");
+  }
 }
 
 const clickNormalLogin = () => {
@@ -40,6 +47,7 @@ const clickNormalLogin = () => {
         //   "Authorization"
         // ] = `Bearer ${accessToken}`;
         console.log(getCookie("email"));
+        remakeIdCheckCookie();
       }
       // navigate('/');
     },
@@ -57,6 +65,8 @@ const showPassword = (show) => {
     passwordInput.type = "password"; // Hide password
   }
 };
+isSavedId();
+console.log(isIdChecked.value);
 </script>
 
 <template>
@@ -93,7 +103,12 @@ const showPassword = (show) => {
           />
         </div>
         <div class="mb-3 form-check">
-          <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+          <input
+            type="checkbox"
+            class="form-check-input"
+            id="exampleCheck1"
+            v-model="isIdChecked"
+          />
           <label class="form-check-label" for="exampleCheck1"
             >아이디 저장</label
           >
