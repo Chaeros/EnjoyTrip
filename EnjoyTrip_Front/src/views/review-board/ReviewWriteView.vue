@@ -8,6 +8,7 @@
 
 <script setup>
 import { onMounted } from "vue";
+const { VITE_VUE_API_URL } = import.meta.env;
 
 onMounted(() => {
   const editor = document.getElementById("editor");
@@ -25,13 +26,13 @@ onMounted(() => {
           formData.append("file", file);
 
           // 서버에 이미지 업로드
-          const response = await fetch("/upload", {
+          const response = await fetch("http://localhost:8080/image/upload", {
             method: "POST",
             body: formData,
           });
 
           const data = await response.json();
-          const imageUrl = data.url; // 서버에서 반환된 이미지 URL
+          const imageUrl = VITE_VUE_API_URL + data.url; // 서버에서 반환된 이미지 URL
 
           // 에디터에 이미지 URL 삽입
           document.execCommand(
