@@ -1,37 +1,43 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-import SearchAttractionView from '@/views/plan/SearchAttractionView.vue'
-import AddUserInfoView from '@/views/user/AddUserInfoView.vue'
-import LoginView from '@/views/user/LoginView.vue'
+import { createRouter, createWebHistory } from "vue-router";
+import HomeView from "@/views/HomeView.vue";
+import SearchAttractionView from "@/views/plan/SearchAttractionView.vue";
+import AddUserInfoView from "@/views/user/AddUserInfoView.vue";
+import LoginView from "@/views/user/LoginView.vue";
+import SignUpView from "@/views/user/SignUpView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView
+      path: "/",
+      name: "home",
+      component: HomeView,
     },
     {
-      path: '/oauth2/sign-up',
-      name: 'oauth2SignUp',
-      component: AddUserInfoView
+      path: "/oauth2/sign-up",
+      name: "oauth2SignUp",
+      component: AddUserInfoView,
     },
     {
-      path: '/searchattraction',
-      name: 'searchattraction',
-      component: SearchAttractionView
+      path: "/searchattraction",
+      name: "searchattraction",
+      component: SearchAttractionView,
     },
     {
-      path: '/login',
-      name: 'login',
-      component: LoginView
+      path: "/login",
+      name: "login",
+      component: LoginView,
     },
     {
-      path: '/login/oauth2/code/kakao',
-      name: 'kakaoLoginSuccess',
-      component: AddUserInfoView
-    }
+      path: "/login/oauth2/code/kakao",
+      name: "kakaoLoginSuccess",
+      component: AddUserInfoView,
+    },
+    {
+      path: "/normal/sign-up",
+      name: "normalSingUp",
+      component: SignUpView,
+    },
     // {
     //   path: '/board',
     //   name: 'board',
@@ -55,8 +61,7 @@ const router = createRouter({
     //     }
     //   ]
     // }
+  ],
+});
 
-  ]
-})
-
-export default router
+export default router;

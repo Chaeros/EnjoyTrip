@@ -7,6 +7,7 @@ import { RouterLink, RouterView } from "vue-router";
   <RouterLink to="/" />
   <RouterLink to="/oauth2/sign-up" />
   <RouterLink to="/searchattraction" />
+  <RouterLink to="/normal/sign-up" />
   <RouterView />
 </template>
 
