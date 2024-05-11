@@ -34,6 +34,20 @@ public class ImageController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
+        // 파일 MIME 타입 확인 (이미지 여부 확인)
+        String mimeType = file.getContentType();
+        if (mimeType == null || !mimeType.startsWith("image/")) {
+            response.put("message", "Only image files are allowed");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+
+        // 파일 크기 제한 (예: 10MB)
+        long maxFileSize = 10 * 1024 * 1024;
+        if (file.getSize() > maxFileSize) {
+            response.put("message", "File is too large");
+            return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(response);
+        }
+
         try {
             // 파일 저장 경로 설정
             String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
