@@ -1,7 +1,7 @@
 <template>
   <div class="sign-up-page">
     <div class="sign-up-box">
-      <h1>회원 가입</h1>
+      <h1 class="sign-up-title"><b>회원 가입</b></h1>
       <form>
         <div class="mb-3">
           <input
@@ -184,6 +184,9 @@ const checkPasswordStrength = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.sign-up-title {
+  padding: 30px;
 }
 .form-control {
   width: 400px;
