@@ -13,12 +13,13 @@ import {
 const sidos = ref([]);
 const guguns = ref([]);
 const contentTypes = ref([]);
+
 const attractions = ref([]);
 
 const inputInformation = ref({
-  sidoCode: "",
-  gugunCode: "",
-  contentTypeId: "",
+  sidoCode: "-1",
+  gugunCode: "-1",
+  contentTypeId: "-1",
   keyword: "",
 });
 
@@ -34,21 +35,13 @@ const addAttraction = (attraction) => {
   selectedAttractions.value.push(attraction);
 };
 
-const kakaoMapRef = ref(null);
-
 const clickAttractionAdd = (attraction) => {
-  if (!selectedAttractions.value.includes(attraction)) {
-      selectedAttractions.value.push(attraction);
-      kakaoMapRef.value.updateMapLocation();
-  } else {
-    console.dir("중복 관광지")
-  }
+  selectedAttractions.value.push(attraction);
 };
 
 const deleteAttraction = (index) => {
   console.log(index);
   selectedAttractions.value.splice(index, 1);
-  kakaoMapRef.value.updateMapLocation();
 };
 
 const selectAttractionReset = () => {
@@ -89,34 +82,44 @@ async function callContentTypes() {
     ({ error }) => {
       console.log(error);
     }
-  )
+  );
 }
+
+// async function callContentType(){
+//   let response = await axios.get("http://localhost:8/attraction/contenttype");
+//   console.dir(response.data);
+//   contentTypes.value = response.data;
+// }
+// callContentType();
 
 async function searchAttractions() {
-  console.dir("inputInformation : ");
   console.dir(inputInformation.value);
-  getListAttraction(
-    inputInformation.value,
-    ({ data }) => {
-      console.dir(data);
-      attractions.value = data;
-    },
-    (error) => {
-      console.log(error);
-    }
-  )
+  let response = await axios.get(
+    "http://localhost:8/attraction/attraction/" +
+      inputInformation.value.sidoCode +
+      "/" +
+      inputInformation.value.gugunCode +
+      "/" +
+      inputInformation.value.contentTypeId +
+      "/" +
+      inputInformation.value.keyword
+  );
+  console.dir(
+    "http://localhost:8/attraction/attraction/" +
+      inputInformation.value.sidoCode +
+      "/" +
+      inputInformation.value.gugunCode +
+      "/" +
+      inputInformation.value.contentTypeId +
+      "/" +
+      inputInformation.value.keyword
+  );
+  console.dir(response.data);
+  attractions.value = response.data;
 }
-
-
 
 callSidos(1);
 callContentTypes();
-
-const activeTab = ref('attraction');
-
-function setActiveTab(tab) {
-  activeTab.value = tab;
-}
 </script>
 
 <template>
@@ -130,22 +133,21 @@ function setActiveTab(tab) {
           <div class="list-group">
             <a
               href="#"
-              class="list-group-item list-group-item-action"
-              :class="{ 'active': activeTab === 'date' }"
-              @click.prevent="setActiveTab('date')"             
+              class="list-group-item list-group-item-action active"
+              aria-current="true"
             >
               날짜 확인
             </a>
             <a href="#" class="list-group-item list-group-item-action"
-            :class="{ 'active': activeTab === 'attraction' }"
-              @click.prevent="setActiveTab('attraction')"
               >장소 선택</a
             >
             <a href="#" class="list-group-item list-group-item-action"
-            :class="{ 'active': activeTab === 'accomodation' }"
-              @click.prevent="setActiveTab('accomodation')"
               >숙소 선택</a
             >
+          </div>
+          <div>
+            <b-button disabled size="lg" variant="primary">Disabled</b-button>
+            <b-button disabled size="lg">Also Disabled</b-button>
           </div>
         </nav>
       </header>
@@ -199,7 +201,7 @@ function setActiveTab(tab) {
           <input
             class="form-control me-2"
             type="search"
-            placeholder="검색어를 입력하세요"
+            placeholder="Search"
             aria-label="Search"
             v-model="inputInformation.keyword"
           />
@@ -208,7 +210,7 @@ function setActiveTab(tab) {
             type="submit"
             @click.prevent="searchAttractions"
           >
-            search
+            Search
           </button>
         </form>
 
@@ -231,12 +233,13 @@ function setActiveTab(tab) {
                 class="select-attraction"
                 v-for="(attraction, index) in selectedAttractions"
               >
-                <img class="attraction-img" :src="attraction.attractInfo.firstImage" />
+                <img class="attraction-img" :src="attraction.firstImage" />
                 <div class="select-attraction-content">
-                  <h3>{{ attraction.attractInfo.title }}</h3>
-                  <p>주소 : {{ attraction.attractInfo.addr1 }}</p>
+                  <h3>{{ attraction.title }}</h3>
+                  <p>장소 : {{ attraction.addr1 }}</p>
                   <div class="attraction-indicators">
-                    <p>좋아요 : {{ attraction.likeCnt }}</p>
+                    <p>좋아요 : {{ attraction.like }}</p>
+                    <p>즐겨찾기 : {{ attraction.bookmark }}</p>
                   </div>
                 </div>
                 <button
@@ -254,7 +257,7 @@ function setActiveTab(tab) {
             </button>
           </div>
         </div>
-        <KakaoMap ref="kakaoMapRef" class="kakao-map-container" :selectedAttractions="selectedAttractions"></KakaoMap>
+        <KakaoMap class="kakao-map-container"></KakaoMap>
         <!-- <KakaoMap2></KakaoMap2> -->
         <!-- <KakaoMap class="kakao-map-container" /> -->
       </div>
@@ -338,7 +341,7 @@ function setActiveTab(tab) {
 .kakao-map-container {
   width: 100%;
   height: 100%;
-  position: absolute;
+  positoin: absolute;
 }
 
 .attractions {
@@ -351,13 +354,4 @@ function setActiveTab(tab) {
   padding: 20px; /* 내부 여백 설정 */
   margin: 5px;
 }
-
-/* */
-
-.attraction-img {
-  width: 100px;
-}
-
-
-
 </style>
