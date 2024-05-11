@@ -1,12 +1,25 @@
-<script setup>
-// import { useRoute, useRouter } from "vue-router";
-// import VueCookies from "vue-cookies";
-// const route = useRoute();
-// console.log(route);
-// console.log(route.query.accessToken);
-// VueCookies.set("accessToken", route.query.accessToken);
-</script>
+<script setup></script>
 
 <template>
-  <main>Home</main>
+  <div>
+    <h1>Home</h1>
+    <main>
+      <nav>
+        <ul>
+          <li><router-link :to="{ name: 'home' }">Home</router-link></li>
+          <li>
+            <router-link :to="{ name: 'searchattraction' }"
+              >Search Attraction</router-link
+            >
+          </li>
+          <li><router-link :to="{ name: 'login' }">Login</router-link></li>
+          <li>
+            <router-link :to="{ name: 'normalSingUp' }"
+              >Normal Sign Up</router-link
+            >
+          </li>
+        </ul>
+      </nav>
+    </main>
+  </div>
 </template>

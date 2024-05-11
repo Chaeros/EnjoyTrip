@@ -2,17 +2,18 @@
 import { ref } from "vue";
 import { normalLogin } from "@/api/member.js";
 import { getCookie, setCookie } from "@/util/cookie";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const isIdChecked = ref(false);
-
-const clickKakaoLogin = () => {
-  window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;
-};
-
 const loginInfo = ref({
   email: "",
   password: "",
 });
+
+const clickKakaoLogin = () => {
+  window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;
+};
 
 function isSavedId() {
   if (getCookie("idChecked") === "check") {
@@ -55,6 +56,10 @@ const clickNormalLogin = () => {
       console.log(error);
     }
   );
+};
+
+const navigateToSignUp = () => {
+  router.push({ name: "normalSingUp" });
 };
 
 const showPassword = (show) => {
@@ -121,7 +126,8 @@ console.log(isIdChecked.value);
           로그인
         </button>
         <div class="user-management">
-          <a>아이디(이메일)찾기</a> | <a>비밀번호 찾기</a> | <a>회원가입</a>
+          <a>아이디(이메일)찾기</a> | <a>비밀번호 찾기</a> |
+          <a @click.prevent="navigateToSignUp">회원가입</a>
         </div>
         <div class="hr-with-text">
           <hr />
