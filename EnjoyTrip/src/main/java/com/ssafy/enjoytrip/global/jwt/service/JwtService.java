@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.ssafy.enjoytrip.domain.member.Member;
 import com.ssafy.enjoytrip.domain.member.mapper.MemberMapper;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
@@ -142,6 +143,11 @@ public class JwtService {
      * AccessToken 헤더 설정
      */
     public void setAccessTokenHeader(HttpServletResponse response, String accessToken) {
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setMaxAge(10 * 60); // 쿠키 유효 시간 설정 (예: 10분)
+        accessTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정
+        accessTokenCookie.setHttpOnly(true);
+        response.addCookie(accessTokenCookie);
         response.setHeader(accessHeader, accessToken);
     }
 
@@ -149,6 +155,11 @@ public class JwtService {
      * RefreshToken 헤더 설정
      */
     public void setRefreshTokenHeader(HttpServletResponse response, String refreshToken) {
+        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
+        refreshTokenCookie.setMaxAge(60 * 60); // 쿠키 유효 시간 설정 (예: 1시간)
+        refreshTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정
+        refreshTokenCookie.setHttpOnly(true);
+        response.addCookie(refreshTokenCookie);
         response.setHeader(refreshHeader, refreshToken);
     }
 

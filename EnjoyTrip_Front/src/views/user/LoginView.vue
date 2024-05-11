@@ -1,16 +1,32 @@
 <script setup>
 import { ref } from "vue";
 import { normalLogin } from "@/api/member.js";
+
 const clickKakaoLogin = () => {
   window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;
 };
 
 const loginInfo = ref({
-  email: "",
+  email: getCookie("email"),
   password: "",
 });
 
+function getCookie(name) {
+  let matches = document.cookie.match(
+    new RegExp(
+      "(?:^|; )" +
+        name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") +
+        "=([^;]*)"
+    )
+  );
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
+
 const clickNormalLogin = () => {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  console.log(loginInfo.value.email);
   normalLogin(
     loginInfo.value,
     (response) => {
@@ -19,14 +35,15 @@ const clickNormalLogin = () => {
         let refreshToken = response.headers["authorization-refresh"];
         console.log("refresh 토큰 :", refreshToken);
         console.log("access 토큰 :", accessToken);
-        setLocalStorage("access_token", accessToken); // 토큰 localStorage에 저장
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${accessToken}`;
+        // setLocalStorage("access_token", accessToken); // 토큰 localStorage에 저장
+        // axios.defaults.headers.common[
+        //   "Authorization"
+        // ] = `Bearer ${accessToken}`;
+        console.log(getCookie("email"));
       }
       // navigate('/');
     },
-    ({ error }) => {
+    (error) => {
       console.log(error);
     }
   );

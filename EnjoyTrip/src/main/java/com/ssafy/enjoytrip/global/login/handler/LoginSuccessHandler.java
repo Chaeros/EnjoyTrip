@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.global.login.handler;
 import com.ssafy.enjoytrip.domain.member.Member;
 import com.ssafy.enjoytrip.domain.member.mapper.MemberMapper;
 import com.ssafy.enjoytrip.global.jwt.service.JwtService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,13 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         String refreshToken = jwtService.createRefreshToken(); // JwtService의 createRefreshToken을 사용하여 RefreshToken 발급
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken); // 응답 헤더에 AccessToken, RefreshToken 실어서 응답
+
+        // 쿠키 생성 및 클라이언트에 전송
+        Cookie emailCookie = new Cookie("email", email);
+        emailCookie.setMaxAge(24 * 60 * 60); // 쿠키 유효 시간 설정 (예: 24시간)
+        emailCookie.setPath("/"); // 쿠키의 유효 경로 설정
+//        emailCookie.setHttpOnly(true);
+        response.addCookie(emailCookie);
 
         Member member = memberMapper.findMemberByEmail(email);
         if ( member != null ){

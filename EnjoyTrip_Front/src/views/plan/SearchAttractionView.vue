@@ -14,7 +14,6 @@ const sidos = ref([]);
 const guguns = ref([]);
 const contentTypes = ref([]);
 
-
 const attractions = ref([]);
 
 const inputInformation = ref({
@@ -83,7 +82,7 @@ async function callContentTypes() {
     ({ error }) => {
       console.log(error);
     }
-  )
+  );
 }
 
 // async function callContentType(){
@@ -118,7 +117,6 @@ async function searchAttractions() {
   console.dir(response.data);
   attractions.value = response.data;
 }
-
 
 callSidos(1);
 callContentTypes();
