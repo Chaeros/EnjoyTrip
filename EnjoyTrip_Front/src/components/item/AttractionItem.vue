@@ -1,27 +1,33 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { ref } from "vue";
+import { defineProps, defineEmits } from "vue";
 
 const { attraction } = defineProps({ attraction: Object });
-const emit = defineEmits(["clickAttractionAdd"]);
+const emit = defineEmits(["clickAttractionAdd", "updateMapLocation"]);
+const updateMapLocation = () => {
+  emit("updateMapLocation", {
+    lat: attraction.latitude,
+    lng: attraction.longitude
+  });
+};
 // const route = useRoute();
 // const router = useRouter();
 
 const clickAttractionAdd = () => {
-  console.dir(attraction);
   emit("clickAttractionAdd", attraction);
 };
 </script>
 
 <template>
-  <div class="attraction-flex">
-    <img class="attraction-img" :src="attraction.img" />
+  <div @click="updateMapLocation" class="attraction-flex">
+    <img class="attraction-img" :src="attraction.attractInfo.firstImage" />
     <div class="attraction-content">
-      <h3>{{ attraction.title }}</h3>
-      <p>장소 : {{ attraction.address }}</p>
+      
+      <h3>{{ attraction.attractInfo.title }}</h3>
+      <p>장소 : {{ attraction.attractInfo.addr1 }}</p>
       <div class="attraction-indicators">
-        <p>좋아요 : {{ attraction.like }}</p>
-        <p>즐겨찾기 : {{ attraction.bookmark }}</p>
+        <p>좋아요 : {{ attraction.likeCnt }}</p>
       </div>
     </div>
     <button
@@ -30,7 +36,7 @@ const clickAttractionAdd = () => {
       class="btn btn-primary"
       @click="clickAttractionAdd"
     >
-      Add
+      +
     </button>
   </div>
 </template>
