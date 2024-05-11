@@ -47,10 +47,15 @@ function normalLogin(loginInfo, success, fail) {
   local.post(`/login`, loginInfo, { headers }).then(success).catch(fail);
 }
 
+function normalSignUp(memberInfo, success, fail) {
+  local.post(`/sign-up`, memberInfo).then(success).catch(fail);
+}
+
 export {
   addUserInformation,
   kakaoLogin,
   sendKakaoLoginCode,
   updateUserInfomation,
   normalLogin,
+  normalSignUp,
 };

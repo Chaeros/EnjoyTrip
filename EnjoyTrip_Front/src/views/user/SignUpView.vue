@@ -92,8 +92,8 @@
         </div>
         <button
           type="submit"
-          class="btn btn-primary normal-login-btn"
-          @click.prevent="clickNormalLogin"
+          class="btn btn-primary normal-sign-up-btn"
+          @click.prevent="clickNormalSignUp"
         >
           가입하기
         </button>
@@ -118,11 +118,15 @@ import {
   isPasswordLengthCorrect,
   isPasswordStrengthStrong,
 } from "@/util/password-validator";
+import { normalSignUp } from "@/api/member.js";
+
 const signUpInfo = ref({
   email: "",
   password: "",
   passwordConfirm: "",
 });
+
+const clickNormalSignUp = () => {};
 
 const handlePasswordInput = () => {
   // 비밀번호 입력 시 호출되는 핸들러
@@ -173,7 +177,7 @@ const checkPasswordStrength = () => {
 };
 </script>
 
-<style>
+<style scoped>
 .sign-up-page {
   display: flex;
   justify-content: center; /* Horizontally center the content */
@@ -199,7 +203,7 @@ const checkPasswordStrength = () => {
   transform: translateY(-50%);
   cursor: pointer;
 }
-.normal-login-btn {
+.normal-sign-up-btn {
   width: 400px;
   height: 50px;
   font-weight: bold;
