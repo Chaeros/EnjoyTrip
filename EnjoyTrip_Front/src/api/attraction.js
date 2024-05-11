@@ -3,7 +3,7 @@ import { localAxios } from "@/util/http-commons";
 const local = localAxios();
 
 function getListAttraction(param, success, fail) {
-    local.get(`/attraction/attraction`, {  }).then(success).catch(fail);
+    local.get(`/attraction/attraction`, { params : param }).then(success).catch(fail);
 }
 
 function getListSido(success, fail) {
