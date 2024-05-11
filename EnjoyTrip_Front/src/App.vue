@@ -8,6 +8,7 @@ import { RouterLink, RouterView } from "vue-router";
   <RouterLink to="/oauth2/sign-up" />
   <RouterLink to="/searchattraction" />
   <RouterLink to="/normal/sign-up" />
+  <RouterLink to="/reviewboard/write" />
   <RouterView />
 </template>
 
