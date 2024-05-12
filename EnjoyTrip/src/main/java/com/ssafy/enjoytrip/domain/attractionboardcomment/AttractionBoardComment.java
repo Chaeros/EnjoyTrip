@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.domain.attractionboardcomment;
 
+import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
+import com.ssafy.enjoytrip.domain.attractionboardcomment.dto.response.AttractionBoardCommentResponseDto;
 import lombok.*;
 
 @Getter
@@ -8,8 +10,18 @@ import lombok.*;
 @ToString
 @AllArgsConstructor
 public class AttractionBoardComment {
-    private long id;
+    private int id;
     private String content;
-    private long attractionBoardId;
-    private long memberId;
+    private int attractionBoardId;
+    private int memberId;
+
+    public AttractionBoardCommentResponseDto transferToAttractionBoardCommentResponseDto() {
+        return AttractionBoardCommentResponseDto.builder()
+                .id(this.id)
+                .content(this.content)
+                .memberId(this.memberId)
+                .attractionBoardId(this.attractionBoardId)
+                .memberId(this.memberId)
+                .build();
+    }
 }

@@ -2,7 +2,7 @@ package com.ssafy.enjoytrip.domain.attractionboard.service;
 
 import com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardAddRequestDto;
-import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardModifyDto;
+import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardModifyRequestDto;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.mapper.AttractionBoardMapper;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class AttractionBoardServiceImpl implements AttractionBoardService{
     }
 
     @Override
-    public int modifyAttractionBoard(AttractionBoardModifyDto attractionBoardModifyDto) {
+    public int modifyAttractionBoard(AttractionBoardModifyRequestDto attractionBoardModifyDto) {
         return attractionBoardMapper.updateAttractionBoard(attractionBoardModifyDto.transferToAttractionBoard());
     }
 

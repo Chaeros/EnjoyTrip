@@ -1,7 +1,9 @@
 package com.ssafy.enjoytrip.domain.attractionboard.dto.request;
 
 import com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard;
+import lombok.Data;
 
+@Data
 public class AttractionBoardAddRequestDto {
     private String title;
     private String content;

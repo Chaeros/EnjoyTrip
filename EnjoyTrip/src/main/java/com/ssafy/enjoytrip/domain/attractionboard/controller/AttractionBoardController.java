@@ -1,7 +1,7 @@
 package com.ssafy.enjoytrip.domain.attractionboard.controller;
 
 import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardAddRequestDto;
-import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardModifyDto;
+import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardModifyRequestDto;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.service.AttractionBoardService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class AttractionBoardController {
     }
 
     @PatchMapping
-    public ResponseEntity<Void> modifyAttractionBoard(@RequestBody AttractionBoardModifyDto attractionBoardModifyDto){
+    public ResponseEntity<Void> modifyAttractionBoard(@RequestBody AttractionBoardModifyRequestDto attractionBoardModifyDto){
         if ( attractionBoardService.modifyAttractionBoard(attractionBoardModifyDto) == 0 ){
             return ResponseEntity.badRequest().build();
         }
