@@ -1,4 +1,5 @@
 <template>
+  <Header></Header>
   <div class="board-write-page">
     <div class="board-write-box">
       <input
@@ -6,13 +7,34 @@
         type="text"
         placeholder="제목을 입력하세요"
       />
+      <div class="horizontal-line"></div>
+      <div class="select-attraction-box">
+        리뷰를 작성할 관광지를 선택해주세요!
+        <button
+          type="button"
+          class="btn btn-outline-secondary select-attraction-btn"
+        >
+          선택하기
+        </button>
+      </div>
       <div
         id="editor"
         class="board-write-editor"
         contenteditable="true"
         style="border: 1px solid black; padding: 10px"
       ></div>
-      <button>게시하기</button>
+      <div class="board-write-buttons">
+        <div>
+          <button type="button" class="btn btn-outline-secondary button">
+            목록으로
+          </button>
+        </div>
+        <div>
+          <button type="button" class="btn btn-outline-secondary button">
+            게시하기
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -21,6 +43,7 @@
 import { onMounted } from "vue";
 import axios from "axios";
 import interact from "interactjs";
+import Header from "@/components/Header.vue";
 
 const { VITE_VUE_API_URL } = import.meta.env;
 
@@ -144,17 +167,45 @@ img.resizable {
 }
 
 .board-write-title {
-  width: 800px;
+  width: 1200px;
+  height: 80px;
+  font-size: 40px;
+}
+
+.horizontal-line {
+  width: 1200px;
+  height: 2px;
+  background-color: black;
+  margin: 0; /* 선과 위 요소 사이에 간격을 줄 수 있습니다 */
+}
+
+.select-attraction-box {
+  margin: 10px 0;
+  width: 1200px;
+}
+
+.select-attraction-btn {
 }
 
 .board-write-editor {
-  width: 800px;
-  height: 100vh;
+  width: 1200px;
+  height: 60vh;
   overflow-y: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /*그림자 효과 */
 }
 
 .postButton {
   margin: 20px;
   width: 200px;
+}
+.board-write-buttons {
+  margin: 10px 0;
+  width: 1200px;
+  display: flex;
+  justify-content: space-between;
+}
+.button {
+  font-size: 20px;
 }
 </style>

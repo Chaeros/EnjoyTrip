@@ -2,9 +2,10 @@
   <div class="header-wrap">
     <div class="header">
       <div class="left-side-header">
-        <a class="header-logo">ChanGon</a>
+        <h3 class="header-logo">ChanGon</h3>
         <a>관광지찾기</a>
         <a>커뮤니티</a>
+        <a>공지사항</a>
       </div>
       <div class="right-side-header">
         <div class="search-box">
@@ -47,7 +48,7 @@
 .header-logo {
   font-size: 30px;
 }
-.header > * > * {
+.header > * > a {
   margin: 0 10px;
 }
 .left-side-header {
@@ -58,7 +59,6 @@
 .right-side-header {
   display: flex;
   align-items: center;
-  width: 700px;
 }
 .search-box {
   position: relative;
