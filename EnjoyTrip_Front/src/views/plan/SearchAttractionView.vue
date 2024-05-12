@@ -13,13 +13,12 @@ import {
 const sidos = ref([]);
 const guguns = ref([]);
 const contentTypes = ref([]);
-
 const attractions = ref([]);
 
 const inputInformation = ref({
-  sidoCode: "-1",
-  gugunCode: "-1",
-  contentTypeId: "-1",
+  sidoCode: "",
+  gugunCode: "",
+  contentTypeId: "",
   keyword: "",
 });
 
@@ -35,13 +34,21 @@ const addAttraction = (attraction) => {
   selectedAttractions.value.push(attraction);
 };
 
+const kakaoMapRef = ref(null);
+
 const clickAttractionAdd = (attraction) => {
-  selectedAttractions.value.push(attraction);
+  if (!selectedAttractions.value.includes(attraction)) {
+      selectedAttractions.value.push(attraction);
+      kakaoMapRef.value.updateMapLocation();
+  } else {
+    console.dir("중복 관광지")
+  }
 };
 
 const deleteAttraction = (index) => {
   console.log(index);
   selectedAttractions.value.splice(index, 1);
+  kakaoMapRef.value.updateMapLocation();
 };
 
 const selectAttractionReset = () => {
@@ -82,44 +89,34 @@ async function callContentTypes() {
     ({ error }) => {
       console.log(error);
     }
-  );
+  )
 }
-
-// async function callContentType(){
-//   let response = await axios.get("http://localhost:8/attraction/contenttype");
-//   console.dir(response.data);
-//   contentTypes.value = response.data;
-// }
-// callContentType();
 
 async function searchAttractions() {
+  console.dir("inputInformation : ");
   console.dir(inputInformation.value);
-  let response = await axios.get(
-    "http://localhost:8/attraction/attraction/" +
-      inputInformation.value.sidoCode +
-      "/" +
-      inputInformation.value.gugunCode +
-      "/" +
-      inputInformation.value.contentTypeId +
-      "/" +
-      inputInformation.value.keyword
-  );
-  console.dir(
-    "http://localhost:8/attraction/attraction/" +
-      inputInformation.value.sidoCode +
-      "/" +
-      inputInformation.value.gugunCode +
-      "/" +
-      inputInformation.value.contentTypeId +
-      "/" +
-      inputInformation.value.keyword
-  );
-  console.dir(response.data);
-  attractions.value = response.data;
+  getListAttraction(
+    inputInformation.value,
+    ({ data }) => {
+      console.dir(data);
+      attractions.value = data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  )
 }
+
+
 
 callSidos(1);
 callContentTypes();
+
+const activeTab = ref('attraction');
+
+function setActiveTab(tab) {
+  activeTab.value = tab;
+}
 </script>
 
 <template>
@@ -133,21 +130,22 @@ callContentTypes();
           <div class="list-group">
             <a
               href="#"
-              class="list-group-item list-group-item-action active"
-              aria-current="true"
+              class="list-group-item list-group-item-action"
+              :class="{ 'active': activeTab === 'date' }"
+              @click.prevent="setActiveTab('date')"             
             >
               날짜 확인
             </a>
             <a href="#" class="list-group-item list-group-item-action"
+            :class="{ 'active': activeTab === 'attraction' }"
+              @click.prevent="setActiveTab('attraction')"
               >장소 선택</a
             >
             <a href="#" class="list-group-item list-group-item-action"
+            :class="{ 'active': activeTab === 'accomodation' }"
+              @click.prevent="setActiveTab('accomodation')"
               >숙소 선택</a
             >
-          </div>
-          <div>
-            <b-button disabled size="lg" variant="primary">Disabled</b-button>
-            <b-button disabled size="lg">Also Disabled</b-button>
           </div>
         </nav>
       </header>
@@ -201,7 +199,7 @@ callContentTypes();
           <input
             class="form-control me-2"
             type="search"
-            placeholder="Search"
+            placeholder="검색어를 입력하세요"
             aria-label="Search"
             v-model="inputInformation.keyword"
           />
@@ -210,7 +208,7 @@ callContentTypes();
             type="submit"
             @click.prevent="searchAttractions"
           >
-            Search
+            search
           </button>
         </form>
 
@@ -233,13 +231,12 @@ callContentTypes();
                 class="select-attraction"
                 v-for="(attraction, index) in selectedAttractions"
               >
-                <img class="attraction-img" :src="attraction.firstImage" />
+                <img class="attraction-img" :src="attraction.attractInfo.firstImage" />
                 <div class="select-attraction-content">
-                  <h3>{{ attraction.title }}</h3>
-                  <p>장소 : {{ attraction.addr1 }}</p>
+                  <h3>{{ attraction.attractInfo.title }}</h3>
+                  <p>주소 : {{ attraction.attractInfo.addr1 }}</p>
                   <div class="attraction-indicators">
-                    <p>좋아요 : {{ attraction.like }}</p>
-                    <p>즐겨찾기 : {{ attraction.bookmark }}</p>
+                    <p>좋아요 : {{ attraction.likeCnt }}</p>
                   </div>
                 </div>
                 <button
@@ -257,7 +254,7 @@ callContentTypes();
             </button>
           </div>
         </div>
-        <KakaoMap class="kakao-map-container"></KakaoMap>
+        <KakaoMap ref="kakaoMapRef" class="kakao-map-container" :selectedAttractions="selectedAttractions"></KakaoMap>
         <!-- <KakaoMap2></KakaoMap2> -->
         <!-- <KakaoMap class="kakao-map-container" /> -->
       </div>
@@ -341,7 +338,7 @@ callContentTypes();
 .kakao-map-container {
   width: 100%;
   height: 100%;
-  positoin: absolute;
+  position: absolute;
 }
 
 .attractions {
@@ -354,4 +351,13 @@ callContentTypes();
   padding: 20px; /* 내부 여백 설정 */
   margin: 5px;
 }
+
+/* */
+
+.attraction-img {
+  width: 100px;
+}
+
+
+
 </style>
