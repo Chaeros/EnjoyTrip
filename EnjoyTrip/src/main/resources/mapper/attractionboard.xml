@@ -34,7 +34,7 @@
         where id = #{id}
     </select>
 
-    <select id="findAttractinoBoardsByTitle" parameterType="string" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
+    <select id="findAttractionBoardsByTitle" parameterType="string" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
         select id, title, content, hit, member_id, attraction_id
         from attraction_board
         where title LIKE CONCAT('%', #{title}, '%')

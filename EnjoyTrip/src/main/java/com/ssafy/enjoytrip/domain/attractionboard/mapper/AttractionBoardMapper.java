@@ -8,10 +8,10 @@ import java.util.List;
 @Mapper
 public interface AttractionBoardMapper {
     int insertAttractionBoard(AttractionBoard attractionBoard);
-    void updateAttractionBoard(AttractionBoard attractionBoard);
-    void deleteAttractionBoard(int id);
+    int updateAttractionBoard(AttractionBoard attractionBoard);
+    int deleteAttractionBoard(int id);
     AttractionBoard findAttractionBoard(int id);
     List<AttractionBoard> findAttractionBoards();
-    List<AttractionBoard> findAttractinoBoardsByTitle(String title);
+    List<AttractionBoard> findAttractionBoardsByTitle(String title);
     List<AttractionBoard> findAttractionBoardsByAttractionId(int attractionId);
 }

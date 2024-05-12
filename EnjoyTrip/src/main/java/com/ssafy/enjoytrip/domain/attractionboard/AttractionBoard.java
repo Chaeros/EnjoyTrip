@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.domain.attractionboard;
 
+import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 import lombok.*;
 
 @Getter
@@ -14,4 +15,15 @@ public class AttractionBoard {
     private int hit;
     private long memberId;
     private int attractionId;
+
+    public AttractionBoardResponseDto transferToAttractionBoardResponseDto() {
+        return AttractionBoardResponseDto.builder()
+                .id(this.id)
+                .title(this.title)
+                .content(this.content)
+                .hit(this.hit)
+                .memberId(this.memberId)
+                .attractionId(this.attractionId)
+                .build();
+    }
 }
