@@ -1,9 +1,37 @@
 <template>
-  <div
-    id="editor"
-    contenteditable="true"
-    style="border: 1px solid black; padding: 10px"
-  ></div>
+  <v-app>
+    <v-app-bar :elevation="2">
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon></v-app-bar-nav-icon>
+      </template>
+
+      <v-app-bar-title>Application Bar</v-app-bar-title>
+
+      <template v-slot:append>
+        <v-btn icon="mdi-heart"></v-btn>
+
+        <v-btn icon="mdi-magnify"></v-btn>
+
+        <v-btn icon="mdi-dots-vertical"></v-btn>
+      </template>
+    </v-app-bar>
+    <div class="board-write-page">
+      <div class="board-write-box">
+        <input
+          class="board-write-title"
+          type="text"
+          placeholder="제목을 입력하세요"
+        />
+        <div
+          id="editor"
+          class="board-write-editer"
+          contenteditable="true"
+          style="border: 1px solid black; padding: 10px"
+        ></div>
+        <button>게시하기</button>
+      </div>
+    </div>
+  </v-app>
 </template>
 
 <script setup>
@@ -103,5 +131,26 @@ img.resizable {
   display: block;
   max-width: 100%;
   overflow: auto;
+}
+.board-write-page {
+  display: flex;
+  height: 100vh;
+}
+.board-write-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+}
+.board-write-title {
+  margin: 70px 0 0 0;
+  width: 800px;
+  height: 100px;
+  font-size: 30px;
+}
+.board-write-editer {
+  width: 800px;
+  height: 100vh;
+  overflow-y: auto;
 }
 </style>
