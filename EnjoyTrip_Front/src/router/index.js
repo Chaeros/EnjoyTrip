@@ -5,6 +5,7 @@ import AddUserInfoView from "@/views/user/AddUserInfoView.vue";
 import LoginView from "@/views/user/LoginView.vue";
 import SignUpView from "@/views/user/SignUpView.vue";
 import ReviewWriteView from "@/views/review-board/ReviewWriteView.vue";
+import ReviewListView from "@/views/review-board/ReviewListView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -43,6 +44,11 @@ const router = createRouter({
       path: "/reviewboard/write",
       name: "reviewBoardWrite",
       component: ReviewWriteView,
+    },
+    {
+      path: "/reviewboard/list",
+      name: "reviewBoardList",
+      component: ReviewListView,
     },
     // {
     //   path: '/board',

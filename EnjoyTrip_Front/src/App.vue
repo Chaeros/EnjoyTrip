@@ -9,6 +9,7 @@ import { RouterLink, RouterView } from "vue-router";
   <RouterLink to="/searchattraction" />
   <RouterLink to="/normal/sign-up" />
   <RouterLink to="/reviewboard/write" />
+  <RouterLink to="/reviewboard/list" />
   <RouterView />
 </template>
 

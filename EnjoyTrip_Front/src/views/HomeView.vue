@@ -26,6 +26,11 @@ import Header from "@/components/Header.vue";
               >ReviewBoardWrite</router-link
             >
           </li>
+          <li>
+            <router-link :to="{ name: 'reviewBoardList' }"
+              >ReviewBoardList</router-link
+            >
+          </li>
         </ul>
       </nav>
     </main>
