@@ -1,37 +1,20 @@
 <template>
-  <v-app>
-    <v-app-bar :elevation="2">
-      <template v-slot:prepend>
-        <v-app-bar-nav-icon></v-app-bar-nav-icon>
-      </template>
-
-      <v-app-bar-title>Application Bar</v-app-bar-title>
-
-      <template v-slot:append>
-        <v-btn icon="mdi-heart"></v-btn>
-
-        <v-btn icon="mdi-magnify"></v-btn>
-
-        <v-btn icon="mdi-dots-vertical"></v-btn>
-      </template>
-    </v-app-bar>
-    <div class="board-write-page">
-      <div class="board-write-box">
-        <input
-          class="board-write-title"
-          type="text"
-          placeholder="제목을 입력하세요"
-        />
-        <div
-          id="editor"
-          class="board-write-editer"
-          contenteditable="true"
-          style="border: 1px solid black; padding: 10px"
-        ></div>
-        <button>게시하기</button>
-      </div>
+  <div class="board-write-page">
+    <div class="board-write-box">
+      <input
+        class="board-write-title"
+        type="text"
+        placeholder="제목을 입력하세요"
+      />
+      <div
+        id="editor"
+        class="board-write-editor"
+        contenteditable="true"
+        style="border: 1px solid black; padding: 10px"
+      ></div>
+      <button>게시하기</button>
     </div>
-  </v-app>
+  </div>
 </template>
 
 <script setup>
@@ -46,7 +29,7 @@ onMounted(() => {
 
   if (editor) {
     editor.addEventListener("paste", async (event) => {
-      console.log("occure event");
+      console.log("occur event");
       const items = (event.clipboardData || event.originalEvent.clipboardData)
         .items;
 
@@ -111,8 +94,21 @@ onMounted(() => {
             interact.modifiers.restrictEdges({
               outer: "parent",
             }),
+            interact.modifiers.restrictSize({
+              min: { width: 50, height: 50 },
+            }),
           ],
           inertia: true,
+          autoScroll: {
+            container: editor,
+            margin: 50,
+            distance: 5,
+            interval: 10,
+          },
+        });
+
+        img.addEventListener("mousedown", (event) => {
+          event.preventDefault();
         });
       }
     }
@@ -131,26 +127,34 @@ img.resizable {
   display: block;
   max-width: 100%;
   overflow: auto;
+  cursor: nwse-resize; /* 크기 조절 가능할 때 커서 모양 */
+  resize: both; /* CSS를 통해 크기 조절 가능하게 설정 */
 }
+
 .board-write-page {
   display: flex;
   height: 100vh;
 }
+
 .board-write-box {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin: 0 auto;
 }
+
 .board-write-title {
-  margin: 70px 0 0 0;
   width: 800px;
-  height: 100px;
-  font-size: 30px;
 }
-.board-write-editer {
+
+.board-write-editor {
   width: 800px;
   height: 100vh;
   overflow-y: auto;
+}
+
+.postButton {
+  margin: 20px;
+  width: 200px;
 }
 </style>
