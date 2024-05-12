@@ -18,6 +18,11 @@
               >Normal Sign Up</router-link
             >
           </li>
+          <li>
+            <router-link :to="{ name: 'reviewBoardWrite' }"
+              >ReviewBoardWrite</router-link
+            >
+          </li>
         </ul>
       </nav>
     </main>

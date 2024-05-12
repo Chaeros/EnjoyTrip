@@ -9,6 +9,7 @@
 <script setup>
 import { onMounted } from "vue";
 import axios from "axios";
+import interact from "interactjs";
 
 const { VITE_VUE_API_URL } = import.meta.env;
 
@@ -41,9 +42,10 @@ onMounted(() => {
               document.execCommand(
                 "insertHTML",
                 false,
-                `<img src="${imageUrl}" />`
+                `<img src="${imageUrl}" class="resizable" style="max-width: 100%; overflow: auto;" />`
               );
               console.log(imageUrl);
+              addImageResizeFunctionality();
             })
             .catch((error) => {
               console.error("Error uploading image:", error);
@@ -51,10 +53,55 @@ onMounted(() => {
         }
       }
     });
+
+    function addImageResizeFunctionality() {
+      const imgs = editor.getElementsByTagName("img");
+      for (const img of imgs) {
+        interact(img).resizable({
+          edges: { left: true, right: true, bottom: true, top: true },
+          listeners: {
+            move(event) {
+              const { target } = event;
+              let x = parseFloat(target.getAttribute("data-x")) || 0;
+              let y = parseFloat(target.getAttribute("data-y")) || 0;
+
+              // update the element's style
+              target.style.width = event.rect.width + "px";
+              target.style.height = event.rect.height + "px";
+
+              // translate when resizing from top or left edges
+              x += event.deltaRect.left;
+              y += event.deltaRect.top;
+
+              target.style.transform = `translate(${x}px, ${y}px)`;
+
+              target.setAttribute("data-x", x);
+              target.setAttribute("data-y", y);
+            },
+          },
+          modifiers: [
+            interact.modifiers.restrictEdges({
+              outer: "parent",
+            }),
+          ],
+          inertia: true,
+        });
+      }
+    }
+
+    // 기존 이미지에 크기 조절 기능 적용
+    addImageResizeFunctionality();
   } else {
     console.error("Editor element not found");
   }
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+/* 크기 조절 핸들을 처리하기 위한 스타일 추가 */
+img.resizable {
+  display: block;
+  max-width: 100%;
+  overflow: auto;
+}
+</style>
