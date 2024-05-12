@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ssafy.enjoytrip.domain.attractionboard.mapper.MemberMapper">
+<mapper namespace="com.ssafy.enjoytrip.domain.attractionboard.mapper.AttractionBoardMapper">
+    <insert id="insertAttractionBoard" parameterType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
+        insert into attraction_board (
+            title, content, member_id, attraction_id
+        ) values (
+             #{title}, #{content}, #{member_id}, #{attraction_id}
+        )
+    </insert>
 
+    <update id="updateAttractionBoard" parameterType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
+        update attraction_board
+        set title = #{title},
+            content = #{content}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMember" parameterType="int">
+        delete
+        from attraction_board
+        where id = #{id}
+    </delete>
+
+    <select id="findAttractionBoards" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
+        select id, title, content, hit, member_id, attraction_id
+        from attraction_board
+    </select>
+
+    <select id="findAttractionBoard" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
+        select id, title, content, hit, member_id, attraction_id
+        from attraction_board
+        where id = #{id}
+    </select>
+
+    <select id="findAttractinoBoardsByTitle" parameterType="string" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
+        select id, title, content, hit, member_id, attraction_id
+        from attraction_board
+        where title LIKE CONCAT('%', #{title}, '%')
+    </select>
+
+    <select id="findAttractionBoardsByAttractionId" parameterType="int" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
+        select id, title, content, hit, member_id, attraction_id
+        from attraction_board
+        where attraction_id = #{attractionId}
+    </select>
 </mapper>
