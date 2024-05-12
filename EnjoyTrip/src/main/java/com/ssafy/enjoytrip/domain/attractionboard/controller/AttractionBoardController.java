@@ -48,7 +48,7 @@ public class AttractionBoardController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
 
-    @GetMapping("/{attractionId")
+    @GetMapping("/{attractionId}")
     public ResponseEntity<AttractionBoardResponseDto> searchAttractionBoard(@PathVariable("attractionId") int attractionId){
         return attractionBoardService.searchAttractionBoard(attractionId)
                 .map(ResponseEntity::ok)
