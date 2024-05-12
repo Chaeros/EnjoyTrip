@@ -4,12 +4,15 @@
     <img class="represent-img" src="@/img/Gyeongbokgung.jpg" />
     <div class="board-list-box">
       <div class="board-list-box-top">
-        <button
-          type="button"
-          class="btn btn-outline-secondary select-attraction-btn"
-        >
-          글 쓰기
-        </button>
+        <div class="board-list-description-and-write-btn">
+          <div class="review-title">리뷰 목록</div>
+          <button
+            type="button"
+            class="btn btn-outline-secondary select-attraction-btn"
+          >
+            글 쓰기
+          </button>
+        </div>
         <div class="review-card-list">
           <div class="card-group">
             <div class="card">
@@ -19,7 +22,7 @@
                 alt="덕수궁"
               />
               <div class="card-body">
-                <h5 class="card-title">덕수궁</h5>
+                <h5 class="card-title"><b>덕수궁</b></h5>
                 <p class="card-text">
                   조선시대의 궁궐이다. 원래 왕가의 별궁인 명례궁이었으나,
                   임진왜란 직후 행궁으로써 정궁 역할을 했으며, 광해군 때 정식
@@ -39,7 +42,7 @@
                 alt="창덕궁"
               />
               <div class="card-body">
-                <h5 class="card-title">창덕궁</h5>
+                <h5 class="card-title"><b>창덕궁</b></h5>
                 <p class="card-text">
                   조선왕조 사상 가장 오랜 기간 왕의 주 거처로 쓰인 궁궐
                 </p>
@@ -57,7 +60,7 @@
                 alt="광화문"
               />
               <div class="card-body">
-                <h5 class="card-title">Card title</h5>
+                <h5 class="card-title"><b>광화문</b></h5>
                 <p class="card-text">
                   광화문(光化門)은 경복궁의 남문으로, 궁의 정문 기능을 하는
                   문이다.
@@ -98,10 +101,20 @@ import Header from "@/components/Header.vue";
 .board-list-box-top {
   width: 1200px;
 }
+.board-list-description-and-write-btn {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px;
+}
+.review-title {
+  font-size: 25px;
+  font-weight: bold;
+}
 .board-write-buttons {
   display: flex;
   justify-content: space-between;
   margin: 20px 0;
+  font-size: 25px;
 }
 .button {
   font-size: 16px;
