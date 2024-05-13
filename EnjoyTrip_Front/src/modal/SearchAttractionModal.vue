@@ -49,7 +49,7 @@ export default {
   background: white;
   padding: 20px;
   border-radius: 10px;
-  width: 800px;
+  width: 400px;
   height: 800px;
   max-width: 80%;
 }

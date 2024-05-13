@@ -43,7 +43,46 @@
   </div>
   <Modal :isVisible="showModal" title="관광지 선택" @close="closeModal">
     <div class="dropdowns">
-      <div class="dropdown">
+      <select
+        class="custom-select w-100"
+        v-model="inputInformation.sidoCode"
+        @change="callGuguns(inputInformation.sidoCode)"
+      >
+        <option value="-1">시도</option>
+        <option
+          v-for="sido in sidos"
+          :value="sido.sidoCode"
+          :key="sido.sidoCode"
+        >
+          {{ sido.sidoName }}
+        </option>
+      </select>
+
+      <select class="custom-select w-100" v-model="inputInformation.gugunCode">
+        <option disabled value="-1">구군</option>
+        <option
+          v-for="gugun in guguns"
+          :value="gugun.gugunCode"
+          :key="gugun.gugunCode"
+        >
+          {{ gugun.gugunName }}
+        </option>
+      </select>
+
+      <select
+        class="custom-select w-100"
+        v-model="inputInformation.contentTypeId"
+      >
+        <option value="-1">컨텐츠</option>
+        <option
+          v-for="content in contentTypes"
+          :value="content.contentId"
+          :key="content.contentId"
+        >
+          {{ content.contentName }}
+        </option>
+      </select>
+      <!-- <div class="dropdown">
         <button
           class="btn btn-secondary dropdown-toggle"
           type="button"
@@ -86,8 +125,8 @@
           <li><a class="dropdown-item" href="#">Action</a></li>
           <li><a class="dropdown-item" href="#">Another action</a></li>
           <li><a class="dropdown-item" href="#">Something else here</a></li>
-        </ul>
-      </div>
+        </ul> 
+      </div> -->
     </div>
     <div class="search-box">
       <input
@@ -95,20 +134,21 @@
         type="search"
         placeholder="Search"
         aria-label="Search"
+        v-model="keyword"
+        @keyup.enter="searchAttractions"
       />
       <img
         src="@/img/search_icon.png"
         alt="Show Password"
         title="Show Password"
         class="search_icon"
-        @mousedown="showPassword(true)"
-        @mouseup="showPassword(false)"
+        @clcik="searchAttractions"
       />
     </div>
-    <div>
+    <div class="attraction-set">
       <AttractionItem
         v-for="attraction in attractions"
-        :key="item.contentId"
+        :key="attraction.contentId"
         :attraction="attraction"
         @click-attraction-add="selectAttraction"
       ></AttractionItem>
@@ -124,9 +164,26 @@ import Footer from "@/components/Footer.vue";
 import Modal from "@/modal/SearchAttractionModal.vue";
 import AttractionItem from "@/components/item/AttractionItem.vue";
 import { ref } from "vue";
+import {
+  getListAttraction,
+  getListSido,
+  getListGugun,
+  getListContentType,
+} from "@/api/attraction";
 
 const showModal = ref(false);
 const selectAttractionItem = ref();
+const attractions = ref();
+const keyword = ref();
+const sidos = ref([]);
+const guguns = ref([]);
+const contentTypes = ref([]);
+const inputInformation = ref({
+  sidoCode: "",
+  gugunCode: "",
+  contentTypeId: "",
+  keyword: "",
+});
 
 const openModal = () => {
   showModal.value = true;
@@ -237,6 +294,57 @@ onMounted(() => {
     console.error("Editor element not found");
   }
 });
+
+async function callSidos(sido) {
+  getListSido(
+    ({ data }) => {
+      sidos.value = data;
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+  callGuguns(sido);
+}
+
+async function callGuguns(sido) {
+  getListGugun(
+    sido,
+    ({ data }) => {
+      guguns.value = data;
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+}
+
+async function callContentTypes() {
+  getListContentType(
+    ({ data }) => {
+      contentTypes.value = data;
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+}
+
+async function searchAttractions() {
+  console.log("shoot api");
+  console.log(inputInformation.value);
+  getListAttraction(
+    inputInformation.value,
+    ({ data }) => {
+      attractions.value = data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+}
+callSidos(1);
+callContentTypes();
 </script>
 
 <style scoped>
@@ -325,5 +433,10 @@ img.resizable {
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
+}
+.attraction-set {
+  height: 600px; /* 높이를 필요에 맞게 조정하세요 */
+  overflow-y: scroll; /* 상하 스크롤을 항상 표시 */
+  /* 또는 overflow-y: auto; /* 필요할 때만 상하 스크롤을 표시 */
 }
 </style>
