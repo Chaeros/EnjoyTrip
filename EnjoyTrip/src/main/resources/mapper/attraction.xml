@@ -63,13 +63,6 @@
         where content_id = #{contentId}
     </select>
 
-    <select id="selectAttractionBoardsByContentId" parameterType="int"
-            resultType="AttractionBoard">
-        select *
-        from attraction_board
-        where attraction_id =
-              #{contentId}
-    </select>
 
     <select id="selectAttractionInfosByMemberId" parameterType="int"
             resultType="AttractionInfo">
@@ -101,108 +94,6 @@
             where trip_plan_id = #{planId}
               and trip_date = #{tripDate}
         )
-    </select>
-
-
-
-    <select id="selectPlanAttractionDetailByPlanId" parameterType="int"
-            resultType="AttractionDetail">
-        select at_likes.content_id,
-               at_likes.content_type_id,
-               at_likes.title, at_likes.addr1,
-               at_likes.addr2,
-               at_likes.zipcode,
-               at_likes.tel, at_likes.first_image,
-               at_likes.first_image2,
-               at_likes.readcount,
-               at_likes.sido_code,
-               at_likes.gugun_code,
-               at_likes.latitude, at_likes.longitude,
-               at_likes.mlevel,
-               at_likes.like_cnt,
-               atbo.title board_title,
-               atbo.content board_content,
-               atbo.hit board_hit,
-               atbo.member_id
-                   board_member_id, atbo.attraction_id
-                   board_attraction_id,
-               atde.overview
-        from (select atin.content_id,
-                     atin.content_type_id, atin.title,
-                     atin.addr1, atin.addr2,
-                     atin.zipcode,
-                     atin.tel, atin.first_image,
-                     atin.first_image2, atin.readcount,
-                     atin.sido_code, atin.gugun_code,
-                     atin.latitude, atin.longitude,
-                     atin.mlevel, count(*) like_cnt
-              from
-                  attraction_info atin
-                      join
-                  attraction_likes atli
-                  on atin.content_id =
-                     atli.content_id
-              group by
-                  atin.content_id) as at_likes
-                 join
-             attraction_board atbo
-             on
-                 atbo.attraction_id = at_likes.content_id
-                 join
-             attraction_description
-                 atde
-             on atde.content_id = at_likes.content_id
-        where at_likes.content_id
-                  in (select attraction_id
-                      from make_trip_plans
-                      where trip_plan_id =
-                            #{planId})
-    </select>
-
-    <select id="selectPlanAttractionDetailByPlanIdAndDay"
-            parameterType="map" resultType="AttractionDetail">
-        select at_likes.content_id,
-               at_likes.content_type_id,
-               at_likes.title, at_likes.addr1,
-               at_likes.addr2,
-               at_likes.zipcode,
-               at_likes.tel, at_likes.first_image,
-               at_likes.first_image2,
-               at_likes.readcount,
-               at_likes.sido_code,
-               at_likes.gugun_code, at_likes.latitude, at_likes.longitude,
-               at_likes.mlevel, at_likes.like_cnt,
-               atbo.title board_title,
-               atbo.content board_content, atbo.hit board_hit,
-               atbo.member_id
-                   board_member_id, atbo.attraction_id
-                   board_attraction_id,
-               atde.overview
-        from (select atin.content_id, atin.content_type_id, atin.title,
-                     atin.addr1, atin.addr2,
-                     atin.zipcode, atin.tel, atin.first_image,
-                     atin.first_image2, atin.readcount,
-                     atin.sido_code, atin.gugun_code,
-                     atin.latitude, atin.longitude,
-                     atin.mlevel, count(*) like_cnt
-              from
-                  attraction_info atin
-                      join
-                  attraction_likes atli
-                  on atin.content_id =
-                     atli.content_id
-              group by
-                  atin.content_id) as at_likes
-                 join
-             attraction_board atbo
-             on atbo.attraction_id = at_likes.content_id
-                 join
-             attraction_description atde
-             on atde.content_id = at_likes.content_id
-        where at_likes.content_id in (select attraction_id
-                                      from make_trip_plans
-                                      where trip_plan_id = #{planId}
-                                        and trip_date = #{day})
     </select>
 
 

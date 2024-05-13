@@ -18,8 +18,6 @@ public interface AttractionService {
     AttractionDetail getAttractionDetailByContentId(int contentId);
     List<AttractionInfoLike> getListAttractionInfoLikesByMemberId(int memberId);
 
-    List<AttractionInfoLike> getListAttractionInfoLikesByPlanId(int memberId);
-    List<AttractionInfoLike> getListAttractionInfoLikesByPlanIdAndDay(PlanRequestDto PlanRequestDto);
 
 
     List<Sido> getListSidos();

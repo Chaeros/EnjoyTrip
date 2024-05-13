@@ -75,30 +75,10 @@ public class AttractionController {
         }
     }
 
-    @GetMapping("/plan/{planId}")
-    public ResponseEntity<?> planAttractionDetailByPlanId(@PathVariable("planId") int planId) {
-        List<AttractionInfoLike> list = attractionService.getListAttractionInfoLikesByPlanId(planId);
-
-        if (list != null && !list.isEmpty()) {
-            return new ResponseEntity<List<AttractionInfoLike>>(list, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-        }
-    }
-
-    @GetMapping("/plan")
-    public ResponseEntity<?> planAttractionDetailByPlanIdAndDetail(PlanRequestDto PlanRequestDto) {
-        List<AttractionInfoLike> list = attractionService.getListAttractionInfoLikesByPlanIdAndDay(PlanRequestDto);
-
-        if (list != null && !list.isEmpty()) {
-            return new ResponseEntity<List<AttractionInfoLike>>(list, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
-        }
-    }
 
     @GetMapping("/sido")
     public ResponseEntity<?> listSidos() {
+        System.out.println("sido");
         List<Sido> list = attractionService.getListSidos();
 
         if (list != null && !list.isEmpty()) {

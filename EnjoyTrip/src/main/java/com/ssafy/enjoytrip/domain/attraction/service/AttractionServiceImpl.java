@@ -60,12 +60,10 @@ public class AttractionServiceImpl implements AttractionService {
     public AttractionDetail getAttractionDetailByContentId(int contentId) {
         AttractionInfo AttractionInfo = attractionMapper.selectAttractionInfoByContentId(contentId);
         AttractionDescription AttractionDescription = attractionMapper.selectAttractionDescriptionByContentId(contentId);
-        List<AttractionBoard> AttractionBoards = attractionMapper.selectAttractionBoardsByContentId(contentId);
 
         AttractionDetail AttractionDetail = new AttractionDetail();
         AttractionDetail.setAttractionInfo(AttractionInfo);
         AttractionDetail.setAttractionDescription(AttractionDescription);
-        AttractionDetail.setAttractionBoards(AttractionBoards);
 
         return AttractionDetail;
     }
@@ -91,41 +89,7 @@ public class AttractionServiceImpl implements AttractionService {
 
 
 
-    @Override
-    public List<AttractionInfoLike> getListAttractionInfoLikesByPlanId(int planId) {
-        List<AttractionInfoLike> list = new ArrayList<>();
 
-        List<AttractionInfo> AttractionInfos = attractionMapper.selectAttractionInfosByPlanId(planId);
-        for (AttractionInfo AttractionInfo : AttractionInfos) {
-            int contentId = AttractionInfo.getContentId();
-            int likeCnt = attractionMapper.selectAttrLikeCntByContentId(contentId);
-
-            AttractionInfoLike AttractionInfoLike = new AttractionInfoLike();
-            AttractionInfoLike.setAttractionInfo(AttractionInfo);
-            AttractionInfoLike.setLikeCnt(likeCnt);
-            list.add(AttractionInfoLike);
-        }
-
-        return list;
-    }
-
-    @Override
-    public List<AttractionInfoLike> getListAttractionInfoLikesByPlanIdAndDay(PlanRequestDto PlanRequestDto) {
-        List<AttractionInfoLike> list = new ArrayList<>();
-
-        List<AttractionInfo> AttractionInfos = attractionMapper.selectAttractionInfosByPlanIdAndDay(PlanRequestDto);
-        for (AttractionInfo AttractionInfo : AttractionInfos) {
-            int contentId = AttractionInfo.getContentId();
-            int likeCnt = attractionMapper.selectAttrLikeCntByContentId(contentId);
-
-            AttractionInfoLike AttractionInfoLike = new AttractionInfoLike();
-            AttractionInfoLike.setAttractionInfo(AttractionInfo);
-            AttractionInfoLike.setLikeCnt(likeCnt);
-            list.add(AttractionInfoLike);
-        }
-
-        return list;
-    }
 
 
 

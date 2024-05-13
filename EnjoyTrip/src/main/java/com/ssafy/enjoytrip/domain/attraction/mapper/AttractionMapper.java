@@ -30,19 +30,8 @@ public interface AttractionMapper {
     // 관광지별 상세정보(description) 가져오기
     AttractionDescription selectAttractionDescriptionByContentId(int contentId);
 
-    // 관광지별 게시판 목록 가져오기
-    List<AttractionBoard> selectAttractionBoardsByContentId(int contentId);
-
     // 내가 좋아요 누른 관광지 목록 조회
     List<AttractionInfo> selectAttractionInfosByMemberId(int memberId);
-
-
-
-    // 여행계획 내 전체 관광지 조회
-    List<AttractionInfo> selectAttractionInfosByPlanId(int planId);
-
-    // 여행계획 내 일자별 전체 관광지 조회
-    List<AttractionInfo> selectAttractionInfosByPlanIdAndDay(PlanRequestDto PlanRequestDto);
 
 
 
