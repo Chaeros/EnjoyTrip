@@ -42,7 +42,6 @@
 <script setup>
 import { onMounted } from "vue";
 import axios from "axios";
-import interact from "interactjs";
 import Header from "@/components/Header.vue";
 
 const { VITE_VUE_API_URL } = import.meta.env;

@@ -24,8 +24,8 @@
             @mouseup="showPassword(false)"
           />
         </div>
-        <button class="login-btn">로그인</button>
-        <button class="sign-up-btn">회원가입</button>
+        <a class="login-btn">로그인</a>
+        <a class="sign-up-btn">회원가입</a>
       </div>
     </div>
   </div>
@@ -76,8 +76,12 @@
 }
 .login-btn {
   width: 100px;
+  color: inherit;
+  text-decoration: none;
 }
 .sign-up-btn {
   width: 100px;
+  color: inherit;
+  text-decoration: none;
 }
 </style>
