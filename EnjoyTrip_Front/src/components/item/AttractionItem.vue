@@ -1,29 +1,22 @@
 <script setup>
-import { useRoute, useRouter } from "vue-router";
-import { ref } from "vue";
-import { defineProps, defineEmits } from "vue";
+import { useRoute, useRouter } from 'vue-router';
+import { ref } from 'vue';
+import { defineProps, defineEmits } from 'vue';
 
 const { attraction } = defineProps({ attraction: Object });
-const emit = defineEmits(["clickAttractionAdd", "updateMapLocation"]);
-const updateMapLocation = () => {
-  emit("updateMapLocation", {
-    lat: attraction.latitude,
-    lng: attraction.longitude
-  });
-};
-// const route = useRoute();
-// const router = useRouter();
+console.dir('attraction은');
+console.dir(attraction);
+const emit = defineEmits(['clickAttractionAdd']);
 
 const clickAttractionAdd = () => {
-  emit("clickAttractionAdd", attraction);
+  emit('clickAttractionAdd', attraction);
 };
 </script>
 
 <template>
-  <div @click="updateMapLocation" class="attraction-flex">
+  <div class="attraction-flex">
     <img class="attraction-img" :src="attraction.attractInfo.firstImage" />
     <div class="attraction-content">
-      
       <h3>{{ attraction.attractInfo.title }}</h3>
       <p>장소 : {{ attraction.attractInfo.addr1 }}</p>
       <div class="attraction-indicators">

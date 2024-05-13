@@ -1,21 +1,23 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { mapKey } from "../config/index.ts";
-import { defineProps } from 'vue';
-import { defineExpose } from 'vue';
+import { ref, onMounted } from 'vue';
+import { mapKey } from '../config/index.ts';
+import { defineExpose, watch } from 'vue';
 
 // selectedAttractions은 잘 받아옴.
-const {selectedAttractions} = defineProps({ selectedAttractions: Object });
-console.log("selectedAttractions는 ");
-console.dir(selectedAttractions);
 
+const { selectedAttractions, selectedAccomodations } = defineProps({
+  selectedAttractions: Object,
+  selectedAccomodations: Object,
+});
 let map = ref(null);
 
 onMounted(() => {
+  console.dir('숙소 조합');
+  console.dir(selectedAccomodations);
   if (window.kakao && window.kakao.maps) {
     initMap();
   } else {
-    const script = document.createElement("script");
+    const script = document.createElement('script');
     /* global kakao */
     script.onload = () => kakao.maps.load(initMap);
     script.src = `//dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${mapKey}`;
@@ -24,7 +26,7 @@ onMounted(() => {
 });
 
 const initMap = () => {
-  const container = document.getElementById("map");
+  const container = document.getElementById('map');
   const options = {
     center: new kakao.maps.LatLng(36.35537731926109, 127.29847072801634),
     level: 5,
@@ -62,11 +64,17 @@ let searchA;
 const markers = ref([]);
 const overlays = ref([]);
 
+const attractionMarkers = ref([]);
+const attractionOverlays = ref([]);
+
+const accomodationMarkers = ref([]);
+const accomodationOverlays = ref([]);
+
 const updateMapLocation = () => {
   clearMarkersAndOverlays();
   makeMarkersAndOverlays();
   toggleOverlays();
-}
+};
 
 const clearMarkersAndOverlays = () => {
   for (let i = 0; i < markers.value.length; i++) {
@@ -76,51 +84,114 @@ const clearMarkersAndOverlays = () => {
 
   markers.value = [];
   overlays.value = [];
-}
+};
 
 const makeMarkersAndOverlays = () => {
   const positions = ref([]);
   selectedAttractions.forEach((attraction) => {
-    const newCenter = new kakao.maps.LatLng(attraction.attractInfo.latitude, attraction.attractInfo.longitude);
+    const newCenter = new kakao.maps.LatLng(
+      attraction.attractInfo.latitude,
+      attraction.attractInfo.longitude
+    );
     map.value.setCenter(newCenter);
     const marker = new kakao.maps.Marker({
       map: map.value,
       position: newCenter,
-    })
+    });
     markers.value.push(marker);
 
-    const content = '<div>hiOverlay</div>'
+    const content = getOverlayContent(attraction);
 
     const overlay = new kakao.maps.CustomOverlay({
       content: content,
       map: map.value,
-      position: marker.getPosition()       
+      position: marker.getPosition(),
     });
 
-    overlays.value.push(overlay);   
-    
+    overlays.value.push(overlay);
+  });
+};
 
+const fillOverlays = () => {
+  console.dir(overlays.value);
+  console.dir(overlays.value.length);
+  for (let i = 0; i < selectedAttractions.length; i++) {
+    const attraction = selectedAttractions[i];
+    overlays.value[i].content = getOverlayContent(attraction);
+  }
+};
 
-  })
-
-}
+const getOverlayContent = (attraction) => {
+  return (
+    '<div class="overlay_wrap">' +
+    '    <div class="overlay_info">' +
+    '        <div class="overlay_title">' +
+    `            ${attraction.attractInfo.title}` +
+    // `            <div class="overlay_close" onclick="closeOverlay(${i})" title="닫기"></div>` +
+    '        </div>' +
+    '        <div class="overlay_body">' +
+    '            <div class="overlay_img">' +
+    `               <img src="${attraction.attractInfo.firstImage}" width="73" height="70">` +
+    '           </div>' +
+    '            <div class="overlay_desc">' +
+    `                <div class="overlay_ellipsis">${attraction.attractInfo.addr1}</div>` +
+    `                <div class="overlay_jibun overlay_ellipsis">${attraction.attractInfo.addr2}</div>` +
+    '                <div><a href="https://www.kakaocorp.com/main" target="_blank" class="overlay_link">홈페이지</a></div>' +
+    '            </div>' +
+    '        </div>' +
+    '    </div>' +
+    '</div>' +
+    '<style>' +
+    `    .overlay_wrap {position: absolute;left: 0;bottom: 40px;width: 288px;height: 132px;margin-left: -144px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}` +
+    `    .overlay_wrap * {padding: 0;margin: 0;}` +
+    `    .overlay_wrap .overlay_info {width: 286px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}` +
+    `    .overlay_wrap .overlay_info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}` +
+    `    .overlay_info .overlay_title {padding: 5px 0 0 10px;height: 30px;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}` +
+    `    .overlay_info .overlay_close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}` +
+    `    .overlay_info .overlay_close:hover {cursor: pointer;}` +
+    `    .overlay_info .overlay_body {position: relative;overflow: hidden;}` +
+    `    .overlay_info .overlay_desc {position: relative;margin: 13px 0 0 90px;height: 75px;}` +
+    `    .overlay_desc .overlay_ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}` +
+    `    .overlay_desc .overlay_jibun {font-size: 11px;color: #888;margin-top: -2px;}` +
+    `    .overlay_info .overlay_img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}` +
+    `    .overlay_info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}` +
+    `    .overlay_info .overlay_link {color: #5085BB;}` +
+    '</style>'
+    // `<style>` +
+    // `.overlay_wrap {position: absolute;left: 0;bottom: 40px;width: 288px;height: 132px;margin-left: -144px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun +
+    // Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}``.overlay_wrap * {padding: 0;margin: 0;}` +
+    // `.overlay_wrap .overlay_info {width: 286px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}` +
+    // `.overlay_wrap .overlay_info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}` +
+    // `.overlay_info .overlay_title {padding: 5px 0 0 10px;height: 30px;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}` +
+    // `.overlay_info .overlay_close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/
+    // overlay_close.png');}` +
+    // `.overlay_info .overlay_close:hover {cursor: pointer;}` +
+    // `.overlay_info .overlay_body {position: relative;overflow: hidden;}` +
+    // `.overlay_info .overlay_desc {position: relative;margin: 13px 0 0 90px;height: 75px;}` +
+    // `.overlay_desc .overlay_ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}` +
+    // `.overlay_desc .overlay_jibun {font-size: 11px;color: #888;margin-top: -2px;}` +
+    // `.overlay_info .overlay_img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}` +
+    // `.overlay_info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}` +
+    // `.overlay_info .overlay_link {color: #5085BB;}` +
+    // `</style>`
+  );
+};
 
 const toggleOverlays = () => {
-  for (let i=0; i<markers.value.length; i++) {
+  for (let i = 0; i < markers.value.length; i++) {
     const marker = markers.value[i];
-    kakao.maps.event.addListener(marker, 'click', function() { 
+    kakao.maps.event.addListener(marker, 'click', function () {
       if (overlays.value[i].getMap() === null) {
-        console.dir("null임.")
-        console.dir("mapValue");
-        console.dir(map.value);  
+        console.dir('null임.');
+        console.dir('mapValue');
+        console.dir(map.value);
         overlays.value[i].setMap(map.value);
       } else {
         overlays.value[i].setMap(null);
       }
     });
   }
-}
-
+};
 
 // updateMapLocation() {
 //     for (let i=0; i<selectedAttractions.length; i++) {
@@ -135,40 +206,37 @@ const toggleOverlays = () => {
 //     marker.setMap(map.value);
 //     markers.value.push(marker);
 
-
-    // const content =
-    //    '<div class="wrap">' +
-    //    '    <div class="info">' +
-    //    '        <div class="title">' +
-    //    `            ${attraction.attractInfo.title}` +
-    //    `            <div class="close" onclick="closeOverlay(${i})" title="닫기"></div>` +
-    //    "        </div>" +
-    //    '        <div class="body">' +
-    //    '            <div class="img">' +
-    //    `                <img src=${
-    //      attraction.attractInfo.firstimage
-    //        ? attraction.attractInfo.firstimage
-    //        : "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png"
-    //    } width="73" height="70">` +
-    //    "           </div>" +
-    //    '            <div class="desc">' +
-    //    `                <div class="ellipsis">${attraction.attractInfo.addr1}</div>` +
-    //    `                <div class="jibun ellipsis">${attraction.attractInfo.addr2}</div>` +
-    //    `                <div><a href="https://map.kakao.com/link/roadview/${attraction.attractInfo.mapy},${attraction.attractInfo.mapx}" target="_blank" class="link">로드뷰 보기</a></div>` +
-    //    "            </div>" +
-    //    "        </div>" +
-    //    "    </div>" +
-    //    "</div>";
+// const content =
+//    '<div class="wrap">' +
+//    '    <div class="info">' +
+//    '        <div class="title">' +
+//    `            ${attraction.attractInfo.title}` +
+//    `            <div class="close" onclick="closeOverlay(${i})" title="닫기"></div>` +
+//    "        </div>" +
+//    '        <div class="body">' +
+//    '            <div class="img">' +
+//    `                <img src=${
+//      attraction.attractInfo.firstimage
+//        ? attraction.attractInfo.firstimage
+//        : "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/thumnail.png"
+//    } width="73" height="70">` +
+//    "           </div>" +
+//    '            <div class="desc">' +
+//    `                <div class="ellipsis">${attraction.attractInfo.addr1}</div>` +
+//    `                <div class="jibun ellipsis">${attraction.attractInfo.addr2}</div>` +
+//    `                <div><a href="https://map.kakao.com/link/roadview/${attraction.attractInfo.mapy},${attraction.attractInfo.mapx}" target="_blank" class="link">로드뷰 보기</a></div>` +
+//    "            </div>" +
+//    "        </div>" +
+//    "    </div>" +
+//    "</div>";
 
 //     var overlay = new kakao.maps.CustomOverlay({
 //       content: content,
 //       map: map,
-//       position: marker.getPosition()       
+//       position: marker.getPosition()
 //     });
 
 //     overlays.push(overlay);
-
-    
 
 //     // const content =
 //     //   '<div class="wrap">' +
@@ -197,7 +265,7 @@ const toggleOverlays = () => {
 //     // var overlay = new kakao.maps.CustomOverlay({
 //     //   content: content,
 //     //   map: map,
-//     //   position: marker.getPosition()       
+//     //   position: marker.getPosition()
 //     // });
 
 //     // overlays.push(overlay);
@@ -209,7 +277,6 @@ const toggleOverlays = () => {
 //     // //     overlay.setMap(null);
 //     // //   }
 //     // // });
-
 
 //     }
 
@@ -224,12 +291,8 @@ const toggleOverlays = () => {
 //       }
 //     });
 //     }
-    
+
 //   }
-
-defineExpose({updateMapLocation})
-
-
 
 /*
 // 주변 마커 세팅
@@ -318,7 +381,12 @@ function closeOverlay(idx) {
 }
 */
 
-
+const selectedAttractionsWatch = watch(
+  selectedAttractions,
+  (newValue, oldValue) => {
+    updateMapLocation();
+  }
+);
 </script>
 
 <template>
@@ -332,5 +400,98 @@ function closeOverlay(idx) {
 #map {
   width: 100%;
   height: 100%;
+}
+
+.wrap {
+  position: absolute;
+  left: 0;
+  bottom: 40px;
+  width: 288px;
+  height: 132px;
+  margin-left: -144px;
+  text-align: left;
+  overflow: hidden;
+  font-size: 12px;
+  font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;
+  line-height: 1.5;
+}
+.wrap * {
+  padding: 0;
+  margin: 0;
+}
+.wrap .info {
+  width: 286px;
+  height: 120px;
+  border-radius: 5px;
+  border-bottom: 2px solid #ccc;
+  border-right: 1px solid #ccc;
+  overflow: hidden;
+  background: #fff;
+}
+.wrap .info:nth-child(1) {
+  border: 0;
+  box-shadow: 0px 1px 2px #888;
+}
+.info .title {
+  padding: 5px 0 0 10px;
+  height: 30px;
+  background: #eee;
+  border-bottom: 1px solid #ddd;
+  font-size: 18px;
+  font-weight: bold;
+}
+.info .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #888;
+  width: 17px;
+  height: 17px;
+  background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');
+}
+.info .close:hover {
+  cursor: pointer;
+}
+.info .body {
+  position: relative;
+  overflow: hidden;
+}
+.info .desc {
+  position: relative;
+  margin: 13px 0 0 90px;
+  height: 75px;
+}
+.desc .ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.desc .jibun {
+  font-size: 11px;
+  color: #888;
+  margin-top: -2px;
+}
+.info .img {
+  position: absolute;
+  top: 6px;
+  left: 5px;
+  width: 73px;
+  height: 71px;
+  border: 1px solid #ddd;
+  color: #888;
+  overflow: hidden;
+}
+.info:after {
+  content: '';
+  position: absolute;
+  margin-left: -12px;
+  left: 50%;
+  bottom: 0;
+  width: 22px;
+  height: 12px;
+  background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png');
+}
+.info .link {
+  color: #5085bb;
 }
 </style>

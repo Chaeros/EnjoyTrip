@@ -1,122 +1,50 @@
 <script setup>
-import axios from "axios";
-import { ref } from "vue";
-import KakaoMap from "@/components/KakaoMap.vue";
-import AttractionItem from "@/components/item/AttractionItem.vue";
-import {
-  getListAttraction,
-  getListSido,
-  getListGugun,
-  getListContentType,
-} from "@/api/attraction";
-
-const sidos = ref([]);
-const guguns = ref([]);
-const contentTypes = ref([]);
-const attractions = ref([]);
-
-const inputInformation = ref({
-  sidoCode: "",
-  gugunCode: "",
-  contentTypeId: "",
-  keyword: "",
-});
+import { ref, computed } from 'vue';
+import AttractionSearchBar from '@/components/AttractionSearchBar.vue';
+import AccomodationSearchBar from '@/components/AccomodationSearchBar.vue';
+import KakaoMap from '@/components/KakaoMap.vue';
+import AttractionSearch from '@/components/AttractionSearch.vue';
+import AccomodationSearch from '@/components/AccomodationSearch.vue';
+import DateCheck from '@/components/DateCheck.vue';
 
 const selectedAttractions = ref([]);
+const selectedAccomodations = ref([]);
+
+const activeTab = ref('attraction');
+function setActiveTab(tab) {
+  activeTab.value = tab;
+  console.dir(activeTab.value);
+}
 
 const isExistSelectView = ref(true);
-
 const toggleSelectContent = () => {
   isExistSelectView.value = !isExistSelectView.value;
-};
-
-const addAttraction = (attraction) => {
-  selectedAttractions.value.push(attraction);
-};
-
-const kakaoMapRef = ref(null);
-
-const clickAttractionAdd = (attraction) => {
-  if (!selectedAttractions.value.includes(attraction)) {
-      selectedAttractions.value.push(attraction);
-      kakaoMapRef.value.updateMapLocation();
-  } else {
-    console.dir("중복 관광지")
-  }
-};
-
-const deleteAttraction = (index) => {
-  console.log(index);
-  selectedAttractions.value.splice(index, 1);
-  kakaoMapRef.value.updateMapLocation();
 };
 
 const selectAttractionReset = () => {
   selectedAttractions.value = [];
 };
+const selectAccomodationReset = () => {
+  selectedAccomodations.value = [];
+};
 
-async function callSidos(sido) {
-  getListSido(
-    ({ data }) => {
-      console.dir(data);
-      sidos.value = data;
-    },
-    ({ error }) => {
-      console.log(error);
-    }
-  );
-  callGuguns(sido);
-}
+const deleteAttraction = (index) => {
+  selectedAttractions.value.splice(index, 1);
+};
+const deleteAccomodation = (index) => {
+  selectedAccomodations.value.splice(index, 1);
+};
 
-async function callGuguns(sido) {
-  getListGugun(
-    sido,
-    ({ data }) => {
-      guguns.value = data;
-    },
-    ({ error }) => {
-      console.log(error);
-    }
-  );
-}
-
-async function callContentTypes() {
-  getListContentType(
-    ({ data }) => {
-      console.dir(data);
-      contentTypes.value = data;
-    },
-    ({ error }) => {
-      console.log(error);
-    }
-  )
-}
-
-async function searchAttractions() {
-  console.dir("inputInformation : ");
-  console.dir(inputInformation.value);
-  getListAttraction(
-    inputInformation.value,
-    ({ data }) => {
-      console.dir(data);
-      attractions.value = data;
-    },
-    (error) => {
-      console.log(error);
-    }
-  )
-}
-
-
-
-callSidos(1);
-callContentTypes();
-
-const activeTab = ref('attraction');
-
-function setActiveTab(tab) {
-  activeTab.value = tab;
-}
+const clickAttractionAdd = (attraction) => {
+  if (!selectedAttractions.value.includes(attraction)) {
+    selectedAttractions.value.push(attraction);
+  }
+};
+const clickAccomodationAdd = (accomodation) => {
+  if (!selectedAccomodations.value.includes(accomodation)) {
+    selectedAccomodations.value.push(accomodation);
+  }
+};
 </script>
 
 <template>
@@ -131,136 +59,264 @@ function setActiveTab(tab) {
             <a
               href="#"
               class="list-group-item list-group-item-action"
-              :class="{ 'active': activeTab === 'date' }"
-              @click.prevent="setActiveTab('date')"             
+              :class="{ active: activeTab === 'dateCheck' }"
+              @click.prevent="setActiveTab('dateCheck')"
             >
               날짜 확인
             </a>
-            <a href="#" class="list-group-item list-group-item-action"
-            :class="{ 'active': activeTab === 'attraction' }"
+            <a
+              href="#"
+              class="list-group-item list-group-item-action"
+              :class="{ active: activeTab === 'attraction' }"
               @click.prevent="setActiveTab('attraction')"
               >장소 선택</a
             >
-            <a href="#" class="list-group-item list-group-item-action"
-            :class="{ 'active': activeTab === 'accomodation' }"
+            <a
+              href="#"
+              class="list-group-item list-group-item-action"
+              :class="{ active: activeTab === 'accomodation' }"
               @click.prevent="setActiveTab('accomodation')"
               >숙소 선택</a
             >
           </div>
         </nav>
       </header>
-      <div class="left-content">
-        <div class="selects">
-          <select
-            class="custom-select w-100"
-            v-model="inputInformation.sidoCode"
-            @change="callGuguns(inputInformation.sidoCode)"
-          >
-            <option value="-1">시도</option>
-            <option
-              v-for="sido in sidos"
-              :value="sido.sidoCode"
-              :key="sido.sidoCode"
-            >
-              {{ sido.sidoName }}
-            </option>
-          </select>
 
-          <select
-            class="custom-select w-100"
-            v-model="inputInformation.gugunCode"
-          >
-            <option disabled value="-1">구군</option>
-            <option
-              v-for="gugun in guguns"
-              :value="gugun.gugunCode"
-              :key="gugun.gugunCode"
-            >
-              {{ gugun.gugunName }}
-            </option>
-          </select>
-
-          <select
-            class="custom-select w-100"
-            v-model="inputInformation.contentTypeId"
-          >
-            <option disabled value="-1">컨텐츠</option>
-            <option
-              v-for="content in contentTypes"
-              :value="content.contentId"
-              :key="content.contentId"
-            >
-              {{ content.contentName }}
-            </option>
-          </select>
-        </div>
-
-        <form class="d-flex">
-          <input
-            class="form-control me-2"
-            type="search"
-            placeholder="검색어를 입력하세요"
-            aria-label="Search"
-            v-model="inputInformation.keyword"
-          />
-          <button
-            class="btn btn-outline-success"
-            type="submit"
-            @click.prevent="searchAttractions"
-          >
-            search
-          </button>
-        </form>
-
-        <div class="attractions">
-          <div class="attraction" v-for="attraction in attractions">
-            <AttractionItem
-              :attraction="attraction"
-              @click-attraction-add="clickAttractionAdd"
-            />
-          </div>
-        </div>
-      </div>
+      <DateCheck v-if="activeTab === 'dateCheck'" />
+      <AttractionSearch
+        v-if="activeTab === 'attraction'"
+        @click-attraction-add="clickAttractionAdd"
+      />
+      <AccomodationSearch
+        v-if="activeTab === 'accomodation'"
+        @click-accomodation-add="clickAccomodationAdd"
+      />
 
       <div class="right-content">
-        <div class="select-content-bar">
-          <div class="select-content-wrap">
-            <div class="select-content" v-if="isExistSelectView === true">
-              <button @click="selectAttractionReset">초기화</button>
-              <div
-                class="select-attraction"
-                v-for="(attraction, index) in selectedAttractions"
-              >
-                <img class="attraction-img" :src="attraction.attractInfo.firstImage" />
-                <div class="select-attraction-content">
-                  <h3>{{ attraction.attractInfo.title }}</h3>
-                  <p>주소 : {{ attraction.attractInfo.addr1 }}</p>
-                  <div class="attraction-indicators">
-                    <p>좋아요 : {{ attraction.likeCnt }}</p>
-                  </div>
-                </div>
-                <button
-                  id="deleteBtn"
-                  type="button"
-                  class="btn btn-primary"
-                  @click="deleteAttraction(index)"
-                >
-                  삭제
-                </button>
-              </div>
-            </div>
-            <button class="select-content-button" @click="toggleSelectContent">
-              <>
-            </button>
-          </div>
+        <div class="right-content-search">
+          <AttractionSearchBar
+            class="search-bar"
+            v-if="activeTab === 'attraction' && isExistSelectView === true"
+            @select-attraction-reset="selectAttractionReset"
+            @delete-attraction="deleteAttraction"
+            :selected-attractions="selectedAttractions"
+          ></AttractionSearchBar>
+          <AccomodationSearchBar
+            class="search-bar"
+            v-if="activeTab === 'accomodation' && isExistSelectView === true"
+            @select-accomodation-reset="selectAccomodationReset"
+            @delete-accomodation="deleteAccomodation"
+            :selected-accomodations="selectedAccomodations"
+          ></AccomodationSearchBar>
+          <button class="select-content-button" @click="toggleSelectContent">
+            <>
+          </button>
         </div>
-        <KakaoMap ref="kakaoMapRef" class="kakao-map-container" :selectedAttractions="selectedAttractions"></KakaoMap>
-        <!-- <KakaoMap2></KakaoMap2> -->
-        <!-- <KakaoMap class="kakao-map-container" /> -->
+        <KakaoMap
+          ref="kakaoMapRef"
+          class="kakao-map-container"
+          :selectedAttractions="selectedAttractions"
+          :selectedAccomodations="selectedAccomodations"
+        ></KakaoMap>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.wrap {
+  margin: 0 auto;
+  width: 100%; /* 부모 요소 너비 100% */
+  display: flex;
+  justify-content: center; /* 내부 컨텐츠 가운데 정렬 */
+}
+
+.all-content {
+  display: flex;
+  height: 100vh;
+  max-width: 100%; /* 최대 너비 설정 */
+  width: 100%; /* 내부 요소 전체 너비 사용 */
+}
+
+#header {
+  display: flex;
+  flex-direction: column;
+  width: 80px;
+  background-color: antiquewhite;
+}
+
+.left-content {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+}
+
+.select-content-bar {
+  z-index: 10;
+  position: absolute;
+}
+
+.select-content-wrap {
+  position: static;
+  display: flex;
+}
+
+.select-content {
+  width: 400px;
+  height: 100vh;
+  background-color: white;
+  z-index: 1000;
+  overflow-y: auto; /* 세로 스크롤바 자동 표시 */
+  /* display: none; */
+}
+
+.select-attraction {
+  display: flex;
+  justify-content: center; /* 수평 가운데 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+  border: 1px solid; /* 테두리 설정 */
+  border-radius: 8px; /* 모서리 둥글게 만들기 */
+  padding: 20px; /* 내부 여백 설정 */
+  margin: 5px;
+}
+
+.search-bar {
+  position: static;
+}
+
+.select-content-button {
+  position: static;
+  height: 100%;
+  z-index: 100;
+}
+
+.right-content {
+  flex: 1; /* 나머지 공간을 채우도록 설정 */
+  background-color: blueviolet;
+  width: 100%; /* right-content 영역을 전체 너비로 설정 */
+  display: flex; /* 자식 요소들을 수직으로 배치하기 위해 추가 */
+  position: relative;
+}
+
+.right-content-search {
+  display: flex;
+  position: absolute;
+}
+
+.selects {
+  display: flex;
+}
+
+.kakao-map-container {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.attractions {
+  overflow-y: auto; /* 세로 스크롤바 자동 표시 */
+}
+
+.attraction {
+  border: 1px solid; /* 테두리 설정 */
+  border-radius: 8px; /* 모서리 둥글게 만들기 */
+  padding: 20px; /* 내부 여백 설정 */
+  margin: 5px;
+}
+
+/* */
+
+.attraction-img {
+  width: 100px;
+}
+</style>
+
+<!-- <script setup>
+import axios from 'axios';
+import { ref, computed } from 'vue';
+import KakaoMap from '@/components/KakaoMap.vue';
+// import AttractionItem from '@/components/item/AttractionItem.vue';
+import AttractionSearch from '@/components/AttractionSearch.vue';
+import AccomodationSearch from '@/components/AccomodationSearch.vue';
+import DateCheck from '@/components/DateCheck.vue';
+
+const kakaoMapRef = ref(null);
+
+// callSidos(1);
+// callContentTypes();
+
+const selectedAttractions = ref([]);
+const selectedAccomodations = ref([]);
+
+const activeTab = ref('attraction');
+
+function setActiveTab(tab) {
+  activeTab.value = tab;
+  console.dir(activeTab.value);
+}
+
+const currentComponent = computed(() => {
+  switch (activeTab.value) {
+    case 'attraction':
+      return AttractionSearch;
+    case 'accomodation':
+      return AccomodationSearch;
+    case 'dateCheck':
+      return DateCheck;
+  }
+});
+</script>
+
+<template>
+  <div class="wrap">
+    <div class="all-content">
+      <header id="header">
+        <h1>
+          <a>로고</a>
+        </h1>
+        <nav>
+          <div class="list-group">
+            <a
+              href="#"
+              class="list-group-item list-group-item-action"
+              :class="{ active: activeTab === 'dateCheck' }"
+              @click.prevent="setActiveTab('dateCheck')"
+            >
+              날짜 확인
+            </a>
+            <a
+              href="#"
+              class="list-group-item list-group-item-action"
+              :class="{ active: activeTab === 'attraction' }"
+              @click.prevent="setActiveTab('attraction')"
+              >장소 선택</a
+            >
+            <a
+              href="#"
+              class="list-group-item list-group-item-action"
+              :class="{ active: activeTab === 'accomodation' }"
+              @click.prevent="setActiveTab('accomodation')"
+              >숙소 선택</a
+            >
+          </div>
+        </nav>
+      </header>
+
+      <component :is="currentComponent"></component>
+
+      <div class="right-content">
+        <KakaoMap
+          ref="kakaoMapRef"
+          class="kakao-map-container"
+          :selectedAttractions="selectedAttractions"
+          :selectedAccomodations="selectedAccomodations"
+        ></KakaoMap>
+        <!-- <KakaoMap2></KakaoMap2> -->
+<!-- <KakaoMap class="kakao-map-container" /> -->
+<!-- </div>
+    </div>
+  </div> -->
+<!-- </template>
 
 <style scoped>
 .wrap {
@@ -357,7 +413,4 @@ function setActiveTab(tab) {
 .attraction-img {
   width: 100px;
 }
-
-
-
-</style>
+</style> -->
