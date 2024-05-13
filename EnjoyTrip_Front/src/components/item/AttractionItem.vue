@@ -4,8 +4,6 @@ import { ref } from 'vue';
 import { defineProps, defineEmits } from 'vue';
 
 const { attraction } = defineProps({ attraction: Object });
-console.dir('attraction은');
-console.dir(attraction);
 const emit = defineEmits(['clickAttractionAdd']);
 
 const clickAttractionAdd = () => {
