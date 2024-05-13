@@ -15,6 +15,7 @@
         </div>
       </div>
     </div>
+    <CommentView class="comment"></CommentView>
   </div>
   <Footer></Footer>
 </template>
@@ -22,6 +23,7 @@
 <script setup>
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
+import CommentView from "@/components/comment/CommentView.vue";
 </script>
 
 <style scoped>
@@ -47,5 +49,9 @@ import Footer from "@/components/Footer.vue";
 .board-post-detail-info-left {
   width: 100%;
   justify-content: space-between;
+}
+.comment {
+  width: 1000px;
+  margin: 0 auto;
 }
 </style>
