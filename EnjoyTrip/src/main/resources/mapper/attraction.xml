@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.domain.attraction.mapper.AttractionMapper">
+
+    <select id="selectAttractionInfosByCond"
+            parameterType="AttractionRequestDto" resultType="AttractionInfo">
+        select *
+        from attraction_info
+        where content_type_id != 32
+        <if test="sidoCode != 0">
+            AND sido_code = #{sidoCode}
+        </if>
+        <if test="gugunCode != 0">
+            AND gugun_code = #{gugunCode}
+        </if>
+        <if test="contentTypeId != 0">
+            AND content_type_id = #{contentTypeId}
+        </if>
+        <if test="keyword != null">
+            AND title like CONCAT('%', #{keyword}, '%')
+        </if>
+    </select>
+
+    <select id="selectAccomInfosByCond" parameterType="AccomodationRequestDto"
+            resultType="AttractionInfo">
+        select *
+        from attraction_info
+        where content_type_id = 32
+        <if test="sidoCode != 0">
+            AND sido_code = #{sidoCode}
+        </if>
+        <if test="gugunCode != 0">
+            AND gugun_code = #{gugunCode}
+        </if>
+        <if test="keyword != null">
+            AND title like CONCAT('%', #{keyword}, '%')
+        </if>
+    </select>
+
+    <select id="selectAttrLikeCntByContentId" parameterType="int"
+            resultType="int">
+        select count(*)
+        from attraction_likes
+        where content_id =
+              #{contentId}
+    </select>
+
+
+
+    <select id="selectAttractionInfoByContentId" parameterType="int"
+            resultType="AttractionInfo">
+        select *
+        from attraction_info
+        where content_id = #{contentId}
+    </select>
+
+    <select id="selectAttractionDescriptionByContentId"
+            parameterType="int" resultType="AttractionDescription">
+        select *
+        from attraction_description
+        where content_id = #{contentId}
+    </select>
+
+    <select id="selectAttractionBoardsByContentId" parameterType="int"
+            resultType="AttractionBoard">
+        select *
+        from attraction_board
+        where attraction_id =
+              #{contentId}
+    </select>
+
+    <select id="selectAttractionInfosByMemberId" parameterType="int"
+            resultType="AttractionInfo">
+        select * from attraction_info
+        where content_id in (
+            select
+                content_id from attraction_likes
+            where member_id = #{memberId}
+        )
+    </select>
+
+
+    <select id="selectAttractionInfosByPlanId" parameterType="int"
+            resultType="AttractionInfo">
+        select * from attraction_info
+        where content_id in (
+            select
+                attraction_id from make_trip_plans
+            where trip_plan_id = #{planId}
+        )
+    </select>
+
+    <select id="selectAttractionInfosByPlanIdAndDay" parameterType="PlanRequestDto"
+            resultType="AttractionInfo">
+        select * from attraction_info
+        where content_id in (
+            select
+                attraction_id from make_trip_plans
+            where trip_plan_id = #{planId}
+              and trip_date = #{tripDate}
+        )
+    </select>
+
+
+
+    <select id="selectPlanAttractionDetailByPlanId" parameterType="int"
+            resultType="AttractionDetail">
+        select at_likes.content_id,
+               at_likes.content_type_id,
+               at_likes.title, at_likes.addr1,
+               at_likes.addr2,
+               at_likes.zipcode,
+               at_likes.tel, at_likes.first_image,
+               at_likes.first_image2,
+               at_likes.readcount,
+               at_likes.sido_code,
+               at_likes.gugun_code,
+               at_likes.latitude, at_likes.longitude,
+               at_likes.mlevel,
+               at_likes.like_cnt,
+               atbo.title board_title,
+               atbo.content board_content,
+               atbo.hit board_hit,
+               atbo.member_id
+                   board_member_id, atbo.attraction_id
+                   board_attraction_id,
+               atde.overview
+        from (select atin.content_id,
+                     atin.content_type_id, atin.title,
+                     atin.addr1, atin.addr2,
+                     atin.zipcode,
+                     atin.tel, atin.first_image,
+                     atin.first_image2, atin.readcount,
+                     atin.sido_code, atin.gugun_code,
+                     atin.latitude, atin.longitude,
+                     atin.mlevel, count(*) like_cnt
+              from
+                  attraction_info atin
+                      join
+                  attraction_likes atli
+                  on atin.content_id =
+                     atli.content_id
+              group by
+                  atin.content_id) as at_likes
+                 join
+             attraction_board atbo
+             on
+                 atbo.attraction_id = at_likes.content_id
+                 join
+             attraction_description
+                 atde
+             on atde.content_id = at_likes.content_id
+        where at_likes.content_id
+                  in (select attraction_id
+                      from make_trip_plans
+                      where trip_plan_id =
+                            #{planId})
+    </select>
+
+    <select id="selectPlanAttractionDetailByPlanIdAndDay"
+            parameterType="map" resultType="AttractionDetail">
+        select at_likes.content_id,
+               at_likes.content_type_id,
+               at_likes.title, at_likes.addr1,
+               at_likes.addr2,
+               at_likes.zipcode,
+               at_likes.tel, at_likes.first_image,
+               at_likes.first_image2,
+               at_likes.readcount,
+               at_likes.sido_code,
+               at_likes.gugun_code, at_likes.latitude, at_likes.longitude,
+               at_likes.mlevel, at_likes.like_cnt,
+               atbo.title board_title,
+               atbo.content board_content, atbo.hit board_hit,
+               atbo.member_id
+                   board_member_id, atbo.attraction_id
+                   board_attraction_id,
+               atde.overview
+        from (select atin.content_id, atin.content_type_id, atin.title,
+                     atin.addr1, atin.addr2,
+                     atin.zipcode, atin.tel, atin.first_image,
+                     atin.first_image2, atin.readcount,
+                     atin.sido_code, atin.gugun_code,
+                     atin.latitude, atin.longitude,
+                     atin.mlevel, count(*) like_cnt
+              from
+                  attraction_info atin
+                      join
+                  attraction_likes atli
+                  on atin.content_id =
+                     atli.content_id
+              group by
+                  atin.content_id) as at_likes
+                 join
+             attraction_board atbo
+             on atbo.attraction_id = at_likes.content_id
+                 join
+             attraction_description atde
+             on atde.content_id = at_likes.content_id
+        where at_likes.content_id in (select attraction_id
+                                      from make_trip_plans
+                                      where trip_plan_id = #{planId}
+                                        and trip_date = #{day})
+    </select>
+
+
+    <select id="selectSidos" resultType="Sido">
+        select *
+        from sido
+    </select>
+
+    <select id="selectGugunsBySidoCode" parameterType="int"
+            resultType="Gugun">
+        select *
+        from gugun
+        where sido_code = #{sidoCode}
+    </select>
+
+
+
+    <select id="selectContentTypes" resultType="ContentType">
+        select *
+        from
+            content_type
+    </select>
+
+
+
+
+</mapper>
