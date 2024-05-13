@@ -78,10 +78,12 @@
   width: 100px;
   color: inherit;
   text-decoration: none;
+  text-align: center;
 }
 .sign-up-btn {
   width: 100px;
   color: inherit;
   text-decoration: none;
+  text-align: center;
 }
 </style>

@@ -21,7 +21,8 @@
     "vue-kakao-maps": "^0.2.11",
     "vue-router": "^4.3.2",
     "vue3-cookies": "^1.0.6",
-    "vue3-kakao-maps": "^2.1.0"
+    "vue3-kakao-maps": "^2.1.0",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

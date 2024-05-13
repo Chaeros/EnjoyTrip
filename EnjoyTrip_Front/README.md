@@ -32,3 +32,9 @@ npm run build
 ```sh
 npm install vue-router@4
 ```
+
+### vuex install 전역 모달 사용을 위한 npm 설치
+
+````sh
+npm install vuex --save
+````

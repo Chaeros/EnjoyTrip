@@ -13,6 +13,7 @@
         <button
           type="button"
           class="btn btn-outline-secondary select-attraction-btn"
+          @click="openModal"
         >
           선택하기
         </button>
@@ -25,24 +26,107 @@
       ></div>
       <div class="board-write-buttons">
         <div>
-          <button type="button" class="btn btn-outline-secondary button">
+          <button type="button" class="btn btn-outline-secondary user-button">
             목록으로
           </button>
         </div>
         <div>
-          <button type="button" class="btn btn-outline-secondary button">
+          <button type="button" class="btn btn-outline-secondary user-button">
             게시하기
           </button>
         </div>
       </div>
     </div>
   </div>
+  <div class="footer">
+    <Footer></Footer>
+  </div>
+  <Modal :isVisible="showModal" title="관광지 선택" @close="closeModal">
+    <div class="dropdowns">
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          시도
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">Action</a></li>
+          <li><a class="dropdown-item" href="#">Another action</a></li>
+          <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+      </div>
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          구군
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">Action</a></li>
+          <li><a class="dropdown-item" href="#">Another action</a></li>
+          <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+      </div>
+      <div class="dropdown">
+        <button
+          class="btn btn-secondary dropdown-toggle"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          컨텐츠타입
+        </button>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="#">Action</a></li>
+          <li><a class="dropdown-item" href="#">Another action</a></li>
+          <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="search-box">
+      <input
+        class="form-control me-2 search-text"
+        type="search"
+        placeholder="Search"
+        aria-label="Search"
+      />
+      <img
+        src="@/img/search_icon.png"
+        alt="Show Password"
+        title="Show Password"
+        class="search_icon"
+        @mousedown="showPassword(true)"
+        @mouseup="showPassword(false)"
+      />
+    </div>
+    <div></div>
+  </Modal>
 </template>
 
 <script setup>
 import { onMounted } from "vue";
 import axios from "axios";
 import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
+import Modal from "@/modal/SearchAttractionModal.vue";
+import AttractionItem from "@/components/item/AttractionItem.vue";
+import { ref } from "vue";
+
+const showModal = ref(false);
+
+const openModal = () => {
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+};
 
 const { VITE_VUE_API_URL } = import.meta.env;
 
@@ -155,7 +239,7 @@ img.resizable {
 
 .board-write-page {
   display: flex;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 .board-write-box {
@@ -169,6 +253,8 @@ img.resizable {
   width: 1200px;
   height: 80px;
   font-size: 40px;
+  margin-top: 15px;
+  border: none;
 }
 
 .horizontal-line {
@@ -204,7 +290,28 @@ img.resizable {
   display: flex;
   justify-content: space-between;
 }
-.button {
+.user-button {
   font-size: 20px;
+  text-align: center;
+}
+.footer {
+  margin-top: 25px;
+}
+.dropdowns {
+  display: flex;
+}
+.dropdown {
+  margin: 3px;
+}
+.search-box {
+  position: relative;
+}
+.search_icon {
+  width: 20px;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
 }
 </style>
