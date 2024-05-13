@@ -413,4 +413,5 @@ const currentComponent = computed(() => {
 .attraction-img {
   width: 100px;
 }
-</style> -->
+</style>
+

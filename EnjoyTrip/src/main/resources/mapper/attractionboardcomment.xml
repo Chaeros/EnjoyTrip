@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.enjoytrip.domain.attractionboardcomment.mapper.AttractionBoardCommentMapper">
+    <insert id="insertAttractionBoardComment" parameterType="com.ssafy.enjoytrip.domain.attractionboardcomment.AttractionBoardComment">
+        insert into attraction_board_comments (
+            content, attraction_board_id, member_id
+        ) values (
+            #{content}, #{attractionBoardId}, #{memberId}
+        )
+    </insert>
+
+    <update id="updateAttractionBoardComment" parameterType="com.ssafy.enjoytrip.domain.attractionboardcomment.AttractionBoardComment">
+        update attraction_board_comments
+           set content = #{content}
+         where id = #{id}
+    </update>
+
+    <delete id="deleteAttractionBoardComment" parameterType="int">
+        delete
+          from attraction_board_comments
+         where id = #{id}
+    </delete>
+
+    <select id="findAttractionBoardComments" parameterType="int" resultType="com.ssafy.enjoytrip.domain.attractionboardcomment.AttractionBoardComment">
+        select id, content, attraction_board_id, member_id
+          from attraction_board_comments
+         where attraction_board_id = #{attractionBoardId}
+    </select>
+</mapper>
