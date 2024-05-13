@@ -10,6 +10,7 @@ import { RouterLink, RouterView } from "vue-router";
   <RouterLink to="/normal/sign-up" />
   <RouterLink to="/reviewboard/write" />
   <RouterLink to="/reviewboard/list" />
+  <RouterLink to="/reviewboard/detail" />
   <RouterView />
 </template>
 
