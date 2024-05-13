@@ -9,6 +9,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class AttractionInfoLike {
-    private AttractionInfo attractInfo;
+    private AttractionInfo AttractionInfo;
     private int likeCnt;
 }

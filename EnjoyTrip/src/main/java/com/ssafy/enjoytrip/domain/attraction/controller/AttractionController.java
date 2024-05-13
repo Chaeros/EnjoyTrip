@@ -2,6 +2,15 @@ package com.ssafy.enjoytrip.domain.attraction.controller;
 
 import java.util.List;
 
+import com.ssafy.enjoytrip.domain.attraction.ContentType;
+import com.ssafy.enjoytrip.domain.attraction.Gugun;
+import com.ssafy.enjoytrip.domain.attraction.Sido;
+import com.ssafy.enjoytrip.domain.attraction.dto.request.AccomodationRequestDto;
+import com.ssafy.enjoytrip.domain.attraction.dto.request.AttractionRequestDto;
+import com.ssafy.enjoytrip.domain.attraction.dto.request.PlanRequestDto;
+import com.ssafy.enjoytrip.domain.attraction.dto.response.AttractionDetail;
+import com.ssafy.enjoytrip.domain.attraction.dto.response.AttractionInfoLike;
+import com.ssafy.enjoytrip.domain.attraction.service.AttractionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,16 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.ssafy.attraction.model.AccomRequest;
-import com.ssafy.attraction.model.AttractDetail;
-import com.ssafy.attraction.model.AttractInfoLike;
-import com.ssafy.attraction.model.AttractRequest;
-import com.ssafy.attraction.model.ContentType;
-import com.ssafy.attraction.model.Gugun;
-import com.ssafy.attraction.model.PlanRequest;
-import com.ssafy.attraction.model.Sido;
-import com.ssafy.attraction.model.service.AttractService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,71 +27,71 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/attraction")
-public class AttractController {
+public class AttractionController {
 
-    private final AttractService attractService;
+    private final AttractionService attractionService;
 
     @GetMapping("/attraction")
-    public ResponseEntity<?> getListAttractInfoLikesByCond(AttractRequest attractRequest) {
-        List<AttractInfoLike> list = attractService.getListAttractInfoLikesByCond(attractRequest);
+    public ResponseEntity<?> getListAttractionInfoLikesByCond(AttractionRequestDto AttractionRequestDto) {
+        List<AttractionInfoLike> list = attractionService.getListAttractionInfoLikesByCond(AttractionRequestDto);
 
         if (list != null && !list.isEmpty()) {
-            return new ResponseEntity<List<AttractInfoLike>>(list, HttpStatus.OK);
+            return new ResponseEntity<List<AttractionInfoLike>>(list, HttpStatus.OK);
         } else {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping("/accomodation")
-    public ResponseEntity<?> getListAccomInfoLikesByCond(AccomRequest accomRequest) {
-        List<AttractInfoLike> list = attractService.getListAccomInfoLikesByCond(accomRequest);
+    public ResponseEntity<?> getListAccomInfoLikesByCond(AccomodationRequestDto AccomodationRequestDto) {
+        List<AttractionInfoLike> list = attractionService.getListAccomInfoLikesByCond(AccomodationRequestDto);
 
         if (list != null && !list.isEmpty()) {
-            return new ResponseEntity<List<AttractInfoLike>>(list, HttpStatus.OK);
+            return new ResponseEntity<List<AttractionInfoLike>>(list, HttpStatus.OK);
         } else {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping("/{contentId}")
-    public ResponseEntity<?> attractDetailByContentId(@PathVariable("contentId") int contentId) {
-        AttractDetail attractDetail = attractService.getAttractDetailByContentId(contentId);
+    public ResponseEntity<?> AttractionDetailByContentId(@PathVariable("contentId") int contentId) {
+        AttractionDetail attractionDetail = attractionService.getAttractionDetailByContentId(contentId);
 
-        if (attractDetail != null) {
-            return new ResponseEntity<AttractDetail>(attractDetail, HttpStatus.OK);
+        if (attractionDetail != null) {
+            return new ResponseEntity<AttractionDetail>(attractionDetail, HttpStatus.OK);
         } else {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping("/like/{memberId}")
-    public ResponseEntity<?> likeAttractDetailByContentId(@PathVariable("memberId") int memberId) {
-        List<AttractInfoLike> list = attractService.getListAttractInfoLikesByMemberId(memberId);
+    public ResponseEntity<?> likeAttractionDetailByContentId(@PathVariable("memberId") int memberId) {
+        List<AttractionInfoLike> list = attractionService.getListAttractionInfoLikesByMemberId(memberId);
 
         if (list != null && !list.isEmpty()) {
-            return new ResponseEntity<List<AttractInfoLike>>(list, HttpStatus.OK);
+            return new ResponseEntity<List<AttractionInfoLike>>(list, HttpStatus.OK);
         } else {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping("/plan/{planId}")
-    public ResponseEntity<?> planAttractDetailByPlanId(@PathVariable("planId") int planId) {
-        List<AttractInfoLike> list = attractService.getListAttractInfoLikesByPlanId(planId);
+    public ResponseEntity<?> planAttractionDetailByPlanId(@PathVariable("planId") int planId) {
+        List<AttractionInfoLike> list = attractionService.getListAttractionInfoLikesByPlanId(planId);
 
         if (list != null && !list.isEmpty()) {
-            return new ResponseEntity<List<AttractInfoLike>>(list, HttpStatus.OK);
+            return new ResponseEntity<List<AttractionInfoLike>>(list, HttpStatus.OK);
         } else {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping("/plan")
-    public ResponseEntity<?> planAttractDetailByPlanIdAndDetail(PlanRequest planRequest) {
-        List<AttractInfoLike> list = attractService.getListAttractInfoLikesByPlanIdAndDay(planRequest);
+    public ResponseEntity<?> planAttractionDetailByPlanIdAndDetail(PlanRequestDto PlanRequestDto) {
+        List<AttractionInfoLike> list = attractionService.getListAttractionInfoLikesByPlanIdAndDay(PlanRequestDto);
 
         if (list != null && !list.isEmpty()) {
-            return new ResponseEntity<List<AttractInfoLike>>(list, HttpStatus.OK);
+            return new ResponseEntity<List<AttractionInfoLike>>(list, HttpStatus.OK);
         } else {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
@@ -100,7 +99,7 @@ public class AttractController {
 
     @GetMapping("/sido")
     public ResponseEntity<?> listSidos() {
-        List<Sido> list = attractService.getListSidos();
+        List<Sido> list = attractionService.getListSidos();
 
         if (list != null && !list.isEmpty()) {
             return new ResponseEntity<List<Sido>>(list, HttpStatus.OK);
@@ -111,7 +110,7 @@ public class AttractController {
 
     @GetMapping("/sido/{sido}")
     public ResponseEntity<?> listGugunsBySidoCode(@PathVariable("sido") int sidoCode) {
-        List<Gugun> list = attractService.getListGugunsBySidoCode(sidoCode);
+        List<Gugun> list = attractionService.getListGugunsBySidoCode(sidoCode);
 
         if (list != null && !list.isEmpty()) {
             return new ResponseEntity<List<Gugun>>(list, HttpStatus.OK);
@@ -122,7 +121,7 @@ public class AttractController {
 
     @GetMapping("/contenttype")
     public ResponseEntity<?> listContentTypeIds() {
-        List<ContentType> list = attractService.getListContentTypeIds();
+        List<ContentType> list = attractionService.getListContentTypeIds();
 
         if (list != null && !list.isEmpty()) {
             return new ResponseEntity<List<ContentType>>(list, HttpStatus.OK);
