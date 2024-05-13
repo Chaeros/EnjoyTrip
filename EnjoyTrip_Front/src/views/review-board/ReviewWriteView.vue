@@ -105,7 +105,14 @@
         @mouseup="showPassword(false)"
       />
     </div>
-    <div></div>
+    <div>
+      <AttractionItem
+        v-for="attraction in attractions"
+        :key="item.contentId"
+        :attraction="attraction"
+        @click-attraction-add="selectAttraction"
+      ></AttractionItem>
+    </div>
   </Modal>
 </template>
 
@@ -119,6 +126,7 @@ import AttractionItem from "@/components/item/AttractionItem.vue";
 import { ref } from "vue";
 
 const showModal = ref(false);
+const selectAttractionItem = ref();
 
 const openModal = () => {
   showModal.value = true;
@@ -126,6 +134,10 @@ const openModal = () => {
 
 const closeModal = () => {
   showModal.value = false;
+};
+
+const selectAttraction = (attractionItem) => {
+  selectAttractionItem.value = attractionItem;
 };
 
 const { VITE_VUE_API_URL } = import.meta.env;
