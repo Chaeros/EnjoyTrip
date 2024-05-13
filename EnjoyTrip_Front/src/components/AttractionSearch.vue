@@ -30,7 +30,6 @@ const clickAttractionAdd = (attraction) => {
 async function callSidos(sido) {
   getListSido(
     ({ data }) => {
-      console.dir(data);
       sidos.value = data;
     },
     ({ error }) => {
@@ -55,7 +54,6 @@ async function callGuguns(sido) {
 async function callContentTypes() {
   getListContentType(
     ({ data }) => {
-      console.dir(data);
       contentTypes.value = data;
     },
     ({ error }) => {
@@ -68,7 +66,6 @@ async function searchAttractions() {
   getListAttraction(
     inputInformation.value,
     ({ data }) => {
-      console.dir(data);
       attractions.value = data;
     },
     (error) => {

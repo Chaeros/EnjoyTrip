@@ -15,10 +15,10 @@ const clickAttractionAdd = () => {
 
 <template>
   <div class="attraction-flex">
-    <img class="attraction-img" :src="attraction.attractInfo.firstImage" />
+    <img class="attraction-img" :src="attraction.attractionInfo.firstImage" />
     <div class="attraction-content">
-      <h3>{{ attraction.attractInfo.title }}</h3>
-      <p>장소 : {{ attraction.attractInfo.addr1 }}</p>
+      <h3>{{ attraction.attractionInfo.title }}</h3>
+      <p>장소 : {{ attraction.attractionInfo.addr1 }}</p>
       <div class="attraction-indicators">
         <p>좋아요 : {{ attraction.likeCnt }}</p>
       </div>

@@ -28,7 +28,6 @@ const clickAccomodationAdd = (attraction) => {
 async function callSidos(sido) {
   getListSido(
     ({ data }) => {
-      console.dir(data);
       sidos.value = data;
     },
     ({ error }) => {
@@ -54,7 +53,6 @@ async function searchAttractions() {
   getListAccomodation(
     inputInformation.value,
     ({ data }) => {
-      console.dir(data);
       attractions.value = data;
     },
     (error) => {
