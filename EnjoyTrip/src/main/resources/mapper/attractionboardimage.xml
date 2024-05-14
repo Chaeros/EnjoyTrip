@@ -2,5 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.enjoytrip.domain.attractionboardimage.mapper.AttractionBoardImageMapper">
+    <insert id="insertAttractionBoardImage" parameterType="com.ssafy.enjoytrip.domain.attractionboardimage.AttractionBoardImage">
+        insert into attraction_board_image (
+            image, attraction_board_id
+        ) values (
+            #{image}, #{attractionBoardId}
+        )
+    </insert>
 
+    <delete id="deleteAttractionBoardImages" parameterType="int">
+        delete
+        from attraction_board_image
+        where attraction_board_id = #{attractionBoardId}
+    </delete>
+
+    <select id="findAttractionBoardImage" parameterType="int" resultType="AttractionBoardImage">
+        select id, image, attraction_board_id
+          from attraction_board_image
+         where attraction_board_id = #{attraction_board_id}
+         limit 1
+    </select>
 </mapper>

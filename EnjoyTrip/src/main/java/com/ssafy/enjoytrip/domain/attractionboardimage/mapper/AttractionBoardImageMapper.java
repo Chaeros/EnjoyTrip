@@ -6,6 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface AttractionBoardImageMapper {
     int insertAttractionBoardImage(AttractionBoardImage attractionBoardImage);
-    int deleteAttractionBoardImage(int attractionId);
-    AttractionBoardImage findAttractionBoardImage(int attractionId);
+    int deleteAttractionBoardImages(int attractionBoardId);
+    AttractionBoardImage findAttractionBoardImage(int attractionBoardId);
 }
