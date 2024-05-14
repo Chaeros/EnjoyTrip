@@ -17,7 +17,7 @@ public class AttractionBoardImageController {
 
     @PostMapping
     public ResponseEntity<String> registAttractionBoardImage(@RequestBody AttractionBoardImageAddRequestDto attractionBoardImageAddRequestDto){
-        if ( attractionBoardImageService.addAttractionBoardImage(attractionBoardImageAddRequestDto.transferToAttractionBoardImage()) == 0){
+        if ( attractionBoardImageService.addAttractionBoardImage(attractionBoardImageAddRequestDto) == 0){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Image registration failed due to incorrect data or server error.");
         }
         return ResponseEntity.ok("Image store success");

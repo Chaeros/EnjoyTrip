@@ -10,8 +10,8 @@ public class AttractionBoardImageAddRequestDto {
     private String image;
     private int attractionBoardId;
 
-    public AttractionBoardImageAddRequestDto transferToAttractionBoardImage(){
-        return AttractionBoardImageAddRequestDto.builder()
+    public AttractionBoardImage transferToAttractionBoardImage(){
+        return AttractionBoardImage.builder()
                 .image(this.image)
                 .attractionBoardId(this.attractionBoardId)
                 .build();

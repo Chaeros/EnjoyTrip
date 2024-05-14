@@ -16,7 +16,7 @@ public class AttractionBoardImageServiceImpl implements AttractionBoardImageServ
 
     @Override
     public int addAttractionBoardImage(AttractionBoardImageAddRequestDto attractionBoardImageAddRequestDto) {
-        return attractionBoardImageMapper.insertAttractionBoardImage(attractionBoardImage);
+        return attractionBoardImageMapper.insertAttractionBoardImage(attractionBoardImageAddRequestDto.transferToAttractionBoardImage());
     }
 
     @Override
