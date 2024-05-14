@@ -6,6 +6,7 @@
         class="board-write-title"
         type="text"
         placeholder="제목을 입력하세요"
+        v-model="article.title"
       />
       <div class="horizontal-line"></div>
       <div class="select-attraction-box">
@@ -43,7 +44,11 @@
           </button>
         </div>
         <div>
-          <button type="button" class="btn btn-outline-secondary user-button">
+          <button
+            type="button"
+            class="btn btn-outline-secondary user-button"
+            @click="clickPostArticle"
+          >
             게시하기
           </button>
         </div>
@@ -135,7 +140,12 @@ import {
   getListGugun,
   getListContentType,
 } from "@/api/attraction";
+import { addAttractionReview } from "@/api/attraction-board/attraction-board.js";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
 
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
 const showModal = ref(false);
 const selectAttractionItem = ref();
 const selectAttractTitle = ref();
@@ -144,6 +154,12 @@ const keyword = ref();
 const sidos = ref([]);
 const guguns = ref([]);
 const contentTypes = ref([]);
+const article = ref({
+  title: "",
+  content: "",
+  memberId: userInfo._value.id,
+  attractionId: "",
+});
 const inputInformation = ref({
   sidoCode: "",
   gugunCode: "",
@@ -161,6 +177,7 @@ const closeModal = () => {
 
 const selectAttraction = (attractionItem) => {
   selectAttractionItem.value = attractionItem;
+  article.value.attractionId = attractionItem.attractionInfo.contentId;
   selectAttractTitle.value = attractionItem.attractionInfo.title;
   closeModal();
 };
@@ -313,6 +330,13 @@ async function searchAttractions() {
 }
 callSidos(1);
 callContentTypes();
+
+const clickPostArticle = () => {
+  const editor = document.getElementById("editor");
+  console.log(editor);
+  article.value.content = editor.innerHTML;
+  addAttractionReview(article.value);
+};
 </script>
 
 <style scoped>

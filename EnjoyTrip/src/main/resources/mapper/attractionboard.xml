@@ -6,7 +6,7 @@
         insert into attraction_board (
             title, content, member_id, attraction_id
         ) values (
-             #{title}, #{content}, #{member_id}, #{attraction_id}
+             #{title}, #{content}, #{memberId}, #{attractionId}
         )
     </insert>
 
