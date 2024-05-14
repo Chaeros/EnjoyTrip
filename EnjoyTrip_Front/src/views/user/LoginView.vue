@@ -55,6 +55,7 @@ const clickNormalLogin = () => {
         console.log("!!", loginInfo.value.email);
         console.log("success");
         getUserInfo(loginInfo.value.email);
+        router.push({ name: "home" });
       }
       // navigate('/');
     },

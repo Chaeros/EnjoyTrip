@@ -2,8 +2,8 @@
   <div class="header-wrap">
     <div class="header">
       <div class="left-side-header">
-        <h3 class="header-logo">ChanGon</h3>
-        <a>관광지찾기</a>
+        <h3 class="header-logo" @click="clickTitle">ChanGon</h3>
+        <a @click.prevent="clickAttraction">관광지찾기</a>
         <a>커뮤니티</a>
         <a>공지사항</a>
       </div>
@@ -32,8 +32,20 @@
 </template>
 
 <script setup>
-const clickLogin = () => {};
-const clickSignUp = () => {};
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
+const clickLogin = () => {
+  router.push({ name: "login" });
+};
+const clickSignUp = () => {
+  router.push({ name: "normalSingUp" });
+};
+const clickTitle = () => {
+  router.push({ name: "home" });
+};
+const clickAttraction = () => {
+  router.push({ name: "searchattraction" });
+};
 </script>
 
 <style scoped>
