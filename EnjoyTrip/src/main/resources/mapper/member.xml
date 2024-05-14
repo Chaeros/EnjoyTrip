@@ -12,7 +12,7 @@
 	</insert>
 
 	<select id="findMemberByEmail" parameterType="string" resultType="com.ssafy.enjoytrip.domain.member.Member">
-		select email, password, nickname, role
+		select id, email, password, nickname, role
 		  from members
 		 where email = #{email}
 	</select>
