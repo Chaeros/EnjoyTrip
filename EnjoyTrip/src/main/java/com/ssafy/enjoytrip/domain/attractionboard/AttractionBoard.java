@@ -15,6 +15,7 @@ public class AttractionBoard {
     private int hit;
     private long memberId;
     private int attractionId;
+    private String imageUrl;
 
     public AttractionBoardResponseDto transferToAttractionBoardResponseDto() {
         return AttractionBoardResponseDto.builder()
@@ -24,6 +25,7 @@ public class AttractionBoard {
                 .hit(this.hit)
                 .memberId(this.memberId)
                 .attractionId(this.attractionId)
+                .imageUrl(this.imageUrl)
                 .build();
     }
 }

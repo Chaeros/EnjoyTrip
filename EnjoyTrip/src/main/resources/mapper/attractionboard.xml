@@ -4,9 +4,9 @@
 <mapper namespace="com.ssafy.enjoytrip.domain.attractionboard.mapper.AttractionBoardMapper">
     <insert id="insertAttractionBoard" parameterType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
         insert into attraction_board (
-            title, content, member_id, attraction_id
+            title, content, member_id, attraction_id, image_url
         ) values (
-             #{title}, #{content}, #{memberId}, #{attractionId}
+             #{title}, #{content}, #{memberId}, #{attractionId}, #{imageUrl}
         )
     </insert>
 

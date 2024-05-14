@@ -12,4 +12,5 @@ public class AttractionBoardResponseDto {
     private int hit;
     private long memberId;
     private int attractionId;
+    private String imageUrl;
 }

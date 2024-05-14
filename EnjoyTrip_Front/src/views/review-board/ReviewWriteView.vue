@@ -31,6 +31,11 @@
           선택되었어요! [ {{ selectAttractTitle }} ]
         </span>
       </div>
+      <div class="attach-represant-img-box">
+        <span>대표 이미지를 선택해주세요!(선택)</span>
+        <input type="file" @change="handleFileUpload" />
+        <span v-if="fileName">{{ fileName }}</span>
+      </div>
       <div
         id="editor"
         class="board-write-editor"
@@ -164,6 +169,7 @@ const article = ref({
   content: "",
   memberId: userInfo._value.id,
   attractionId: "",
+  imageUrl: "",
 });
 const inputInformation = ref({
   sidoCode: "",
@@ -171,6 +177,7 @@ const inputInformation = ref({
   contentTypeId: "",
   keyword: "",
 });
+const fileName = ref("");
 
 const openModal = () => {
   showModal.value = true;
@@ -354,6 +361,32 @@ const clickPostArticle = () => {
     }
   );
 };
+
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    fileName.value = file.name;
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/image/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("File uploaded successfully:", response.data);
+      article.value.imageUrl = response.data.url;
+      console.log(response.data.url);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  }
+};
 </script>
 
 <style scoped>
@@ -399,6 +432,12 @@ img.resizable {
 }
 
 .select-attraction-btn {
+}
+
+.attach-represant-img-box {
+  display: flex;
+  margin: 10px 0;
+  width: 1200px;
 }
 
 .board-write-editor {
