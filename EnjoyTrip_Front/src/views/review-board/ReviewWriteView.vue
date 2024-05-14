@@ -17,6 +17,18 @@
         >
           선택하기
         </button>
+        <span
+          class="attraction-unselected"
+          v-show="selectAttractionItem === undefined"
+        >
+          아직 선택되지 않았어요!
+        </span>
+        <span
+          class="attraction-selected"
+          v-show="selectAttractionItem !== undefined"
+        >
+          선택되었어요! [ {{ selectAttractTitle }} ]
+        </span>
       </div>
       <div
         id="editor"
@@ -82,51 +94,6 @@
           {{ content.contentName }}
         </option>
       </select>
-      <!-- <div class="dropdown">
-        <button
-          class="btn btn-secondary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          시도
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Action</a></li>
-          <li><a class="dropdown-item" href="#">Another action</a></li>
-          <li><a class="dropdown-item" href="#">Something else here</a></li>
-        </ul>
-      </div>
-      <div class="dropdown">
-        <button
-          class="btn btn-secondary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          구군
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Action</a></li>
-          <li><a class="dropdown-item" href="#">Another action</a></li>
-          <li><a class="dropdown-item" href="#">Something else here</a></li>
-        </ul>
-      </div>
-      <div class="dropdown">
-        <button
-          class="btn btn-secondary dropdown-toggle"
-          type="button"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          컨텐츠타입
-        </button>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Action</a></li>
-          <li><a class="dropdown-item" href="#">Another action</a></li>
-          <li><a class="dropdown-item" href="#">Something else here</a></li>
-        </ul> 
-      </div> -->
     </div>
     <div class="search-box">
       <input
@@ -139,10 +106,8 @@
       />
       <img
         src="@/img/search_icon.png"
-        alt="Show Password"
-        title="Show Password"
         class="search_icon"
-        @clcik="searchAttractions"
+        @click="searchAttractions"
       />
     </div>
     <div class="attraction-set">
@@ -173,6 +138,7 @@ import {
 
 const showModal = ref(false);
 const selectAttractionItem = ref();
+const selectAttractTitle = ref();
 const attractions = ref();
 const keyword = ref();
 const sidos = ref([]);
@@ -195,6 +161,8 @@ const closeModal = () => {
 
 const selectAttraction = (attractionItem) => {
   selectAttractionItem.value = attractionItem;
+  selectAttractTitle.value = attractionItem.attractionInfo.title;
+  closeModal();
 };
 
 const { VITE_VUE_API_URL } = import.meta.env;
@@ -438,5 +406,17 @@ img.resizable {
   height: 600px; /* 높이를 필요에 맞게 조정하세요 */
   overflow-y: scroll; /* 상하 스크롤을 항상 표시 */
   /* 또는 overflow-y: auto; /* 필요할 때만 상하 스크롤을 표시 */
+}
+.custom-select {
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  margin: 3px;
+}
+.attraction-selected {
+  color: green;
+}
+.attraction-unselected {
+  color: red;
 }
 </style>

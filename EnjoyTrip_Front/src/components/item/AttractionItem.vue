@@ -59,7 +59,7 @@ const clickAttractionAdd = () => {
   width: 100px;
   height: 100%;
   margin: 0 5px 0 0;
-  /* text-align: center; */
+  border-radius: 10px;
 }
 
 .attraction-title {
@@ -72,7 +72,9 @@ const clickAttractionAdd = () => {
   flex-direction: row;
 }
 .btn-css {
-  font-size: 20px;
-  font-weight: bold;
+  width: 50px;
+  font-size: 40px;
+  text-align: center;
+  /* font-weight: bold; */
 }
 </style>

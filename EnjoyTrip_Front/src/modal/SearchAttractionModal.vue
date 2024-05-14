@@ -3,7 +3,13 @@
     <div class="modal-page">
       <div class="modal-header">
         <h3 class="modal-title">{{ title }}</h3>
-        <button @click="closeModal">X</button>
+        <button
+          @click="closeModal"
+          type="button"
+          class="btn btn-outline-secondary x-btn-css"
+        >
+          X
+        </button>
       </div>
       <div class="modal-body">
         <slot></slot>
@@ -65,5 +71,10 @@ export default {
   font-size: 30px;
   font-weight: bold;
   margin: 0 3px;
+}
+.x-btn-css {
+  border-radius: 100%;
+  font-size: 15px;
+  font-weight: bold;
 }
 </style>
