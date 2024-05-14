@@ -24,14 +24,17 @@
             @mouseup="showPassword(false)"
           />
         </div>
-        <a class="login-btn">로그인</a>
-        <a class="sign-up-btn">회원가입</a>
+        <a class="login-btn" @click="clickLogin">로그인</a>
+        <a class="sign-up-btn" @click="clickSignUp">회원가입</a>
       </div>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const clickLogin = () => {};
+const clickSignUp = () => {};
+</script>
 
 <style scoped>
 .header-wrap {

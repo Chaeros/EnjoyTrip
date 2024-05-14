@@ -2,9 +2,12 @@ package com.ssafy.enjoytrip.domain.member.controller;
 
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberSignUpDto;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberUpdateDto;
+import com.ssafy.enjoytrip.domain.member.dto.response.MemberResponseDto;
 import com.ssafy.enjoytrip.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,5 +39,11 @@ public class MemberController {
         memberService.updateMember(memberUpdateDto);
     }
 
-
+    @GetMapping("/member/{email}")
+    public ResponseEntity<MemberResponseDto> getMemberByEmail(@PathVariable("email") String email) throws Exception {
+        log.info("[get member by email] memberEmail : {}",email);
+        return memberService.getMemberByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+    }
 }
