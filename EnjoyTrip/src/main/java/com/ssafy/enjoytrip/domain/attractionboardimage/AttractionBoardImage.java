@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.domain.attractionboardimage;
 
+import com.ssafy.enjoytrip.domain.attractionboardimage.dto.request.AttractionBoardImageAddRequestDto;
 import lombok.*;
 
 @Getter

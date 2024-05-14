@@ -39,7 +39,11 @@
       ></div>
       <div class="board-write-buttons">
         <div>
-          <button type="button" class="btn btn-outline-secondary user-button">
+          <button
+            type="button"
+            class="btn btn-outline-secondary user-button"
+            @click="clickReturnList"
+          >
             목록으로
           </button>
         </div>
@@ -331,6 +335,10 @@ async function searchAttractions() {
 }
 callSidos(1);
 callContentTypes();
+
+const clickReturnList = () => {
+  router.push({ name: "reviewBoardList" });
+};
 
 const clickPostArticle = () => {
   const editor = document.getElementById("editor");
