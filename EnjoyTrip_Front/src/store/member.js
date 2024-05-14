@@ -33,6 +33,8 @@ export const useMemberStore = defineStore("memberStore", () => {
       }
 
     return {
+        userInfo,
+        isLogin,
         getUserInfo
     }
 })

@@ -4,6 +4,7 @@ import { normalLogin } from "@/api/member.js";
 import { getCookie, setCookie } from "@/util/cookie";
 import { useRouter } from "vue-router";
 import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
 
 const router = useRouter();
 const isIdChecked = ref(false);
@@ -12,7 +13,8 @@ const loginInfo = ref({
   password: "",
 });
 const memberStore = useMemberStore();
-const { userInfo, getUserInfo } = memberStore;
+const { userInfo, isLogin } = storeToRefs(memberStore);
+const { getUserInfo } = memberStore;
 
 const clickKakaoLogin = () => {
   window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;
@@ -56,6 +58,8 @@ const clickNormalLogin = () => {
         console.log("success");
         getUserInfo(loginInfo.value.email);
         router.push({ name: "home" });
+        console.info(isLogin);
+        isLogin.value = true;
       }
       // navigate('/');
     },

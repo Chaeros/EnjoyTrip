@@ -1,7 +1,7 @@
 <template>
   <Header></Header>
   <div class="board-list-page">
-    <img class="represent-img" src="@/img/Gyeongbokgung.jpg" />
+    <!-- <img class="represent-img" src="@/img/Gyeongbokgung.jpg" /> -->
     <div class="board-list-box">
       <div class="board-list-box-top">
         <div class="board-list-description-and-write-btn">
@@ -9,6 +9,7 @@
           <button
             type="button"
             class="btn btn-outline-secondary select-attraction-btn"
+            @click="clickBoardWriteBtn"
           >
             글 쓰기
           </button>
@@ -39,6 +40,11 @@
 
 <script setup>
 import Header from "@/components/Header.vue";
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
+const clickBoardWriteBtn = () => {
+  router.push({ name: "reviewBoardWrite" });
+};
 </script>
 
 <style scoped>
