@@ -143,7 +143,8 @@ import {
 import { addAttractionReview } from "@/api/attraction-board/attraction-board.js";
 import { useMemberStore } from "@/store/member";
 import { storeToRefs } from "pinia";
-
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
 const showModal = ref(false);
@@ -335,7 +336,15 @@ const clickPostArticle = () => {
   const editor = document.getElementById("editor");
   console.log(editor);
   article.value.content = editor.innerHTML;
-  addAttractionReview(article.value);
+  addAttractionReview(
+    article.value,
+    (response) => {
+      router.push({ name: "reviewBoardList" });
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
 };
 </script>
 
