@@ -25,23 +25,6 @@
               @click="clickAttractionBoardArticleCard(attractionBoardReview)"
             />
           </template>
-          <!-- <div class="card-group">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title"><b>덕수궁</b></h5>
-                <p class="card-text">
-                  조선시대의 궁궐이다. 원래 왕가의 별궁인 명례궁이었으나,
-                  임진왜란 직후 행궁으로써 정궁 역할을 했으며, 광해군 때 정식
-                  궁궐로 승격
-                </p>
-                <p class="card-text">
-                  <small class="text-body-secondary"
-                    >Last updated 3 mins ago</small
-                  >
-                </p>
-              </div>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>

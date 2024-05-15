@@ -3,7 +3,9 @@
     <div class="comment-box">
       <div class="comment-input-box">
         <div class="comment-count">
-          <div class="comment-count-content">n개 댓글</div>
+          <div class="comment-count-content">
+            {{ commentTotalCount }} 개 댓글
+          </div>
           <div />
         </div>
         <div class="comment-input">
@@ -34,19 +36,23 @@ import {
   removeComment,
   modifyComment,
 } from "@/api/attraction-board-comment/attraction-board-comment.js";
+import { useRoute, useRouter } from "vue-router";
 import { useMemberStore } from "@/store/member";
 import { storeToRefs } from "pinia";
+import { getCommentCount } from "@/api/attraction-board-comment/attraction-board-comment.js";
 const memberStore = useMemberStore();
 const { userInfo, isLogin } = storeToRefs(memberStore);
 const { attractionBoardReviewId } = defineProps({
   attractionBoardReviewId: Number,
 });
 const comments = ref([]);
+const commentTotalCount = ref();
 const commentDto = ref({
   content: "",
   attractionBoardId: attractionBoardReviewId,
   memberId: "",
 });
+const router = useRouter();
 
 console.log(userInfo);
 if (userInfo.value !== null) {
@@ -68,18 +74,39 @@ const bringCommentList = () => {
 bringCommentList();
 
 const clickAddCommentBtn = () => {
-  addComment(
-    commentDto.value,
+  if (isLogin.value === false) {
+    alert("로그인 후 댓글 작성이 가능합니다!");
+    router.push({ name: "login" });
+  } else {
+    addComment(
+      commentDto.value,
+      (response) => {
+        console.log(response);
+        bringCommentList();
+        bringCommentCount();
+        commentDto.value.content = "";
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+};
+
+const bringCommentCount = () => {
+  getCommentCount(
+    attractionBoardReviewId,
     (response) => {
-      console.log(response);
-      bringCommentList();
-      commentDto.value.content = "";
+      console.log(response.data);
+      commentTotalCount.value = response.data;
     },
     (error) => {
       console.log(error);
     }
   );
 };
+bringCommentCount(commentTotalCount.value);
+console.log();
 </script>
 
 <style scoped>

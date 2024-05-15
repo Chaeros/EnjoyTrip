@@ -30,4 +30,17 @@ function modifyComment(comment, success, fail) {
   local.patch(`/attractionboardcommnet`, comment).then(success).catch(fail);
 }
 
-export { addComment, getCommentList, removeComment, modifyComment };
+function getCommentCount(attractionBoardReviewId, success, fail) {
+  local
+    .get(`/attractionboardcommnet/count/` + attractionBoardReviewId)
+    .then(success)
+    .catch(fail);
+}
+
+export {
+  addComment,
+  getCommentList,
+  removeComment,
+  modifyComment,
+  getCommentCount,
+};
