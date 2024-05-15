@@ -1,9 +1,30 @@
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
+import { get } from 'vue-cookie';
 
 const props = defineProps({
   showModal: Boolean,
 });
+
+const totalTripDates = ref(0);
+function getTotalTripDates() {
+  // Date 객체로 변환
+  const firstDate = new Date(startDate.value);
+  const secondDate = new Date(endDate.value);
+  console.log(firstDate);
+  console.log(secondDate);
+
+  // 두 날짜의 차이를 밀리초 단위로 계산
+  const timeDifference = secondDate - firstDate;
+  console.log(timeDifference);
+
+  // 밀리초를 일자로 변환
+  // 하루는 24시간, 시간은 60분, 분은 60초, 초는 1000밀리초
+  const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+  // 소수점 아래는 버리고 정수 부분만 반환
+  totalTripDates.value = Math.abs(Math.floor(daysDifference)) + 1;
+}
 
 const emit = defineEmits(['toggleModal', 'updateDates']);
 const startDate = ref('');
@@ -14,7 +35,9 @@ const toggleModal = () => {
 };
 
 const updateDates = () => {
-  emit('updateDates', { startDate: startDate.value, endDate: endDate.value });
+  if (startDate.value == '' || endDate.value == '') return;
+  getTotalTripDates();
+  emit('updateDates', startDate.value, endDate.value, totalTripDates.value);
 };
 </script>
 
