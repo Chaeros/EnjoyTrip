@@ -31,6 +31,7 @@ const initMap = () => {
   // 지도 객체를 등록합니다.
   // 지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언합니다.
   map.value = new kakao.maps.Map(container, options);
+  updateMapLocation();
 };
 
 const attractionMarkers = ref([]);

@@ -30,6 +30,7 @@ const startDrag = (event, item) => {
 
 <template>
   <div class="container">
+    <h5>관광지</h5>
     <div
       class="select-attraction"
       v-for="(attraction, index) in selectedAttractions"
@@ -46,6 +47,7 @@ const startDrag = (event, item) => {
       </div>
     </div>
 
+    <h5>숙소</h5>
     <div
       class="select-attraction"
       v-for="(attraction, index) in selectedAccomodations"
