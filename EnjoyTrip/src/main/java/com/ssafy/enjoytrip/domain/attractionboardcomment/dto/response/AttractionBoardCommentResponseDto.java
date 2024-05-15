@@ -12,4 +12,5 @@ public class AttractionBoardCommentResponseDto {
     private String content;
     private int attractionBoardId;
     private int memberId;
+    private String regdate;
 }
