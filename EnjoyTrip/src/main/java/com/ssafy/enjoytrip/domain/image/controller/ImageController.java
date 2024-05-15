@@ -13,6 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 @RestController
@@ -41,14 +48,12 @@ public class ImageController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        // 파일 MIME 타입 확인 (이미지 여부 확인)
         String mimeType = file.getContentType();
         if (mimeType == null || !mimeType.startsWith("image/")) {
             response.put("message", "Only image files are allowed");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        // 파일 크기 제한 (예: 10MB)
         long maxFileSize = 10 * 1024 * 1024;
         if (file.getSize() > maxFileSize) {
             response.put("message", "File is too large");
@@ -56,25 +61,24 @@ public class ImageController {
         }
 
         try {
-            // 파일 저장 경로 설정
             String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             Path path = Paths.get(uploadPath + File.separator + filename);
 
-            // 디렉토리가 없으면 생성
             if (!Files.exists(path.getParent())) {
                 Files.createDirectories(path.getParent());
             }
 
-            // 파일 저장
-            Files.write(path, file.getBytes());
-//            attractionBoardImageService.addAttractionBoardImage(
-//                    AttractionBoardImageAddRequestDto.builder()
-//                            .image(String.valueOf(path))
-//                            .attractionBoardId(attractionBoardId)
-//                            .build()
-//            );
+            // 이미지 읽기
+            BufferedImage image = ImageIO.read(file.getInputStream());
 
-            // 파일 URL 반환
+            // 고화질 이미지 저장
+            if (mimeType.equals("image/jpeg")) {
+                saveHighQualityImage(image, path.toFile());
+            } else {
+                // 다른 이미지 형식의 경우, 일반적인 저장 방법 사용
+                ImageIO.write(image, mimeType.split("/")[1], path.toFile());
+            }
+
             String fileUrl = "/image/uploads/" + filename;
             response.put("url", fileUrl);
             return ResponseEntity.ok(response);
@@ -83,6 +87,22 @@ public class ImageController {
             response.put("message", "File upload failed");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    private void saveHighQualityImage(BufferedImage image, File output) throws IOException {
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
+        ImageWriter writer = writers.next();
+
+        ImageOutputStream ios = ImageIO.createImageOutputStream(output);
+        writer.setOutput(ios);
+
+        ImageWriteParam param = writer.getDefaultWriteParam();
+        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        param.setCompressionQuality(1.0f);  // 최대 품질로 설정
+
+        writer.write(null, new IIOImage(image, null, null), param);
+        ios.close();
+        writer.dispose();
     }
 
     @GetMapping("/uploads/{filename:.+}")

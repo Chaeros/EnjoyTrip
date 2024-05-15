@@ -1,5 +1,10 @@
 <template>
   <Header></Header>
+  <img
+    class="board-detail-title-img"
+    :src="imageServerURL + article.imageUrl"
+    v-if="article"
+  />
   <div class="board-detail-page" v-if="writerInfo">
     <div class="board-detail-box">
       <div class="board-detail-info-box">
@@ -56,7 +61,7 @@ import { getAttractionReviewArticle } from "@/api/attraction-board/attraction-bo
 import { getUserInfomationById } from "@/api/member/member.js";
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
-
+const imageServerURL = ref(import.meta.env.VITE_VUE_IMAGE_SERVER_URL);
 const route = useRoute(); // useRoute 훅을 사용해서 현재 라우트 객체에 접근합니다.
 const attractionBoardReviewId = route.params.attractionBoardReviewId; // params로 전달받은 데이터를 가져옵니다.
 const article = ref();
@@ -93,6 +98,12 @@ const getWriterInfo = () => {
 </script>
 
 <style scoped>
+.board-detail-title-img {
+  width: 100%;
+  height: 300px;
+  object-fit: cover; /* 비율 유지하면서 요소의 크기에 맞게 조정 */
+  object-position: center; /* 중심을 기준으로 이미지 위치 조정 */
+}
 .board-detail-box {
   display: flex;
   flex-direction: column;
@@ -129,7 +140,6 @@ const getWriterInfo = () => {
 }
 .image {
   width: 100%;
-  border-radius: 10px;
 }
 .writer-info-box {
   display: flex;

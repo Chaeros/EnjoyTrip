@@ -85,7 +85,6 @@ const getWriterInfo = () => {
 }
 .image {
   width: 100%;
-  border-radius: 10px;
 }
 .writer-info-box {
   display: flex;

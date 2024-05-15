@@ -1,33 +1,52 @@
 <template>
   <div class="card-outter-box" v-if="writerInfo">
-    <div class="card-image">
-      <template v-if="attractionBoardReview.imageUrl !== ''">
-        <img
-          class="image"
-          :src="imageServerURL + attractionBoardReview.imageUrl"
-        />
-      </template>
-    </div>
-    <div class="card-content">
-      <div class="card-title">{{ attractionBoardReview.title }}</div>
+    <div class="card-content-box">
+      <div class="title-and-content-box">
+        <template v-if="attractionBoardReview.imageUrl !== ''">
+          <img
+            class="article-title-image"
+            :src="imageServerURL + attractionBoardReview.imageUrl"
+          />
+        </template>
+        <div class="card-title">{{ attractionBoardReview.title }}</div>
+        <div class="card-content">{{ attractionBoardReview.content }}</div>
+      </div>
+      <div class="attraction-board-regdate">
+        {{ attractionBoardReview.regdate }}
+      </div>
+      <hr class="contour" />
+
       <div class="writer-info-box">
-        <template v-if="writerInfo.image === null">
+        <div class="writer-info-box-left">
           <div>
-            <img
-              class="writer-profile-img"
-              src="@/img/member/default_img.jpg"
-            />
+            <template v-if="writerInfo.image === null">
+              <div>
+                <img
+                  class="writer-profile-img"
+                  src="@/img/member/default_img.jpg"
+                />
+              </div>
+            </template>
+            <template v-else>
+              <div>
+                <img class="writer-profile-img" :src="writerInfo.image" />
+              </div>
+            </template>
           </div>
-        </template>
-        <template v-else>
-          <div>
-            <img class="writer-profile-img" :src="writerInfo.image" />
-          </div>
-        </template>
-        <div>{{ writerInfo.nickname }}</div>
+          <div>by {{ writerInfo.nickname }}</div>
+        </div>
+        <div class="writer-info-box-right">
+          <img
+            class="writer-info-box-right-comment-img"
+            src="@/img/comment/comment.png"
+          />
+          <img
+            class="writer-info-box-right-like-img"
+            src="@/img/like/like.png"
+          />
+        </div>
       </div>
       <div class="card-writer">{{ attractionBoardReview.writer }}</div>
-      <div class="regdate">{{ attractionBoardReview.regdate }}</div>
     </div>
   </div>
   <div v-else>
@@ -66,17 +85,62 @@ onMounted(() => {
 <style scoped>
 .card-outter-box {
   border: 1px solid;
-  border-radius: 10px;
-}
-.image {
   width: 100%;
-  border-radius: 10px;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.card-content-box {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.title-and-content-box {
+  width: 100%;
+  height: 260px;
+}
+.attraction-board-regdate {
+  height: 30px;
+  margin-left: 3px;
+}
+.card-title {
+  font-size: 20px;
+  font-weight: bold;
+}
+.card-content {
+  flex-grow: 1; /* 컨테이너의 남은 공간을 모두 차지하도록 설정 */
+  overflow: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+}
+.card-content-wrap {
+}
+.article-title-image {
+  width: 100%;
+  height: 200px;
+}
+.contour {
+  margin: 1px;
 }
 .writer-info-box {
+  display: flex;
+  height: 60px;
+  margin: 3px;
+}
+.writer-info-box-left {
   display: flex;
 }
 .writer-profile-img {
   border-radius: 100%;
   width: 50px;
+}
+.writer-info-box {
+  display: flex;
+  justify-content: space-between;
+}
+.writer-info-box-right-comment-img {
+  width: 30px;
+}
+.writer-info-box-right-like-img {
+  width: 30px;
 }
 </style>

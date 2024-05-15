@@ -83,10 +83,9 @@ const clickAttractionBoardArticleCard = (attractionBoardReview) => {
   width: 100vw; /* 가로 전체를 차지하도록 설정 */
   height: 50vh; /* 세로를 화면의 20%만 차지하도록 설정 */
   object-fit: cover; /* 이미지를 잘라서라도 가로와 세로 비율을 맞춤 */
-  object-position: center; /* 이미지의 중앙 부분을 유지 */
+  object-position: center; /*이미지의 중앙 부분을 유지 */
 }
 .board-list-box {
-  text-align: center;
   margin-top: 20px;
 }
 .board-list-box-top {
@@ -117,13 +116,14 @@ const clickAttractionBoardArticleCard = (attractionBoardReview) => {
 }
 .review-card-list {
   display: flex;
+  flex-wrap: wrap; /* 카드가 넘치면 다음 줄로 넘김 */
+  justify-content: flex-start; /* 왼쪽 정렬 */
 }
 .card-group {
   position: static;
 }
 .article-card {
-  width: 400px;
-  margin: 10px;
-  border-radius: 10px;
+  width: calc(25% - 20px); /* 전체 너비의 25%만큼 차지하고, 여백 고려 */
+  margin: 10px; /* 상하좌우 여백 */
 }
 </style>
