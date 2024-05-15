@@ -20,10 +20,11 @@ public class PlanController {
 
     @PostMapping
     public ResponseEntity<?> registTripPlan(@RequestBody TripPlanRequest tripPlanRequest) {
-        int insertResult = planService.registTripPlan(tripPlanRequest);
+        int maxTripPlanId = planService.registTripPlan(tripPlanRequest);
+        System.out.println("maxTripPlanId = " + maxTripPlanId);
 
-        if (insertResult > 0) {
-            return new ResponseEntity<Integer>(insertResult, HttpStatus.OK);
+        if (maxTripPlanId > 0) {
+            return new ResponseEntity<Integer>(maxTripPlanId, HttpStatus.OK);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("trip plan 생성 실패");
         }
