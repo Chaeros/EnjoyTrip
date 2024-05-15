@@ -6,6 +6,7 @@
         class="board-write-title"
         type="text"
         placeholder="제목을 입력하세요"
+        v-model="article.title"
       />
       <div class="horizontal-line"></div>
       <div class="select-attraction-box">
@@ -30,6 +31,11 @@
           선택되었어요! [ {{ selectAttractTitle }} ]
         </span>
       </div>
+      <div class="attach-represant-img-box">
+        <span>대표 이미지를 선택해주세요!(선택)</span>
+        <input type="file" @change="handleFileUpload" />
+        <span v-if="fileName">{{ fileName }}</span>
+      </div>
       <div
         id="editor"
         class="board-write-editor"
@@ -38,12 +44,20 @@
       ></div>
       <div class="board-write-buttons">
         <div>
-          <button type="button" class="btn btn-outline-secondary user-button">
+          <button
+            type="button"
+            class="btn btn-outline-secondary user-button"
+            @click="clickReturnList"
+          >
             목록으로
           </button>
         </div>
         <div>
-          <button type="button" class="btn btn-outline-secondary user-button">
+          <button
+            type="button"
+            class="btn btn-outline-secondary user-button"
+            @click="clickPostArticle"
+          >
             게시하기
           </button>
         </div>
@@ -135,7 +149,13 @@ import {
   getListGugun,
   getListContentType,
 } from "@/api/attraction";
-
+import { addAttractionReview } from "@/api/attraction-board/attraction-board.js";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
 const showModal = ref(false);
 const selectAttractionItem = ref();
 const selectAttractTitle = ref();
@@ -144,12 +164,20 @@ const keyword = ref();
 const sidos = ref([]);
 const guguns = ref([]);
 const contentTypes = ref([]);
+const article = ref({
+  title: "",
+  content: "",
+  memberId: userInfo._value.id,
+  attractionId: "",
+  imageUrl: "",
+});
 const inputInformation = ref({
   sidoCode: "",
   gugunCode: "",
   contentTypeId: "",
   keyword: "",
 });
+const fileName = ref("");
 
 const openModal = () => {
   showModal.value = true;
@@ -161,6 +189,7 @@ const closeModal = () => {
 
 const selectAttraction = (attractionItem) => {
   selectAttractionItem.value = attractionItem;
+  article.value.attractionId = attractionItem.attractionInfo.contentId;
   selectAttractTitle.value = attractionItem.attractionInfo.title;
   closeModal();
 };
@@ -313,6 +342,51 @@ async function searchAttractions() {
 }
 callSidos(1);
 callContentTypes();
+
+const clickReturnList = () => {
+  router.push({ name: "reviewBoardList" });
+};
+
+const clickPostArticle = () => {
+  const editor = document.getElementById("editor");
+  console.log(editor);
+  article.value.content = editor.innerHTML;
+  addAttractionReview(
+    article.value,
+    (response) => {
+      router.push({ name: "reviewBoardList" });
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    fileName.value = file.name;
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/image/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("File uploaded successfully:", response.data);
+      article.value.imageUrl = response.data.url;
+      console.log(response.data.url);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  }
+};
 </script>
 
 <style scoped>
@@ -358,6 +432,12 @@ img.resizable {
 }
 
 .select-attraction-btn {
+}
+
+.attach-represant-img-box {
+  display: flex;
+  margin: 10px 0;
+  width: 1200px;
 }
 
 .board-write-editor {

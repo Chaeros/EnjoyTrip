@@ -1,5 +1,8 @@
 package com.ssafy.enjoytrip.domain.image.controller;
 
+import com.ssafy.enjoytrip.domain.attractionboardimage.dto.request.AttractionBoardImageAddRequestDto;
+import com.ssafy.enjoytrip.domain.attractionboardimage.service.AttractionBoardImageService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -21,8 +24,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/image")
+@RequiredArgsConstructor
 @Slf4j
 public class ImageController {
+
+    private final AttractionBoardImageService attractionBoardImageService;
+
     @Value("${upload.path}")
     private String uploadPath;
 
@@ -60,6 +67,12 @@ public class ImageController {
 
             // 파일 저장
             Files.write(path, file.getBytes());
+//            attractionBoardImageService.addAttractionBoardImage(
+//                    AttractionBoardImageAddRequestDto.builder()
+//                            .image(String.valueOf(path))
+//                            .attractionBoardId(attractionBoardId)
+//                            .build()
+//            );
 
             // 파일 URL 반환
             String fileUrl = "/image/uploads/" + filename;

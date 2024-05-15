@@ -2,9 +2,9 @@
   <div class="header-wrap">
     <div class="header">
       <div class="left-side-header">
-        <h3 class="header-logo">ChanGon</h3>
-        <a>관광지찾기</a>
-        <a>커뮤니티</a>
+        <h3 class="header-logo" @click="clickTitle">ChanGon</h3>
+        <a @click="clickAttraction">관광지찾기</a>
+        <a @click="clickCummunity">커뮤니티</a>
         <a>공지사항</a>
       </div>
       <div class="right-side-header">
@@ -24,14 +24,55 @@
             @mouseup="showPassword(false)"
           />
         </div>
-        <a class="login-btn">로그인</a>
-        <a class="sign-up-btn">회원가입</a>
+        <template v-if="isLogin === false">
+          <a class="login-btn" @click="clickLogin">로그인</a>
+          <a class="sign-up-btn" @click="clickSignUp">회원가입</a>
+        </template>
+        <template v-else>
+          <a @click="clickLogOut">로그아웃</a>
+          <a @click="clickLogOut">내 정보</a>
+          <p>{{ displayMember.id }}</p>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { useRoute, useRouter } from "vue-router";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
+import { ref } from "vue";
+const memberStore = useMemberStore();
+const { userInfo, isLogin } = storeToRefs(memberStore);
+const router = useRouter();
+console.log(userInfo);
+const clickLogin = () => {
+  router.push({ name: "login" });
+};
+const clickSignUp = () => {
+  router.push({ name: "normalSingUp" });
+};
+const clickTitle = () => {
+  router.push({ name: "home" });
+};
+const clickAttraction = () => {
+  router.push({ name: "searchattraction" });
+};
+const clickCummunity = () => {
+  router.push({ name: "reviewBoardList" });
+};
+const clickLogOut = () => {
+  console.log("dd");
+  console.log(userInfo);
+  userInfo.value = null;
+  isLogin.value = false;
+};
+const displayMember = ref({
+  id: "",
+  img: "",
+});
+</script>
 
 <style scoped>
 .header-wrap {

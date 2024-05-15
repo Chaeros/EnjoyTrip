@@ -87,8 +87,18 @@
             비밀번호가 일치하지 않습니다
           </p>
           <p v-if="signUpInfo.password === signUpInfo.passwordConfirm">
-            &nbsp;
+            비밀번호가 일치합니다!
           </p>
+        </div>
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="exampleInputNickname"
+            aria-describedby="emailHelp"
+            placeholder="닉네임"
+            v-model="signUpInfo.nickname"
+          />
         </div>
         <button
           type="submit"
@@ -118,15 +128,39 @@ import {
   isPasswordLengthCorrect,
   isPasswordStrengthStrong,
 } from "@/util/password-validator";
-import { normalSignUp } from "@/api/member.js";
-
+import { normalSignUp } from "@/api/member/member.js";
+import { useRoute, useRouter } from "vue-router";
+const router = useRouter();
 const signUpInfo = ref({
   email: "",
   password: "",
   passwordConfirm: "",
+  nickname: "",
 });
 
-const clickNormalSignUp = () => {};
+const isPasswordLengthCorrectValue = ref(false);
+const isPasswordStrengthCorrectValue = ref(false);
+
+const clickNormalSignUp = () => {
+  if (isPasswordLengthCorrectValue === false) {
+    alert("비밀번호 길이가 짧아요!!");
+    return;
+  }
+  if (isPasswordStrengthCorrectValue === false) {
+    alert("비밀번호 강도가 약해요!!");
+    return;
+  }
+  normalSignUp(
+    signUpInfo.value,
+    (response) => {
+      alert("회원가입 성공");
+      router.push({ name: "login" });
+    },
+    (error) => {
+      alert("회원가입 실패");
+    }
+  );
+};
 
 const handlePasswordInput = () => {
   // 비밀번호 입력 시 호출되는 핸들러
@@ -159,9 +193,11 @@ const checkPasswordLength = () => {
   if (isPasswordLengthCorrect(signUpInfo.value.password) === false) {
     // passwordLengthMessage.style.display = "block";
     passwordLengthMessage.style.color = "red"; // 8글자 미만일 때 빨간색
+    isPasswordLengthCorrectValue.value = true;
   } else {
     // passwordLengthMessage.style.display = "none";
     passwordLengthMessage.style.color = "green"; // 8글자 미만일 때 빨간색
+    isPasswordLengthCorrectValue.value = false;
   }
 };
 
@@ -171,8 +207,10 @@ const checkPasswordStrength = () => {
   );
   if (isPasswordStrengthStrong(signUpInfo.value.password) === false) {
     passwordStrengthMessage.style.color = "red";
+    isPasswordStrengthCorrectValue.value = false;
   } else {
     passwordStrengthMessage.style.color = "green";
+    isPasswordStrengthCorrectValue.value = true;
   }
 };
 </script>

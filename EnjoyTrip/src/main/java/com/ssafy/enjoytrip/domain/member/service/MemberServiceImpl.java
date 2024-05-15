@@ -4,11 +4,14 @@ import com.ssafy.enjoytrip.domain.member.Member;
 import com.ssafy.enjoytrip.domain.member.Role;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberSignUpDto;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberUpdateDto;
+import com.ssafy.enjoytrip.domain.member.dto.response.MemberResponseDto;
 import com.ssafy.enjoytrip.domain.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -47,5 +50,15 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public void updateMember(MemberUpdateDto memberUpdateDto) throws Exception {
         memberMapper.updateMember(memberUpdateDto);
+    }
+
+    @Override
+    public Optional<MemberResponseDto> getMemberByEmail(String email) throws Exception {
+        return Optional.ofNullable(memberMapper.findMemberByEmail(email).transferToMemberResponseDto());
+    }
+
+    @Override
+    public Optional<MemberResponseDto> getMemberById(long id) throws Exception {
+        return Optional.ofNullable(memberMapper.findMemberById(id).transferToMemberResponseDto());
     }
 }

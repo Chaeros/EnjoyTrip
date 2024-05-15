@@ -5,6 +5,7 @@ import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardMod
 import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.service.AttractionBoardService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +15,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/attractionboard")
 @RequiredArgsConstructor
+@Slf4j
 public class AttractionBoardController {
     private final AttractionBoardService attractionBoardService;
 
     @PostMapping
     public ResponseEntity<Void> registAttractionBoard(@RequestBody AttractionBoardAddRequestDto attractionBoardAddRequestDto){
+        log.info("attractionBoardAddRequestDto: {}", attractionBoardAddRequestDto);
         if ( attractionBoardService.addAttractionBoard(attractionBoardAddRequestDto) == 0 ){
             return ResponseEntity.badRequest().build();
         }

@@ -55,20 +55,20 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화 -> cookie를 사용하지 않으면 꺼도 된다. (cookie를 사용할 경우 httpOnly(XSS 방어), sameSite(CSRF 방어)로 방어해야 한다.)
-//                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-//                    @Override
-//                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-//                        CorsConfiguration config = new CorsConfiguration();
-//                        config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-//                        config.setAllowedMethods(Collections.singletonList("*"));
-//                        config.setAllowCredentials(true);
-//                        config.setAllowedHeaders(Collections.singletonList("*"));
-//                        config.setExposedHeaders(Collections.singletonList("*"));
-//                        config.setExposedHeaders(Arrays.asList("Authorization", "Authorization-refresh"));
-//                        config.setMaxAge(3600L); //1시간
-//                        return config;
-//                    }
-//                }))
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration config = new CorsConfiguration();
+                        config.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                        config.setAllowedMethods(Collections.singletonList("*"));
+                        config.setAllowCredentials(true);
+                        config.setAllowedHeaders(Collections.singletonList("*"));
+                        config.setExposedHeaders(Collections.singletonList("*"));
+                        config.setExposedHeaders(Arrays.asList("Authorization", "Authorization-refresh"));
+                        config.setMaxAge(3600L); //1시간
+                        return config;
+                    }
+                }))
                 .httpBasic(AbstractHttpConfigurer::disable) // 기본 인증 로그인 비활성화
                 .formLogin(AbstractHttpConfigurer::disable) // 기본 login form 비활성화
                 .logout(AbstractHttpConfigurer::disable) // 기본 logout 비활성화

@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.domain.member;
 
+import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
+import com.ssafy.enjoytrip.domain.member.dto.response.MemberResponseDto;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -51,5 +53,19 @@ public class Member {
 
     public void updateRefreshToken(String updateRefreshToken) {
         this.refreshToken = updateRefreshToken;
+    }
+
+    public MemberResponseDto transferToMemberResponseDto() {
+        return MemberResponseDto.builder()
+                .id(this.id)
+                .email(this.email)
+                .nickname(this.nickname)
+                .image(this.image)
+                .age(this.age)
+                .city(this.city)
+                .role(this.role)
+                .socialType(this.socialType)
+                .refreshToken(this.refreshToken)
+                .build();
     }
 }

@@ -1,7 +1,11 @@
 import { localAxios } from "@/util/http-commons";
 const kakaoRestAPIKey = import.meta.env.VITE_KAKAO_REST_API_KEY;
 const local = localAxios();
-local.defaults.withCredentials = true;
+local.defaults.withCredentials = true; // 사용자 설정 쿠키를 넣을 때 사용해야함.
+
+const headers2 = {
+  "Content-Type": "application/json",
+};
 
 function addUserInformation(param, success, fail) {
   console.log(param);
@@ -51,6 +55,20 @@ function normalSignUp(memberInfo, success, fail) {
   local.post(`/sign-up`, memberInfo).then(success).catch(fail);
 }
 
+function getUserInfomation(email, success, fail) {
+  local
+    .get(`/member/` + email)
+    .then(success)
+    .catch(fail);
+}
+
+function getUserInfomationById(id, success, fail) {
+  local
+    .get(`/member/id/` + id)
+    .then(success)
+    .catch(fail);
+}
+
 export {
   addUserInformation,
   kakaoLogin,
@@ -58,4 +76,6 @@ export {
   updateUserInfomation,
   normalLogin,
   normalSignUp,
+  getUserInfomation,
+  getUserInfomationById,
 };

@@ -4,9 +4,9 @@
 <mapper namespace="com.ssafy.enjoytrip.domain.attractionboard.mapper.AttractionBoardMapper">
     <insert id="insertAttractionBoard" parameterType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
         insert into attraction_board (
-            title, content, member_id, attraction_id
+            title, content, member_id, attraction_id, image_url
         ) values (
-             #{title}, #{content}, #{member_id}, #{attraction_id}
+             #{title}, #{content}, #{memberId}, #{attractionId}, #{imageUrl}
         )
     </insert>
 
@@ -24,24 +24,24 @@
     </delete>
 
     <select id="findAttractionBoards" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
-        select id, title, content, hit, member_id, attraction_id
+        select id, title, content, hit, member_id, attraction_id, image_url, regdate
         from attraction_board
     </select>
 
     <select id="findAttractionBoard" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
-        select id, title, content, hit, member_id, attraction_id
+        select id, title, content, hit, member_id, attraction_id, image_url, regdate
         from attraction_board
         where id = #{id}
     </select>
 
     <select id="findAttractionBoardsByTitle" parameterType="string" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
-        select id, title, content, hit, member_id, attraction_id
+        select id, title, content, hit, member_id, attraction_id, image_url, regdate
         from attraction_board
         where title LIKE CONCAT('%', #{title}, '%')
     </select>
 
     <select id="findAttractionBoardsByAttractionId" parameterType="int" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
-        select id, title, content, hit, member_id, attraction_id
+        select id, title, content, hit, member_id, attraction_id, image_url, regdate
         from attraction_board
         where attraction_id = #{attractionId}
     </select>

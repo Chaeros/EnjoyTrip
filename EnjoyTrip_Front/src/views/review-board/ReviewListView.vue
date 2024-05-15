@@ -1,7 +1,7 @@
 <template>
   <Header></Header>
   <div class="board-list-page">
-    <img class="represent-img" src="@/img/Gyeongbokgung.jpg" />
+    <!-- <img class="represent-img" src="@/img/Gyeongbokgung.jpg" /> -->
     <div class="board-list-box">
       <div class="board-list-box-top">
         <div class="board-list-description-and-write-btn">
@@ -9,12 +9,23 @@
           <button
             type="button"
             class="btn btn-outline-secondary select-attraction-btn"
+            @click="clickBoardWriteBtn"
           >
             글 쓰기
           </button>
         </div>
         <div class="review-card-list">
-          <div class="card-group">
+          <template
+            v-for="attractionBoardReview in attractionBoardReviews"
+            :key="attractionBoardReview.id"
+          >
+            <AttractionBoardArticleCard
+              class="article-card"
+              :attractionBoardReview="attractionBoardReview"
+              @click="clickAttractionBoardArticleCard(attractionBoardReview)"
+            />
+          </template>
+          <!-- <div class="card-group">
             <div class="card">
               <div class="card-body">
                 <h5 class="card-title"><b>덕수궁</b></h5>
@@ -30,7 +41,7 @@
                 </p>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -39,6 +50,45 @@
 
 <script setup>
 import Header from "@/components/Header.vue";
+import AttractionBoardArticleCard from "@/components/item/card/AttractionBoardArticleCard.vue";
+import { useRoute, useRouter } from "vue-router";
+import { ref } from "vue";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
+import { getAttractionReviewList } from "@/api/attraction-board/attraction-board";
+import { getUserInfomationById } from "@/api/member/member.js";
+const router = useRouter();
+const memberStore = useMemberStore();
+const { isLogin } = storeToRefs(memberStore);
+const clickBoardWriteBtn = () => {
+  console.log(isLogin);
+  if (isLogin.value === true) {
+    router.push({ name: "reviewBoardWrite" });
+  } else {
+    alert("로그인 후에만 글 작성이 가능합니다!");
+    router.push({ name: "login" });
+  }
+};
+const attractionBoardReviews = ref([]);
+getAttractionReviewList(
+  (response) => {
+    console.log(response);
+    console.log(response.data);
+    attractionBoardReviews.value = response.data;
+  },
+  (error) => {
+    console.log(error);
+  }
+);
+
+const clickAttractionBoardArticleCard = (attractionBoardReview) => {
+  console.log(attractionBoardReview);
+  console.log(attractionBoardReview.id);
+  router.push({
+    name: "reviewBoardDetail",
+    params: { attractionBoardReviewId: attractionBoardReview.id },
+  });
+};
 </script>
 
 <style scoped>
@@ -88,7 +138,7 @@ import Header from "@/components/Header.vue";
 .card-group {
   position: static;
 }
-.card {
+.article-card {
   width: 400px;
   margin: 10px;
   border-radius: 10px;

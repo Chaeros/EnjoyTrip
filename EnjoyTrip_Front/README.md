@@ -29,12 +29,19 @@ npm run build
 ```
 
 ### router install
+
 ```sh
 npm install vue-router@4
 ```
 
 ### vuex install 전역 모달 사용을 위한 npm 설치
 
-````sh
+```sh
 npm install vuex --save
-````
+```
+
+### 전역 상태 관리를 위한 pinia 라이브러리
+
+```sh
+npm install pinia
+```
