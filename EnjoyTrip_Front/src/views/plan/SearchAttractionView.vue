@@ -32,9 +32,10 @@ function setActiveTab(tab) {
   }
 }
 
-const activeDate = ref(1);
+const activeDate = ref(0);
 function setActiveDate(date) {
   activeDate.value = date;
+  console.dir(activeDate.value);
 }
 
 function toggleModal() {
@@ -324,6 +325,7 @@ const onDrop = (event, date) => {
 
       <DateContainer
         v-for="number in totalTripDates"
+        v-show="activeDate === 0 || activeDate === number"
         :selected-attractions-by-date="selectedAttractionsByDate"
         :date="number"
         @drop="onDrop($event, number)"
@@ -334,6 +336,7 @@ const onDrop = (event, date) => {
       <div class="right-content">
         <div class="right-content-plan"></div>
         <KakaoMap
+          :key="currentView"
           ref="kakaoMapRef"
           class="kakao-map-container"
           :selectedAttractions="selectedAttractions"
