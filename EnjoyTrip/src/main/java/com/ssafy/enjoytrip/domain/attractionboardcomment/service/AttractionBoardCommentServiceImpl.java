@@ -44,4 +44,9 @@ public class AttractionBoardCommentServiceImpl implements AttractionBoardComment
                         .map(AttractionBoardComment::transferToAttractionBoardCommentResponseDto)
                         .collect(Collectors.toList()));
     }
+
+    @Override
+    public int searchAttractionBoardCommentCount(int attractionBoardId) {
+        return attractionBoardCommentMapper.findCommentCount(attractionBoardId);
+    }
 }

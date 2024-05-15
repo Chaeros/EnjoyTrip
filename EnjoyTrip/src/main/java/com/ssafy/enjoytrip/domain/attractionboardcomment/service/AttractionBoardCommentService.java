@@ -12,5 +12,6 @@ public interface AttractionBoardCommentService {
     int modifyAttractionBoardComment(AttractionBoardCommentModifyRequestDto attractionBoardCommentModifyRequestDto);
     int removeAttractionBoardComment(int id);
     Optional<List<AttractionBoardCommentResponseDto>> searchAttractionBoardComments(int attractionBoardId);
-//    Optional<List<AttractionBoardCommentResponseDto>> searchAttractionBoardCommentsByMemberId();
+    int searchAttractionBoardCommentCount(int attractionBoardId);
+    //    Optional<List<AttractionBoardCommentResponseDto>> searchAttractionBoardCommentsByMemberId();
 }

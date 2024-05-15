@@ -11,4 +11,5 @@ public interface AttractionBoardCommentMapper {
     int updateAttractionBoardComment(AttractionBoardComment attractionBoardComment);
     int deleteAttractionBoardComment(int id);
     List<AttractionBoardComment> findAttractionBoardComments(int attractionBoardId);
+    int findCommentCount(int attractionBoardId);
 }

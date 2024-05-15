@@ -27,4 +27,10 @@
           from attraction_board_comments
          where attraction_board_id = #{attractionBoardId}
     </select>
+
+    <select id="findCommentCount" parameterType="int" resultType="int">
+        select count(*)
+          from attraction_board_comments
+         where attraction_board_id = #{attractionBoardId};
+    </select>
 </mapper>

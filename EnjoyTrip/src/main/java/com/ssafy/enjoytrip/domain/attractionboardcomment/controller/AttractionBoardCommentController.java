@@ -51,4 +51,9 @@ public class AttractionBoardCommentController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
+
+    @GetMapping("/count/{attractionBoardId}")
+    public ResponseEntity<Integer> searchAttractionBoardCommentCount(@PathVariable("attractionBoardId") int attractionBoardId){
+        return ResponseEntity.ok(attractionBoardCommentService.searchAttractionBoardCommentCount(attractionBoardId));
+    }
 }
