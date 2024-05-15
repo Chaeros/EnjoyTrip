@@ -8,6 +8,8 @@ import AccomodationSearch from '@/components/AccomodationSearch.vue';
 import DateCheck from '@/components/DateCheck.vue';
 import TotalSelectedAttractions from '@/components/TotalSelectedAttractions.vue';
 import DateContainer from '@/components/DateContainer.vue';
+import AttractionAddModal from '@/components/AttractionAddModal.vue';
+import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
 
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -156,6 +158,18 @@ const onDrop = (event, date) => {
   console.dir(date);
   selectedAttractionsByDate.value[date - 1].push(attraction);
 };
+
+const attractionAddModalOpen = ref(false);
+const attractionAddModalToggle = () => {
+  attractionAddModalOpen.value = !attractionAddModalOpen.value;
+  console.dir(attractionAddModalOpen.value);
+};
+
+const showPlanDetailModalOpen = ref(false);
+const showPlanDetailModalToggle = () => {
+  showPlanDetailModalOpen.value = !showPlanDetailModalOpen.value;
+  console.dir(showPlanDetailModalOpen.value);
+};
 </script>
 
 <template>
@@ -269,6 +283,14 @@ const onDrop = (event, date) => {
     </div>
 
     <div class="all-content" v-if="currentView === 'plan'">
+      <AttractionAddModal
+        @attraction-add-modal-toggle="attractionAddModalToggle"
+        v-show="attractionAddModalOpen"
+      />
+      <ShowPlanDetailModal
+        @show-plan-detail-modal-toggle="showPlanDetailModalToggle"
+        v-show="showPlanDetailModalOpen"
+      />
       <div class="left-tab-plan">
         <header id="header">
           <div class="logo-nav">
@@ -306,9 +328,9 @@ const onDrop = (event, date) => {
                 --bs-btn-padding-x: 0.25rem;
                 --bs-btn-font-size: 1.1rem;
               "
-              @click="createPlan"
+              @click="showPlanDetailModalToggle"
             >
-              수정하기
+              저장하기
             </button>
           </div>
         </header>
@@ -316,6 +338,7 @@ const onDrop = (event, date) => {
         <div class="place-save">
           <div><h3>장소 보관함</h3></div>
           <TotalSelectedAttractions
+            @attraction-add-modal-toggle="attractionAddModalToggle"
             @dragged="handleDragged"
             :selected-attractions="selectedAttractions"
             :selected-accomodations="selectedAccomodations"

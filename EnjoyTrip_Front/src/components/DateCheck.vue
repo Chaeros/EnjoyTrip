@@ -97,4 +97,8 @@ const updateDates = () => {
   justify-content: center;
   align-items: center;
 }
+
+.modal-dialog {
+  top: 20%;
+}
 </style>
