@@ -26,7 +26,7 @@
               </template>
               <div>{{ writerInfo.nickname }}</div>
             </div>
-            <div class="regdate">2024년 5월 13일</div>
+            <div class="regdate">{{ article.regdate }}</div>
           </div>
           <div class="post-detail-info-right">
             <button>팔로우</button>
@@ -34,6 +34,12 @@
         </div>
       </div>
     </div>
+    <div
+      id="article-content"
+      class="article-content"
+      style="border: 1px solid black; padding: 10px"
+      v-html="article.content"
+    ></div>
     <CommentView class="comment"></CommentView>
   </div>
   <Footer></Footer>
@@ -106,6 +112,13 @@ const getWriterInfo = () => {
 .board-post-detail-info-left {
   width: 100%;
   justify-content: space-between;
+}
+.article-content {
+  width: 1000px;
+  margin: 0 auto;
+}
+.article-content img {
+  justify-content: center;
 }
 .comment {
   width: 1000px;
