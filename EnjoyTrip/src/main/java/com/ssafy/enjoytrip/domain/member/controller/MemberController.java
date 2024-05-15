@@ -46,4 +46,12 @@ public class MemberController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
+
+    @GetMapping("/member/id/{id}")
+    public ResponseEntity<MemberResponseDto> getMemberById(@PathVariable("id") long id) throws Exception {
+        log.info("[get member by id] memberId : {}", id);
+        return memberService.getMemberById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+    }
 }

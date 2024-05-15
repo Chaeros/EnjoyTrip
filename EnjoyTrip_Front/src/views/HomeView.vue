@@ -32,11 +32,6 @@ import Footer from "@/components/Footer.vue";
               >ReviewBoardList</router-link
             >
           </li>
-          <li>
-            <router-link :to="{ name: 'reviewBoardDetail' }"
-              >ReviewBoardDetail</router-link
-            >
-          </li>
         </ul>
       </nav>
     </main>

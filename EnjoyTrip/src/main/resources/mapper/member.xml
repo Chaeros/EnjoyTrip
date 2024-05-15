@@ -35,6 +35,12 @@
 		where social_type = #{socialType} and social_id = #{socialId}
 	</select>
 
+	<select id="findMemberById" parameterType="long" resultType="com.ssafy.enjoytrip.domain.member.Member">
+		select id, email, password, nickname, role
+		from members
+		where id = #{id}
+	</select>
+
 	<update id="saveAndFlush" parameterType="com.ssafy.enjoytrip.domain.member.Member">
 		update members
 		   set refresh_token = #{refreshToken}

@@ -56,7 +56,17 @@ function normalSignUp(memberInfo, success, fail) {
 }
 
 function getUserInfomation(email, success, fail) {
-  local.get(`/member/`+email).then(success).catch(fail);
+  local
+    .get(`/member/` + email)
+    .then(success)
+    .catch(fail);
+}
+
+function getUserInfomationById(id, success, fail) {
+  local
+    .get(`/member/id/` + id)
+    .then(success)
+    .catch(fail);
 }
 
 export {
@@ -66,5 +76,6 @@ export {
   updateUserInfomation,
   normalLogin,
   normalSignUp,
-  getUserInfomation
+  getUserInfomation,
+  getUserInfomationById,
 };

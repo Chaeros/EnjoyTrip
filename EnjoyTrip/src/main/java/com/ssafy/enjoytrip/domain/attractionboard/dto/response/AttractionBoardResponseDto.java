@@ -1,10 +1,11 @@
 package com.ssafy.enjoytrip.domain.attractionboard.dto.response;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.ToString;
 
 @Builder
-@ToString
+@Data
 public class AttractionBoardResponseDto {
     private long id;
     private String title;
@@ -13,4 +14,5 @@ public class AttractionBoardResponseDto {
     private long memberId;
     private int attractionId;
     private String imageUrl;
+    private String regdate;
 }

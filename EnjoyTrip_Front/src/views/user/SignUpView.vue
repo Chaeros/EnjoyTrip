@@ -128,7 +128,7 @@ import {
   isPasswordLengthCorrect,
   isPasswordStrengthStrong,
 } from "@/util/password-validator";
-import { normalSignUp } from "@/api/member.js";
+import { normalSignUp } from "@/api/member/member.js";
 import { useRoute, useRouter } from "vue-router";
 const router = useRouter();
 const signUpInfo = ref({

@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { updateUserInfomation } from "@/api/member.js";
+import { updateUserInfomation } from "@/api/member/member.js";
 
 const router = useRouter();
 const route = useRoute();

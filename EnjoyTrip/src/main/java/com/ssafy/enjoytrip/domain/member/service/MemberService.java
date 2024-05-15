@@ -12,4 +12,6 @@ public interface MemberService {
     public void updateMember(MemberUpdateDto memberUpdateDto) throws Exception;
 
     public Optional<MemberResponseDto> getMemberByEmail(String email) throws Exception;
+
+    public Optional<MemberResponseDto> getMemberById(long id) throws Exception;
 }

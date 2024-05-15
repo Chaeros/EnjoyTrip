@@ -56,4 +56,9 @@ public class MemberServiceImpl implements MemberService{
     public Optional<MemberResponseDto> getMemberByEmail(String email) throws Exception {
         return Optional.ofNullable(memberMapper.findMemberByEmail(email).transferToMemberResponseDto());
     }
+
+    @Override
+    public Optional<MemberResponseDto> getMemberById(long id) throws Exception {
+        return Optional.ofNullable(memberMapper.findMemberById(id).transferToMemberResponseDto());
+    }
 }

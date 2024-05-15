@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { normalLogin } from "@/api/member.js";
+import { normalLogin } from "@/api/member/member.js";
 import { getCookie, setCookie } from "@/util/cookie";
 import { useRouter } from "vue-router";
 import { useMemberStore } from "@/store/member";
