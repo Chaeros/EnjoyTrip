@@ -14,6 +14,7 @@ public class AttractionBoardComment {
     private String content;
     private int attractionBoardId;
     private int memberId;
+    private String regdate;
 
     public AttractionBoardCommentResponseDto transferToAttractionBoardCommentResponseDto() {
         return AttractionBoardCommentResponseDto.builder()
@@ -22,6 +23,7 @@ public class AttractionBoardComment {
                 .memberId(this.memberId)
                 .attractionBoardId(this.attractionBoardId)
                 .memberId(this.memberId)
+                .regdate(this.regdate)
                 .build();
     }
 }

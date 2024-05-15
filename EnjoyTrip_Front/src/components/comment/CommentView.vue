@@ -11,6 +11,7 @@
             class="comment-input-text"
             type="text"
             v-model="commentDto.content"
+            @keyup.enter="clickAddCommentBtn"
           />
           <button @click="clickAddCommentBtn">댓글 작성</button>
         </div>
@@ -40,20 +41,23 @@ const { userInfo, isLogin } = storeToRefs(memberStore);
 const { attractionBoardReviewId } = defineProps({
   attractionBoardReviewId: Number,
 });
-
-console.log(userInfo.value);
+const comments = ref([]);
 const commentDto = ref({
   content: "",
   attractionBoardId: attractionBoardReviewId,
-  memberId: userInfo.value.id,
+  memberId: "",
 });
+
+console.log(userInfo);
+if (userInfo.value !== null) {
+  commentDto.value.memberId = userInfo.value.id;
+}
 
 const bringCommentList = () => {
   getCommentList(
     attractionBoardReviewId,
     (response) => {
-      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log(response.data);
+      comments.value = response.data;
     },
     (error) => {
       console.log(error);
@@ -68,33 +72,14 @@ const clickAddCommentBtn = () => {
     commentDto.value,
     (response) => {
       console.log(response);
+      bringCommentList();
+      commentDto.value.content = "";
     },
     (error) => {
       console.log(error);
     }
   );
 };
-
-const comments = ref([
-  {
-    id: "1",
-    content: "dafasdfasdf",
-    attraction_board_id: "99",
-    member_id: "12",
-  },
-  {
-    id: "1",
-    content: "dafasdfasdf",
-    attraction_board_id: "99",
-    member_id: "12",
-  },
-  {
-    id: "1",
-    content: "dafasdfasdf",
-    attraction_board_id: "99",
-    member_id: "12",
-  },
-]);
 </script>
 
 <style scoped>
