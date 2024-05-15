@@ -7,12 +7,12 @@
           <div />
         </div>
         <div class="comment-input">
-          <input class="comment-input-text" type="text" />
-          <button>댓글 작성</button>
-        </div>
-        <div class="comment-btn-box">
-          <div />
-          <button>댓글 작성</button>
+          <input
+            class="comment-input-text"
+            type="text"
+            v-model="commentDto.content"
+          />
+          <button @click="clickAddCommentBtn">댓글 작성</button>
         </div>
       </div>
       <div class="comment-list">
@@ -27,6 +27,54 @@
 <script setup>
 import CommentItem from "@/components/item/comment/CommentItem.vue";
 import { ref } from "vue";
+import {
+  addComment,
+  getCommentList,
+  removeComment,
+  modifyComment,
+} from "@/api/attraction-board-comment/attraction-board-comment.js";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
+const memberStore = useMemberStore();
+const { userInfo, isLogin } = storeToRefs(memberStore);
+const { attractionBoardReviewId } = defineProps({
+  attractionBoardReviewId: Number,
+});
+
+console.log(userInfo.value);
+const commentDto = ref({
+  content: "",
+  attractionBoardId: attractionBoardReviewId,
+  memberId: userInfo.value.id,
+});
+
+const bringCommentList = () => {
+  getCommentList(
+    attractionBoardReviewId,
+    (response) => {
+      console.log("@@@@@@@@@@@@@@@@@@@@@@@@@");
+      console.log(response.data);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+bringCommentList();
+
+const clickAddCommentBtn = () => {
+  addComment(
+    commentDto.value,
+    (response) => {
+      console.log(response);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
 const comments = ref([
   {
     id: "1",

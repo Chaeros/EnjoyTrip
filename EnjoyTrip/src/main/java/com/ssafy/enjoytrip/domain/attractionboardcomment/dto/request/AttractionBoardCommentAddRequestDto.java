@@ -1,7 +1,10 @@
 package com.ssafy.enjoytrip.domain.attractionboardcomment.dto.request;
 
 import com.ssafy.enjoytrip.domain.attractionboardcomment.AttractionBoardComment;
+import lombok.Builder;
+import lombok.Data;
 
+@Data
 public class AttractionBoardCommentAddRequestDto {
     private String content;
     private int attractionBoardId;

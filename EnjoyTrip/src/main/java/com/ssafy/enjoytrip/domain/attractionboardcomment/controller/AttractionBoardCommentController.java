@@ -5,6 +5,7 @@ import com.ssafy.enjoytrip.domain.attractionboardcomment.dto.request.AttractionB
 import com.ssafy.enjoytrip.domain.attractionboardcomment.dto.response.AttractionBoardCommentResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboardcomment.service.AttractionBoardCommentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/attractionboardcommnet")
 public class AttractionBoardCommentController {
 
@@ -20,6 +22,7 @@ public class AttractionBoardCommentController {
 
     @PostMapping
     public ResponseEntity<Void> addAttractionBoardComment(@RequestBody AttractionBoardCommentAddRequestDto attractionBoardCommentAddRequestDto){
+        log.info("[comment add] attractionBoardCommentAddRequestDto : {}",attractionBoardCommentAddRequestDto);
         if ( attractionBoardCommentService.addAttractionBoardComment(attractionBoardCommentAddRequestDto) == 0 ){
             return ResponseEntity.badRequest().build();
         }

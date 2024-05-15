@@ -40,7 +40,10 @@
       style="border: 1px solid black; padding: 10px"
       v-html="article.content"
     ></div>
-    <CommentView class="comment"></CommentView>
+    <CommentView
+      class="comment"
+      :attractionBoardReviewId="attractionBoardReviewId"
+    ></CommentView>
   </div>
   <Footer></Footer>
 </template>
