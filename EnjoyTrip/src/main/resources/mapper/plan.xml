@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.domain.plan.mapper.PlanMapper">
+
+    <insert id="insertTripPlan" parameterType="TripPlan">
+        insert into trip_plans (title,content,departure_date,arrival_date,image,member_id)
+        values (#{title}, #{content}, #{departureDate}, #{arrivalDate}, #{image}, #{memberId})
+    </insert>
+
+    <insert id="insertMakeTripPlan" parameterType="MakeTripPlan">
+        insert into make_trip_plans (sequence,departure_time,arrival_time,memo,move_time,
+                                     trip_date,member_id,trip_plan_id,attraction_id)
+        values (#{sequence}, #{departureTime}, #{arrivalTime}, #{memo}, #{moveTime},
+                #{tripDate},#{memberId},#{tripPlanId},#{attractionId})
+    </insert>
+
+    <select id="selectTripPlanMaxId" resultType="int">
+        select max(id)
+        from trip_plans;
+    </select>
+
+    <update id="updateTripPlan" parameterType="TripPlan">
+        update trip_plans
+        set title = #{title},
+            content = #{content},
+            departure_date = #{departureDate},
+            arrival_date = #{arrivalDate},
+            image = #{image}
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMakeTripPlan" parameterType="int">
+        delete from make_trip_plans
+        where trip_plan_id = #{tripPlanId}
+    </delete>
+
+    <delete id="deleteTripPlan" parameterType="int">
+        delete from trip_plans
+        where id = #{id}
+    </delete>
+
+    <select id="selectMyTripPlanIds" parameterType="int" resultType="int">
+        select id
+        from trip_plans
+        where member_id = #{memberId}
+    </select>
+
+    <select id="selectTripPlanById" parameterType="int" resultType="TripPlan">
+        select *
+        from trip_plans
+        where id = #{id}
+    </select>
+
+    <select id="selectMakeTripPlansByTripPlanId" parameterType="int" resultType="MakeTripPlan">
+        select *
+        from make_trip_plans
+        where trip_plan_id = #{tripPlanId}
+    </select>
+
+
+</mapper>

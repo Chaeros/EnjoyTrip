@@ -11,14 +11,10 @@ const { selectedAttractions, selectedAccomodations } = defineProps({
   selectedAccomodations: Object,
 });
 
-const emit = defineEmits(['dragged']);
-
-// function startDrag(event, item, type) {
-//   event.dataTransfer.setData(
-//     'application/json',
-//     JSON.stringify({ item, type })
-//   );
-// }
+const emit = defineEmits(['dragged', 'attractionAddModalToggle']);
+const attractionAddModalToggle = () => {
+  emit('attractionAddModalToggle');
+};
 
 const startDrag = (event, item) => {
   event.dataTransfer.dropEffect = 'move';
@@ -30,7 +26,11 @@ const startDrag = (event, item) => {
 
 <template>
   <div class="container">
-    <h5>관광지</h5>
+    <div class="title-button">
+      <h5>관광지</h5>
+      <button type="button" @click="attractionAddModalToggle">추가</button>
+    </div>
+
     <div
       class="select-attraction"
       v-for="(attraction, index) in selectedAttractions"
@@ -100,5 +100,10 @@ const startDrag = (event, item) => {
 
 .select-attraction-content {
   font-size: 10px;
+}
+
+.title-button {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
