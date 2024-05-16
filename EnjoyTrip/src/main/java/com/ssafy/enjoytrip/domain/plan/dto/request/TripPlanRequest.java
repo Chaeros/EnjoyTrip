@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.domain.plan.dto.request;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ssafy.enjoytrip.domain.plan.MakeTripPlan;
@@ -14,4 +15,8 @@ import lombok.ToString;
 public class TripPlanRequest {
     private TripPlan tripPlan;
     private List<MakeTripPlan> makeTripPlans;
+
+    public TripPlanRequest() {
+        this.makeTripPlans = new ArrayList<>(); // 여기서 초기화
+    }
 }

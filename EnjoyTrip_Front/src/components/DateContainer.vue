@@ -4,8 +4,6 @@ const { selectedAttractionsByDate, date } = defineProps({
   selectedAttractionsByDate: Array,
   date: Number,
 });
-console.dir('date는');
-console.dir(date);
 </script>
 
 <template>

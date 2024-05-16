@@ -12,8 +12,9 @@ import AttractionAddModal from '@/components/AttractionAddModal.vue';
 import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
 
 import { useRouter } from 'vue-router';
-const router = useRouter();
+import { registTripPlan } from '@/api/plan/plan';
 
+const router = useRouter();
 const currentView = ref('search');
 
 const departureDate = ref('');
@@ -80,10 +81,76 @@ function handleDateUpdate(updatedDate) {
   date.value = updatedDate;
 }
 
+const tripPlanId = ref('');
+const tripPlanRequest = ref({
+  tripPlan: {
+    title: '',
+    content: '',
+    departureDate: '',
+    arrivalDate: '',
+    image: '',
+    memberId: 1,
+  },
+  makeTripPlans: [],
+});
 const createPlan = () => {
+  console.dir('하이');
+  tripPlanRequest.value.tripPlan.departureDate = departureDate.value;
+  tripPlanRequest.value.tripPlan.arrivalDate = arrivalDate.value;
+
+  for (let i = 0; i < selectedAttractions.value.length; i++) {
+    const attraction = selectedAttractions.value[i];
+    // console.dir(attraction);
+    const mtp = {
+      sequence: 0,
+      departureTime: null,
+      arrivalTime: null,
+      memo: '',
+      moveTime: null,
+      tripDate: 0,
+      memberId: 1,
+      tripPlanId: 0,
+      attractionId: attraction.attractionInfo.contentId,
+    };
+    tripPlanRequest.value.makeTripPlans.push(mtp);
+  }
+
+  for (let i = 0; i < selectedAccomodations.value.length; i++) {
+    const attraction = selectedAccomodations.value[i];
+    // console.dir(attraction);
+    const mtp = {
+      sequence: 0,
+      departureTime: null,
+      arrivalTime: null,
+      memo: '',
+      moveTime: null,
+      tripDate: 0,
+      memberId: 1,
+      tripPlanId: 0,
+      attractionId: attraction.attractionInfo.contentId,
+    };
+    tripPlanRequest.value.makeTripPlans.push(mtp);
+  }
+
+  // console.dir('트립플랜리퀘스트');
+  // console.dir(tripPlanRequest.value);
+  registerTripPlan(tripPlanRequest.value);
+  console.dir('트립플랜아이디');
+  console.dir(tripPlanId.value);
   currentView.value = 'plan';
-  // router.push({ name: 'makeplan', params: { planId: '123' } });
 };
+
+async function registerTripPlan(param) {
+  registTripPlan(
+    param,
+    (data) => {
+      tripPlanId.value = data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+}
 
 const updateDates = (startDate, endDate, totalDates) => {
   departureDate.value = startDate;
@@ -95,59 +162,6 @@ const updateDates = (startDate, endDate, totalDates) => {
     selectedAccomodationsByDate.value[i] = [];
   }
 };
-
-// // 데이터 정의
-// const lists = ref([
-//   {
-//     id: 1,
-//     numberList: [{ content: 1 }, { content: 2 }],
-//   },
-//   {
-//     id: 2,
-//     numberList: [
-//       { content: 3 },
-//       { content: 4 },
-//       { content: 5 },
-//       { content: 6 },
-//     ],
-//   },
-//   {
-//     id: 3,
-//     numberList: [{ content: 7 }, { content: 8 }, { content: 9 }],
-//   },
-// ]);
-
-// // Drag 시작 메소드
-// function startDrag(event, item) {
-//   event.dataTransfer.dropEffect = 'move';
-//   event.dataTransfer.effectAllowed = 'move';
-//   event.dataTransfer.setData('selectedItem', item.content);
-// }
-
-// // Drop 이벤트 메소드
-// function onDrop(event, colNum) {
-//   const selectedItem = Number(event.dataTransfer.getData('selectedItem'));
-
-//   // 리스트에서 선택된 아이템과 같은 content 값을 가진 요소를 찾아 index를 반환한다.
-//   let targetIdx;
-//   let targetItem;
-//   lists.forEach((obj, index) => {
-//     obj.numberList.forEach((ob) => {
-//       if (ob.content === selectedItem) {
-//         targetIdx = index;
-//         targetItem = ob;
-//       }
-//     });
-//   });
-
-//   // drop이 된 <div> index(=colNum)를 받아 리스트에 추가한다.
-//   // 기존 리스트에서는 요소를 삭제한다.
-//   lists[colNum].numberList.push(targetItem);
-//   lists[targetIdx].numberList.splice(
-//     lists[targetIdx].numberList.indexOf(targetItem),
-//     1
-//   );
-// }
 
 const handleDragged = (attraction) => {
   console.dir('드래그 됨');
@@ -162,13 +176,11 @@ const onDrop = (event, date) => {
 const attractionAddModalOpen = ref(false);
 const attractionAddModalToggle = () => {
   attractionAddModalOpen.value = !attractionAddModalOpen.value;
-  console.dir(attractionAddModalOpen.value);
 };
 
 const showPlanDetailModalOpen = ref(false);
 const showPlanDetailModalToggle = () => {
   showPlanDetailModalOpen.value = !showPlanDetailModalOpen.value;
-  console.dir(showPlanDetailModalOpen.value);
 };
 </script>
 
