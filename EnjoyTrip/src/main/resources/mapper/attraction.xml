@@ -25,20 +25,22 @@
         limit #{size} offset #{offset}
     </select>
 
-    <select id="selectAccomInfosByCond" parameterType="AccomodationRequestDto"
+    <select id="selectAccomInfosByCond" parameterType="map"
             resultType="AttractionInfo">
         select *
         from attraction_info
         where content_type_id = 32
-        <if test="sidoCode != 0">
-            AND sido_code = #{sidoCode}
+        <if test="accomodationRequestDto.sidoCode != 0">
+            AND sido_code = #{accomodationRequestDto.sidoCode}
         </if>
-        <if test="gugunCode != 0">
-            AND gugun_code = #{gugunCode}
+        <if test="accomodationRequestDto.gugunCode != 0">
+            AND gugun_code = #{accomodationRequestDto.gugunCode}
         </if>
-        <if test="keyword != null">
-            AND title like CONCAT('%', #{keyword}, '%')
+        <if test="accomodationRequestDto.keyword != null">
+            AND title like CONCAT('%', #{accomodationRequestDto.keyword}, '%')
         </if>
+        order by content_id
+        limit #{size} offset #{offset}
     </select>
 
     <select id="selectAttrLikeCntByContentId" parameterType="int"

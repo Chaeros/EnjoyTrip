@@ -48,10 +48,18 @@ public class AttractionServiceImpl implements AttractionService {
     }
 
     @Override
-    public List<AttractionInfoLike> getListAccomInfoLikesByCond(AccomodationRequestDto AccomodationRequestDto) {
+    public List<AttractionInfoLike> getListAccomInfoLikesByCond(AccomodationRequestDto accomodationRequestDto) {
         List<AttractionInfoLike> list = new ArrayList<>();
 
-        List<AttractionInfo> AttractionInfos = attractionMapper.selectAccomInfosByCond(AccomodationRequestDto);
+        Map<String, Object> map = new HashMap<>();
+        int page = accomodationRequestDto.getPage();
+        int size = accomodationRequestDto.getSize();
+        int offset = (page - 1)* size;
+        map.put("accomodationRequestDto",accomodationRequestDto);
+        map.put("offset", offset);
+        map.put("size", size);
+
+        List<AttractionInfo> AttractionInfos = attractionMapper.selectAccomInfosByCond(map);
         for (AttractionInfo AttractionInfo : AttractionInfos) {
             int contentId = AttractionInfo.getContentId();
             int likeCnt = attractionMapper.selectAttrLikeCntByContentId(contentId);
