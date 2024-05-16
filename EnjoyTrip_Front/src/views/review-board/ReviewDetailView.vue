@@ -6,6 +6,9 @@
     v-if="article"
   />
   <div class="board-detail-page" v-if="writerInfo">
+    <div class="like-button-container">
+      <button class="like-button">♥ 좋아요</button>
+    </div>
     <div class="board-detail-box">
       <div class="board-detail-info-box">
         <div class="board-title">
@@ -147,5 +150,22 @@ const getWriterInfo = () => {
 .writer-profile-img {
   border-radius: 100%;
   width: 50px;
+}
+.like-button-container {
+  position: fixed; /* 고정 위치 */
+  top: 50%; /* 화면의 중앙에 위치 */
+  left: 300px; /* 왼쪽에서부터 10px 떨어진 곳에 위치 */
+  transform: translateY(
+    -50%
+  ); /* 컨테이너의 중앙이 화면의 중앙과 정렬되도록 조정 */
+}
+
+.like-button {
+  background-color: #f00; /* 배경 색상 */
+  color: white; /* 글자 색상 */
+  border: none; /* 테두리 제거 */
+  padding: 10px 20px; /* 패딩 */
+  cursor: pointer; /* 클릭 가능한 커서 모양으로 변경 */
+  border-radius: 5px; /* 버튼의 모서리 둥글게 */
 }
 </style>
