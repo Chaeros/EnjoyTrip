@@ -20,9 +20,7 @@ public class PlanServiceImpl implements PlanService {
     public int registTripPlan(TripPlanRequest tripPlanRequest) {
         if(planMapper.insertTripPlan(tripPlanRequest.getTripPlan()) == 0) return 0;
         int maxTripPlanId = planMapper.selectTripPlanMaxId();
-        System.out.println("tripPlanRequest.getMakeTripPlans().size() = " + tripPlanRequest.getMakeTripPlans().size());
         for (MakeTripPlan makeTripPlan : tripPlanRequest.getMakeTripPlans()) {
-            System.out.println("makeTripPlan = " + makeTripPlan);
             makeTripPlan.setTripPlanId(maxTripPlanId);
             if(planMapper.insertMakeTripPlan(makeTripPlan) == 0) return 0;
         }

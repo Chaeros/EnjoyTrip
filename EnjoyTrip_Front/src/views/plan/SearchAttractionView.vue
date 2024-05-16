@@ -12,7 +12,7 @@ import AttractionAddModal from '@/components/AttractionAddModal.vue';
 import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
 
 import { useRouter } from 'vue-router';
-import { registTripPlan } from '@/api/plan/plan';
+import { registTripPlan, editTripPlan } from '@/api/plan/plan';
 
 const router = useRouter();
 const currentView = ref('search');
@@ -93,8 +93,21 @@ const tripPlanRequest = ref({
   },
   makeTripPlans: [],
 });
+
+async function registerTripPlan(param) {
+  registTripPlan(
+    param,
+    (maxPlanId) => {
+      console.dir(maxPlanId.data);
+      tripPlanId.value = maxPlanId.data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+}
+
 const createPlan = () => {
-  console.dir('하이');
   tripPlanRequest.value.tripPlan.departureDate = departureDate.value;
   tripPlanRequest.value.tripPlan.arrivalDate = arrivalDate.value;
 
@@ -132,25 +145,11 @@ const createPlan = () => {
     tripPlanRequest.value.makeTripPlans.push(mtp);
   }
 
-  // console.dir('트립플랜리퀘스트');
-  // console.dir(tripPlanRequest.value);
   registerTripPlan(tripPlanRequest.value);
   console.dir('트립플랜아이디');
   console.dir(tripPlanId.value);
   currentView.value = 'plan';
 };
-
-async function registerTripPlan(param) {
-  registTripPlan(
-    param,
-    (data) => {
-      tripPlanId.value = data;
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-}
 
 const updateDates = (startDate, endDate, totalDates) => {
   departureDate.value = startDate;
@@ -181,6 +180,70 @@ const attractionAddModalToggle = () => {
 const showPlanDetailModalOpen = ref(false);
 const showPlanDetailModalToggle = () => {
   showPlanDetailModalOpen.value = !showPlanDetailModalOpen.value;
+};
+
+const updateTripPlan = (title, content) => {
+  console.dir('title');
+  console.dir(title);
+  console.dir('content');
+  console.dir(content);
+  // dto 초기화
+  const tripPlanRequest = ref({
+    tripPlan: {
+      id: tripPlanId.value,
+      title: '',
+      content: '',
+      departureDate: '',
+      arrivalDate: '',
+      image: '',
+      memberId: 1,
+    },
+    makeTripPlans: [],
+  });
+
+  tripPlanRequest.value.tripPlan.departureDate = departureDate.value;
+  tripPlanRequest.value.tripPlan.arrivalDate = arrivalDate.value;
+  tripPlanRequest.value.tripPlan.title = title;
+  tripPlanRequest.value.tripPlan.content = content;
+
+  async function updateTripPlan(param) {
+    editTripPlan(
+      param,
+      (result) => {
+        console.dir(result.data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  for (let i = 0; i < selectedAttractionsByDate.value.length; i++) {
+    for (let j = 0; j < selectedAttractionsByDate.value[i].length; j++) {
+      const attraction = selectedAttractionsByDate.value[i][j];
+      const mtp = {
+        sequence: j,
+        departureTime: null,
+        arrivalTime: null,
+        memo: '',
+        moveTime: null,
+        tripDate: i + 1,
+        memberId: 1,
+        tripPlanId: tripPlanId.value,
+        attractionId: attraction.attractionInfo.contentId,
+      };
+      tripPlanRequest.value.makeTripPlans.push(mtp);
+    }
+  }
+
+  console.dir('tripPlanRequest는');
+  console.dir(tripPlanRequest.value);
+  updateTripPlan(tripPlanRequest.value);
+  console.dir('업데이트 완료');
+};
+
+const removeAttraction = (date, index) => {
+  selectedAttractionsByDate.value[date].splice(index, 1);
 };
 </script>
 
@@ -300,6 +363,7 @@ const showPlanDetailModalToggle = () => {
         v-show="attractionAddModalOpen"
       />
       <ShowPlanDetailModal
+        @update-trip-plan="updateTripPlan"
         @show-plan-detail-modal-toggle="showPlanDetailModalToggle"
         v-show="showPlanDetailModalOpen"
       />
@@ -366,6 +430,7 @@ const showPlanDetailModalToggle = () => {
         @drop="onDrop($event, number)"
         @dragenter.prevent
         @dragover.prevent
+        @remove-attraction="removeAttraction"
       ></DateContainer>
 
       <div class="right-content">

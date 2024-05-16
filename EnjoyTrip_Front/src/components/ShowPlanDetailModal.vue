@@ -1,8 +1,14 @@
 <script setup>
-import { defineEmits } from 'vue';
-const emit = defineEmits(['showPlanDetailModalToggle']);
+import { ref, defineEmits } from 'vue';
+const emit = defineEmits(['showPlanDetailModalToggle', 'updateTripPlan']);
 const showPlanDetailModalToggle = () => {
   emit('showPlanDetailModalToggle');
+};
+
+const title = ref('');
+const content = ref('');
+const updateTripPlan = () => {
+  emit('updateTripPlan', title.value, content.value);
 };
 </script>
 
@@ -11,11 +17,11 @@ const showPlanDetailModalToggle = () => {
     <div class="show-plan-detail-modal-container">
       <div class="plan-title">
         <label for="title">계획 이름</label>
-        <input type="text" name="title" />
+        <input type="text" name="title" v-model="title" />
       </div>
       <div class="plan-content">
         <label for="content">계획 설명</label>
-        <textarea name="content" />
+        <textarea name="content" v-model="content" />
       </div>
       <div class="plan-btns">
         <button
@@ -24,7 +30,9 @@ const showPlanDetailModalToggle = () => {
         >
           닫기
         </button>
-        <button class="plan-detail-confirm-btn">일정 확정</button>
+        <button class="plan-detail-confirm-btn" @click.prevent="updateTripPlan">
+          일정 확정
+        </button>
       </div>
     </div>
   </div>

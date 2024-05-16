@@ -21,7 +21,6 @@ public class PlanController {
     @PostMapping
     public ResponseEntity<?> registTripPlan(@RequestBody TripPlanRequest tripPlanRequest) {
         int maxTripPlanId = planService.registTripPlan(tripPlanRequest);
-        System.out.println("maxTripPlanId = " + maxTripPlanId);
 
         if (maxTripPlanId > 0) {
             return new ResponseEntity<Integer>(maxTripPlanId, HttpStatus.OK);
@@ -34,7 +33,7 @@ public class PlanController {
     public ResponseEntity<?> editTripPlan(@RequestBody TripPlanRequest tripPlanRequest) {
         int editResult = planService.editTripPlan(tripPlanRequest);
 
-        if (editResult > 0) {
+        if (editResult >= 0) {
             return new ResponseEntity<Integer>(editResult, HttpStatus.OK);
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("trip plan 수정 실패");
