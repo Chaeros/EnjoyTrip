@@ -30,7 +30,7 @@
         </template>
         <template v-else>
           <a @click="clickLogOut">로그아웃</a>
-          <a @click="clickLogOut">내 정보</a>
+          <a @click="clickMyPage">내 정보</a>
           <p>{{ displayMember.id }}</p>
         </template>
       </div>
@@ -67,6 +67,9 @@ const clickLogOut = () => {
   console.log(userInfo);
   userInfo.value = null;
   isLogin.value = false;
+};
+const clickMyPage = () => {
+  router.push({ name: "myPage" });
 };
 const displayMember = ref({
   id: "",

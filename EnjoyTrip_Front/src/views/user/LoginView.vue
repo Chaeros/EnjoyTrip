@@ -59,6 +59,7 @@ const clickNormalLogin = () => {
         getUserInfo(loginInfo.value.email);
         router.push({ name: "home" });
         console.info(isLogin);
+        console.log(getCookie("accessToken"));
         isLogin.value = true;
       }
       // navigate('/');

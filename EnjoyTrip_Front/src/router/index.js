@@ -8,6 +8,7 @@ import ReviewWriteView from "@/views/review-board/ReviewWriteView.vue";
 import ReviewListView from "@/views/review-board/ReviewListView.vue";
 import ReviewDetailView from "@/views/review-board/ReviewDetailView.vue";
 import MakePlanView from "@/views/plan/MakePlanView.vue";
+import MyPageView from "@/views/user/MyPageView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -61,6 +62,11 @@ const router = createRouter({
       path: "/reviewboard/:attractionBoardReviewId",
       name: "reviewBoardDetail",
       component: ReviewDetailView,
+    },
+    {
+      path: "/mypage",
+      name: "mypage",
+      component: MyPageView,
     },
     // {
     //   path: '/board',
