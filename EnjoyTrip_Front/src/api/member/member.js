@@ -69,9 +69,9 @@ function getUserInfomationById(id, success, fail) {
     .catch(fail);
 }
 
-function searchMemberByKeyNicknameKeword(keyword, success, fail) {
+function searchMemberByKeyNicknameKeword(keyword, userId, success, fail) {
   local
-    .get(`/member/keyword/` + keyword)
+    .get(`/member/keyword`, { params: { keyword, userId } })
     .then(success)
     .catch(fail);
 }

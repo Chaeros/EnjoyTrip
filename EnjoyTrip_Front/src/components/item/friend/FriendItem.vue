@@ -16,6 +16,7 @@
       <button
         type="button"
         class="btn btn-outline-primary click-add-friend-btn"
+        @click="clickRemoveBtn"
       >
         <b>삭제히기</b>
       </button>
@@ -27,6 +28,9 @@
 import { ref } from "vue";
 import { getUserInfomationById } from "@/api/member/member.js";
 import { getLocalStorage } from "@/util/localstorage/localstorage.js";
+import { defineEmits } from "vue";
+import { removeFriend } from "@/api/friend/friend.js";
+const emit = defineEmits(["clickFriendRemoveBtn"]);
 const { friend } = defineProps({ friend: Object });
 
 const myFriends = ref();
@@ -39,6 +43,20 @@ const getUserInfomation = () => {
     (response) => {
       console.log(response.data);
       member.value = response.data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const clickRemoveBtn = () => {
+  console.log(friend);
+  removeFriend(
+    friend.id,
+    (response) => {
+      console.log(response);
+      emit("clickFriendRemoveBtn", friend);
     },
     (error) => {
       console.log(error);

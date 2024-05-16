@@ -27,14 +27,20 @@
           />
         </div>
         <template v-for="member in members" :key="member.id">
-          <MemberItem :member="member"></MemberItem>
+          <MemberItem
+            :member="member"
+            @click-friend-addBtn="clickFriendAddBtn"
+          ></MemberItem>
         </template>
       </div>
       <div class="right-current-my-friend-box">
         <div class="myfriend-sub-title">현재 내 친구 목록</div>
         <div calss="my-friend-list-box">
           <template v-for="friend in myFriends" :key="friend.id">
-            <FriendItem :friend="friend"></FriendItem>
+            <FriendItem
+              :friend="friend"
+              @click-friend-remove-btn="clickFriendRemoveBtn"
+            ></FriendItem>
           </template>
         </div>
       </div>
@@ -48,7 +54,10 @@ import Footer from "@/components/Footer.vue";
 import Modal from "@/modal/FriendManagementModal.vue";
 import MemberItem from "@/components/item/member/MemberItem.vue";
 import FriendItem from "@/components/item/friend/FriendItem.vue";
-import { searchMemberByKeyNicknameKeword } from "@/api/member/member.js";
+import {
+  getUserInfomationById,
+  searchMemberByKeyNicknameKeword,
+} from "@/api/member/member.js";
 import { bringFriendList } from "@/api/friend/friend.js";
 import {
   getLocalStorage,
@@ -60,11 +69,35 @@ const keyword = ref("");
 const members = ref();
 const myFriends = ref();
 
-if (setLocalStorage("myId") === null) {
+if (getLocalStorage("userId") === null) {
   alert("다시 로그인 해주세요!");
 }
 
 const callFriendManagement = () => {};
+
+const clickFriendAddBtn = (friendDto) => {
+  console.log(friendDto);
+  bringFriendList(
+    getLocalStorage("userId"),
+    (response) => {
+      console.log(response.data);
+      myFriends.value = response.data;
+      members.value = members.value.filter(
+        (member) => member.id !== friendDto.friendId
+      ); // 친구 제거
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const clickFriendRemoveBtn = (friendDto) => {
+  console.log(friendDto);
+  myFriends.value = myFriends.value.filter(
+    (friend) => friend.id !== friendDto.id
+  ); // 친구 제거
+};
 
 const openModal = () => {
   showModal.value = true;
@@ -77,8 +110,10 @@ const closeModal = () => {
 const callMemberByKeyword = () => {
   searchMemberByKeyNicknameKeword(
     keyword.value,
+    getLocalStorage("userId"),
     (response) => {
       members.value = response.data;
+      keyword.value = "";
     },
     (error) => {
       console.log(error);
@@ -108,6 +143,7 @@ getFriendList();
   width: 380px;
   height: 680px;
   margin-right: 5px;
+  overflow-y: scroll; /* 상하 스크롤을 항상 표시 */
 }
 .modal-box {
   display: flex;
@@ -127,5 +163,6 @@ getFriendList();
   width: 380px;
   height: 680px;
   margin-left: 5px;
+  overflow-y: scroll; /* 상하 스크롤을 항상 표시 */
 }
 </style>

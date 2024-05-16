@@ -27,4 +27,9 @@ public class FriendServiceImpl implements FriendService{
     public List<Friend> searchFriendList(long myId) {
         return friendMapper.findFriendList(myId);
     }
+
+    @Override
+    public int searchDuplicateRelationship(Friend friend) {
+        return friendMapper.findIsExistRelationship(friend);
+    }
 }

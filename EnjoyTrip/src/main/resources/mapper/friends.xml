@@ -13,7 +13,7 @@
 
     <delete id="deleteFriend" parameterType="long">
         delete
-        from attraction_board
+        from friends
         where id = #{id}
     </delete>
 
@@ -21,6 +21,12 @@
         select id, my_id, friend_id
         from friends
         where my_id = #{myId}
+    </select>
+
+    <select id="findIsExistRelationship" parameterType="com.ssafy.enjoytrip.domain.friend.Friend">
+        select count(*)
+        from friends
+        where my_id = #{my_id} and friend_id = #{friend_id}
     </select>
 
 </mapper>

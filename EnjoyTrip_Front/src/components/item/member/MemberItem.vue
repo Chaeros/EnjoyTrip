@@ -36,6 +36,8 @@ import {
   getLocalStorage,
   setLocalStorage,
 } from "@/util/localstorage/localstorage.js";
+import { defineEmits } from "vue";
+const emit = defineEmits(["clickFriendAddBtn"]);
 const { member } = defineProps({ member: Object });
 
 const myFriends = ref();
@@ -63,6 +65,8 @@ const clickAddBtn = () => {
     friendDto.value,
     (response) => {
       console.log(response.data);
+      console.log(friendDto.value);
+      emit("clickFriendAddBtn", friendDto.value);
     },
     (error) => {
       console.log(error);

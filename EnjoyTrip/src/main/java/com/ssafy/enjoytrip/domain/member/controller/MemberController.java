@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.domain.member.controller;
 
+import com.ssafy.enjoytrip.domain.friend.Friend;
+import com.ssafy.enjoytrip.domain.friend.service.FriendService;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberSignUpDto;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.enjoytrip.domain.member.dto.response.MemberResponseDto;
@@ -8,13 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -22,6 +23,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final FriendService friendService;
 
     @PostMapping("/sign-up")
     public String signUp(@RequestBody MemberSignUpDto memberSignUpDto) throws Exception{
@@ -57,11 +59,29 @@ public class MemberController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
 
-    @GetMapping("/member/keyword/{keyword}")
-    public ResponseEntity<List<MemberResponseDto>> getMemberByNicnnameKeyword(@PathVariable("keyword") String keyword) throws Exception {
+    // 친구 추가를 할 때, 유저가 이미 친구 추가한 상대는 받아오지 않으면서 키워드에 알맞는 유저를 반환합니다.
+    @GetMapping("/member/keyword")
+    public ResponseEntity<List<MemberResponseDto>> getMemberByNicnnameKeyword(@RequestParam("keyword") String keyword,
+                                                                              @RequestParam("userId") long userId) throws Exception {
         log.info("[get member by keyword] keyword : {}", keyword);
-        return memberService.getMemberByNicknameKeyword(keyword)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+        List<Friend> friends = friendService.searchFriendList(userId);
+
+        // friends 리스트의 friendId 값을 수집합니다.
+        Set<Long> friendIds = friends.stream()
+                .map(Friend::getFriendId)
+                .collect(Collectors.toSet());
+
+        // memberService에서 keyword에 해당하는 멤버를 가져오고, 친구 목록에 없는 멤버만 필터링합니다.
+        List<MemberResponseDto> filteredMembers = memberService.getMemberByNicknameKeyword(keyword)
+                .orElse(Collections.emptyList())
+                .stream()
+                .filter(member -> !friendIds.contains(member.getId()) && member.getId() != userId)
+                .collect(Collectors.toList());
+
+        if (filteredMembers.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            return ResponseEntity.ok(filteredMembers);
+        }
     }
 }

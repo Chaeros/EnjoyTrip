@@ -8,4 +8,5 @@ public interface FriendService {
     int addFriend(Friend friend);
     int removeFriend(long id);
     List<Friend> searchFriendList(long myId);
+    int searchDuplicateRelationship(Friend friend);
 }

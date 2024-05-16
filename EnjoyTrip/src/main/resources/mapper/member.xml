@@ -36,7 +36,7 @@
 	</select>
 
 	<select id="findMemberById" parameterType="long" resultType="com.ssafy.enjoytrip.domain.member.Member">
-		select id, email, password, nickname, role
+		select id, email, image, social_type, password, nickname
 		from members
 		where id = #{id}
 	</select>
@@ -66,9 +66,13 @@
 	</insert>
 
 	<select id="findMembersByNickNameKeyword" parameterType="string" resultType="com.ssafy.enjoytrip.domain.member.Member">
-		select id, email, password, nickname
+		select id, email, image, password, nickname
 		from members
-		where nickname like CONCAT('%', #{keyword}, '%')
+		<where>
+			<if test="keyword != null and keyword != ''">
+				nickname like CONCAT('%', #{keyword}, '%')
+			</if>
+		</where>
 	</select>
 
 
