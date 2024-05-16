@@ -3,11 +3,13 @@ package com.ssafy.enjoytrip.domain.attractionboardlike.controller;
 import com.ssafy.enjoytrip.domain.attractionboardlike.dto.AttractionBoardLikeAddRequestDto;
 import com.ssafy.enjoytrip.domain.attractionboardlike.service.AttractionBoardLikeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/attractionboardlike")
 public class AttractionBoardLikeController {
 
@@ -31,6 +33,7 @@ public class AttractionBoardLikeController {
 
     @GetMapping("/count/{attractionId}")
     public ResponseEntity<Integer> searchAttractionBoardLikeCount(@PathVariable("attractionId") int attractionId){
+        log.info("attracationId : {}", attractionId);
         return ResponseEntity.ok(attractionBoardLikeService.searchAttractionBoardLikeCount(attractionId));
     }
 }

@@ -40,6 +40,7 @@ import { useMemberStore } from "@/store/member";
 import { storeToRefs } from "pinia";
 import { getAttractionReviewList } from "@/api/attraction-board/attraction-board";
 import { getUserInfomationById } from "@/api/member/member.js";
+
 const router = useRouter();
 const memberStore = useMemberStore();
 const { isLogin } = storeToRefs(memberStore);

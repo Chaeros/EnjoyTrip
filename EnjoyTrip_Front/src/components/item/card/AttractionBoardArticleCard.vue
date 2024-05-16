@@ -40,10 +40,12 @@
             class="writer-info-box-right-comment-img"
             src="@/img/comment/comment.png"
           />
+          {{ commentCount }}
           <img
             class="writer-info-box-right-like-img"
             src="@/img/like/like.png"
           />
+          {{ likeCount }}
         </div>
       </div>
       <div class="card-writer">{{ attractionBoardReview.writer }}</div>
@@ -58,12 +60,16 @@
 <script setup>
 import { getUserInfomationById } from "@/api/member/member.js";
 import { ref, onMounted } from "vue";
+import { getAttractionBoardLikeCount } from "@/api/attraction-board-like/attraction-board-like.js";
+import { getCommentCount } from "@/api/attraction-board-comment/attraction-board-comment.js";
 const imageServerURL = import.meta.env.VITE_VUE_IMAGE_SERVER_URL;
 const { attractionBoardReview } = defineProps({
   attractionBoardReview: Object,
 });
 console.log(attractionBoardReview);
 const writerInfo = ref(null);
+const commentCount = ref(0);
+const likeCount = ref(0);
 
 // 데이터 로드를 위한 함수를 onMounted 안으로 이동하여 컴포넌트가 마운트 된 후 호출되도록 함
 onMounted(() => {
@@ -77,6 +83,29 @@ onMounted(() => {
     (error) => {
       console.error(error);
       writerInfo.value = {}; // 에러가 발생했을 경우 빈 객체를 설정하여 v-if 조건을 false로 만들 수 있습니다.
+    }
+  );
+
+  console.log(attractionBoardReview);
+  getAttractionBoardLikeCount(
+    attractionBoardReview.id,
+    (response) => {
+      console.log("dddddddddddddddddddddddddd");
+      console.log(response.data);
+      likeCount.value = response.data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+
+  getCommentCount(
+    attractionBoardReview.id,
+    (response) => {
+      commentCount.value = response.data;
+    },
+    (error) => {
+      console.log(error);
     }
   );
 });
