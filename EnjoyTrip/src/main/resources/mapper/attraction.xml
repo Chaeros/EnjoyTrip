@@ -5,22 +5,24 @@
 <mapper namespace="com.ssafy.enjoytrip.domain.attraction.mapper.AttractionMapper">
 
     <select id="selectAttractionInfosByCond"
-            parameterType="AttractionRequestDto" resultType="AttractionInfo">
+            parameterType="map" resultType="AttractionInfo">
         select *
         from attraction_info
         where content_type_id != 32
-        <if test="sidoCode != 0">
-            AND sido_code = #{sidoCode}
+        <if test="attractionRequestDto.sidoCode != 0">
+            AND sido_code = #{attractionRequestDto.sidoCode}
         </if>
-        <if test="gugunCode != 0">
-            AND gugun_code = #{gugunCode}
+        <if test="attractionRequestDto.gugunCode != 0">
+            AND gugun_code = #{attractionRequestDto.gugunCode}
         </if>
-        <if test="contentTypeId != 0">
-            AND content_type_id = #{contentTypeId}
+        <if test="attractionRequestDto.contentTypeId != 0">
+            AND content_type_id = #{attractionRequestDto.contentTypeId}
         </if>
-        <if test="keyword != null">
-            AND title like CONCAT('%', #{keyword}, '%')
+        <if test="attractionRequestDto.keyword != null">
+            AND title like CONCAT('%', #{attractionRequestDto.keyword}, '%')
         </if>
+        order by content_id
+        limit #{size} offset #{offset}
     </select>
 
     <select id="selectAccomInfosByCond" parameterType="AccomodationRequestDto"
