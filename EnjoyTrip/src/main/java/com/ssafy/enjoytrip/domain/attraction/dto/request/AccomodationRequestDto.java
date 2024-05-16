@@ -8,6 +8,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class AccomodationRequestDto {
+    private int page;
+    private int size;
     private int sidoCode;
     private int gugunCode;
     private String keyword;

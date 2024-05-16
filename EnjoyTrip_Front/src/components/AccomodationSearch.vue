@@ -2,14 +2,12 @@
 import { ref } from 'vue';
 import { defineEmits } from 'vue';
 import AccomodationItem from '@/components/item/AccomodationItem.vue';
-const emit = defineEmits(['clickAccomodationAdd']);
+const emit = defineEmits(['clickAccomodationAdd', 'modalAccomodationAdd']);
 
 import {
-  getListAttraction,
   getListAccomodation,
   getListSido,
   getListGugun,
-  getListContentType,
 } from '@/api/attraction';
 
 const sidos = ref([]);
@@ -23,6 +21,7 @@ const inputInformation = ref({
 
 const clickAccomodationAdd = (attraction) => {
   emit('clickAccomodationAdd', attraction);
+  emit('modalAccomodationAdd', attraction);
 };
 
 async function callSidos(sido) {
@@ -49,19 +48,65 @@ async function callGuguns(sido) {
   );
 }
 
-async function searchAttractions() {
+callSidos(1);
+
+/* 무한 스크롤 */
+const page = ref(1);
+const size = ref(10);
+const isLoading = ref(false);
+const hasMore = ref(true);
+const bottomElement = ref('');
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        console.dir('intersecting');
+        loadMoreAccomodations();
+      }
+    });
+  },
+  { rootMargin: '0px 0px 100px 0px' }
+);
+
+async function initSearchAccomodations() {
+  // 페이지 번호와 결과를 초기화
+  page.value = 1;
+  attractions.value = [];
+  hasMore.value = true;
+  isLoading.value = false;
+
+  if (bottomElement.value) {
+    observer.observe(bottomElement.value);
+  }
+
+  loadMoreAccomodations();
+}
+
+async function loadMoreAccomodations() {
+  if (isLoading.value || !hasMore.value) return;
+
+  isLoading.value = true;
   getListAccomodation(
-    inputInformation.value,
+    {
+      ...inputInformation.value,
+      page: page.value,
+      size: size.value,
+    },
     ({ data }) => {
-      attractions.value = data;
+      if (data.length < size.value) {
+        hasMore.value = false;
+      }
+      attractions.value.push(...data);
+      page.value++;
+      isLoading.value = false;
     },
     (error) => {
       console.log(error);
+      isLoading.value = false;
     }
   );
 }
-
-callSidos(1);
 </script>
 
 <template>
@@ -105,7 +150,7 @@ callSidos(1);
       <button
         class="btn btn-outline-success"
         type="submit"
-        @click.prevent="searchAttractions"
+        @click.prevent="initSearchAccomodations"
       >
         search
       </button>
@@ -118,6 +163,7 @@ callSidos(1);
           @click-accomodation-add="clickAccomodationAdd"
         />
       </div>
+      <div ref="bottomElement" class="bottom-element"></div>
     </div>
   </div>
 </template>
@@ -216,5 +262,10 @@ callSidos(1);
 
 .attraction-img {
   width: 100px;
+}
+
+.bottom-element {
+  height: 1px;
+  width: 100%;
 }
 </style>

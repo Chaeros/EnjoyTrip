@@ -1,16 +1,16 @@
 <script setup>
 import { defineEmits } from 'vue';
-import AttractionSearch from '@/components/AttractionSearch.vue';
+import AccomodationSearch from '@/components/AccomodationSearch.vue';
 const emit = defineEmits([
-  'attractionAddModalToggle',
-  'modalAttractionAdd',
+  'accomodationAddModalToggle',
+  'modalAccomodationAdd',
   'currentModalViewToggle',
 ]);
-const attractionAddModalToggle = () => {
-  emit('attractionAddModalToggle');
+const accomodationAddModalToggle = () => {
+  emit('accomodationAddModalToggle');
 };
-const modalAttractionAdd = (attraction) => {
-  emit('modalAttractionAdd', attraction);
+const modalAccomodationAdd = (attraction) => {
+  emit('modalAccomodationAdd', attraction);
 };
 const currentModalViewToggle = (attraction) => {
   emit('currentModalViewToggle', attraction);
@@ -20,11 +20,11 @@ const currentModalViewToggle = (attraction) => {
 <template>
   <div class="attraction-add-modal-wrap">
     <div class="attraction-add-modal-container">
-      <button @click.prevent="currentModalViewToggle">숙소 선택하기</button>
-      <AttractionSearch @modal-attraction-add="modalAttractionAdd" />
+      <button @click.prevent="currentModalViewToggle">관광지 선택하기</button>
+      <AccomodationSearch @modal-accomodation-add="modalAccomodationAdd" />
       <button
         class="attraction-add-modal-close-btn"
-        @click.prevent="attractionAddModalToggle"
+        @click.prevent="accomodationAddModalToggle"
       >
         닫기
       </button>
