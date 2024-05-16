@@ -8,6 +8,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class AttractionRequestDto {
+    private int page;
+    private int size;
     private int sidoCode;
     private int gugunCode;
     private int contentTypeId;

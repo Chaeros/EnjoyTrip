@@ -14,7 +14,7 @@ public interface AttractionMapper {
 
 
     // 관광지 조건부 조회
-    List<AttractionInfo> selectAttractionInfosByCond(AttractionRequestDto AttractionRequestDto);
+    List<AttractionInfo> selectAttractionInfosByCond(Map<String,Object> map);
 
     // 숙소 조건부 조회
     List<AttractionInfo> selectAccomInfosByCond(AccomodationRequestDto AccomodationRequestDto);

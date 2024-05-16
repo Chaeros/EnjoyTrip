@@ -1,7 +1,9 @@
 package com.ssafy.enjoytrip.domain.attraction.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.ssafy.enjoytrip.domain.attraction.*;
 import com.ssafy.enjoytrip.domain.attraction.dto.request.AccomodationRequestDto;
@@ -21,10 +23,17 @@ public class AttractionServiceImpl implements AttractionService {
     private final AttractionMapper attractionMapper;
 
     @Override
-    public List<AttractionInfoLike> getListAttractionInfoLikesByCond(AttractionRequestDto AttractionRequestDto) {
+    public List<AttractionInfoLike> getListAttractionInfoLikesByCond(AttractionRequestDto attractionRequestDto) {
         List<AttractionInfoLike> list = new ArrayList<>();
 
-        List<AttractionInfo> AttractionInfos = attractionMapper.selectAttractionInfosByCond(AttractionRequestDto);
+        Map<String, Object> map = new HashMap<>();
+        int page = attractionRequestDto.getPage();
+        int size = attractionRequestDto.getSize();
+        int offset = (page - 1)* size;
+        map.put("attractionRequestDto",attractionRequestDto);
+        map.put("offset", offset);
+        map.put("size", size);
+        List<AttractionInfo> AttractionInfos = attractionMapper.selectAttractionInfosByCond(map);
         for (AttractionInfo AttractionInfo : AttractionInfos) {
             int contentId = AttractionInfo.getContentId();
             int likeCnt = attractionMapper.selectAttrLikeCntByContentId(contentId);
