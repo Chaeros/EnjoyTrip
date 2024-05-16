@@ -69,7 +69,7 @@ function getUserInfomationById(id, success, fail) {
     .catch(fail);
 }
 
-function searchMemberByKeyNicnnameKeword(keyword, success, fail) {
+function searchMemberByKeyNicknameKeword(keyword, success, fail) {
   local
     .get(`/member/keyword/` + keyword)
     .then(success)
@@ -85,5 +85,5 @@ export {
   normalSignUp,
   getUserInfomation,
   getUserInfomationById,
-  searchMemberByKeyword,
+  searchMemberByKeyNicknameKeword,
 };

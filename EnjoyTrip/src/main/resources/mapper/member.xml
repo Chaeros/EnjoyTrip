@@ -66,7 +66,7 @@
 	</insert>
 
 	<select id="findMembersByNickNameKeyword" parameterType="string" resultType="com.ssafy.enjoytrip.domain.member.Member">
-		select id, email, password, nickname, role
+		select id, email, password, nickname
 		from members
 		where nickname like CONCAT('%', #{keyword}, '%')
 	</select>

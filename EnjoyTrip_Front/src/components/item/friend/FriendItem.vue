@@ -1,5 +1,5 @@
 <template>
-  <div class="member-box">
+  <div class="member-box" v-if="member !== null">
     <div class="member-info">
       <template v-if="member.image === null">
         <img
@@ -16,59 +16,36 @@
       <button
         type="button"
         class="btn btn-outline-primary click-add-friend-btn"
-        @click="clickAddBtn"
       >
-        <b>추가하기</b>
+        <b>삭제히기</b>
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
-import axios from "axios";
 import { ref } from "vue";
-import {
-  addFriend,
-  removeFriend,
-  bringFriendList,
-} from "@/api/friend/friend.js";
-import {
-  getLocalStorage,
-  setLocalStorage,
-} from "@/util/localstorage/localstorage.js";
-const { member } = defineProps({ member: Object });
+import { getUserInfomationById } from "@/api/member/member.js";
+import { getLocalStorage } from "@/util/localstorage/localstorage.js";
+const { friend } = defineProps({ friend: Object });
 
 const myFriends = ref();
+const member = ref(null);
 
-const friendDto = ref({
-  myId: getLocalStorage("userId"),
-  friendId: member.id,
-});
-
-const getFriendList = () => {
-  bringFriendList(
-    getLocalStorage("userId"),
-    (response) => {
-      myFriends.value = response.data;
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-};
-
-console.log(friendDto.value);
-const clickAddBtn = () => {
-  addFriend(
-    friendDto.value,
+const getUserInfomation = () => {
+  console.log(friend);
+  getUserInfomationById(
+    friend.friendId,
     (response) => {
       console.log(response.data);
+      member.value = response.data;
     },
     (error) => {
       console.log(error);
     }
   );
 };
+getUserInfomation();
 </script>
 
 <style>
