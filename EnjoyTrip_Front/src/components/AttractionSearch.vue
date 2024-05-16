@@ -19,7 +19,7 @@ const attractions = ref([]);
 const inputInformation = ref({
   sidoCode: '',
   gugunCode: '',
-  contentTypeId: '',
+  contentTypeId: 0,
   keyword: '',
 });
 
