@@ -5,6 +5,7 @@ import { getCookie, setCookie } from "@/util/cookie";
 import { useRouter } from "vue-router";
 import { useMemberStore } from "@/store/member";
 import { storeToRefs } from "pinia";
+import { setLocalStorage } from "@/util/localstorage/localstorage.js";
 
 const router = useRouter();
 const isIdChecked = ref(false);
@@ -48,7 +49,10 @@ const clickNormalLogin = () => {
         let refreshToken = response.headers["authorization-refresh"];
         console.log("refresh 토큰 :", refreshToken);
         console.log("access 토큰 :", accessToken);
-        // setLocalStorage("access_token", accessToken); // 토큰 localStorage에 저장
+        // 토큰 localStorage에 저장
+        setLocalStorage("access_token", accessToken);
+        setLocalStorage("refresh_token", refreshToken);
+        // setLocalStorage("myId",myId)
         // axios.defaults.headers.common[
         //   "Authorization"
         // ] = `Bearer ${accessToken}`;

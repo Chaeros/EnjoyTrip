@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ssafy.enjoytrip.domain.member.mapper.MemberMapper">
 
-    <insert id="insertFriend" parameterType="com.ssafy.enjoytrip.domain.member.Member">
+    <insert id="insertFriend" parameterType="com.ssafy.enjoytrip.domain.friend.Friend">
         insert into friends (
             my_id, friend_id
         ) values (
@@ -11,57 +11,16 @@
         )
     </insert>
 
-    <select id="findMemberByEmail" parameterType="string" resultType="com.ssafy.enjoytrip.domain.member.Member">
-        select id, email, password, nickname, role
-        from friends
-        where email = #{email}
-    </select>
-
-    <select id="findMemberByNickname" parameterType="string" resultType="com.ssafy.enjoytrip.domain.member.Member">
-        select email, password, nickname, role
-        from friends
-        where nickname = #{nickname}
-    </select>
-
-    <select id="findMemberByRefreshToken" parameterType="string" resultType="com.ssafy.enjoytrip.domain.member.Member">
-        select email, password, nickname, role
-        from friends
-        where refresh_token = #{refreshToken}
-    </select>
-
-    <select id="findMemberBySocialTypeAndSocialId" parameterType="map" resultType="com.ssafy.enjoytrip.domain.member.Member">
-        select email, password, nickname, role
-        from friends
-        where social_type = #{socialType} and social_id = #{socialId}
-    </select>
-
-    <select id="findMemberById" parameterType="long" resultType="com.ssafy.enjoytrip.domain.member.Member">
-        select id, email, password, nickname, role
-        from friends
+    <delete id="deleteFriend" parameterType="long">
+        delete
+        from attraction_board
         where id = #{id}
+    </delete>
+
+    <select id="findFriendList" parameterType="long" resultType="com.ssafy.enjoytrip.domain.friend.Friend">
+        select id, my_id, friend_id
+        from friends
+        where my_id = #{myId}
     </select>
 
-    <update id="saveAndFlush" parameterType="com.ssafy.enjoytrip.domain.member.Member">
-        update friends
-        set refresh_token = #{refreshToken}
-        where email = #{email}
-    </update>
-
-    <update id="updateMember" parameterType="com.ssafy.enjoytrip.domain.member.dto.request.MemberUpdateDto">
-        update members
-        set name = #{name},
-            tel = #{tel},
-            address = #{address},
-            role = "USER",
-            email = #{email}
-        where email = #{confirmEmail}
-    </update>
-
-    <insert id="save" parameterType="com.ssafy.enjoytrip.domain.member.Member">
-        insert into members (
-            email, nickname, image, social_type, social_id, role
-        ) values (
-                     #{email}, #{nickname}, #{image}, #{socialType}, #{socialId}, #{role}
-                 )
-    </insert>
 </mapper>

@@ -65,7 +65,7 @@ const router = createRouter({
     },
     {
       path: "/mypage",
-      name: "mypage",
+      name: "myPage",
       component: MyPageView,
     },
     // {

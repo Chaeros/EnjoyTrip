@@ -1,17 +1,15 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { defineStore } from "pinia";
-
 import { getUserInfomation } from "@/api/member/member";
 import { httpStatusCode } from "@/util/http-status";
+import { setLocalStorage } from "@/util/localstorage/localstorage.js";
 
 export const useMemberStore = defineStore("memberStore", () => {
   const router = useRouter();
-
   const userId = ref(null);
   const userInfo = ref(null);
   const isLogin = ref(false);
-
   const getUserInfo = async (eamil) => {
     console.log("ooo", eamil);
     await getUserInfomation(
@@ -21,6 +19,7 @@ export const useMemberStore = defineStore("memberStore", () => {
         if (response.status === httpStatusCode.OK) {
           userInfo.value = response.data;
           console.log("저장됨", userInfo.value);
+          setLocalStorage("userId", userInfo.value.id);
         } else {
           console.log("유저 정보 없음!!!!");
         }
