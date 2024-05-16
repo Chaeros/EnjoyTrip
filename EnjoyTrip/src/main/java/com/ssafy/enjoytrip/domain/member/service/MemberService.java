@@ -4,6 +4,7 @@ import com.ssafy.enjoytrip.domain.member.dto.request.MemberSignUpDto;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.enjoytrip.domain.member.dto.response.MemberResponseDto;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface MemberService {
@@ -14,4 +15,6 @@ public interface MemberService {
     public Optional<MemberResponseDto> getMemberByEmail(String email) throws Exception;
 
     public Optional<MemberResponseDto> getMemberById(long id) throws Exception;
+
+    public Optional<List<MemberResponseDto>> getMemberByNicknameKeyword(String keyword) throws Exception;
 }

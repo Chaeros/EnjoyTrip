@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.domain.member.service;
 
+import com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard;
+import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 import com.ssafy.enjoytrip.domain.member.Member;
 import com.ssafy.enjoytrip.domain.member.Role;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberSignUpDto;
@@ -11,12 +13,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
+
     private final MemberMapper memberMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -60,5 +65,14 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public Optional<MemberResponseDto> getMemberById(long id) throws Exception {
         return Optional.ofNullable(memberMapper.findMemberById(id).transferToMemberResponseDto());
+    }
+
+    @Override
+    public Optional<List<MemberResponseDto>> getMemberByNicknameKeyword(String keyword) throws Exception {
+        List<Member> members = memberMapper.findMembersByNickNameKeyword(keyword);
+        List<MemberResponseDto> responseDtos = members.stream()
+                .map(Member::transferToMemberResponseDto)
+                .collect(Collectors.toList());
+        return Optional.ofNullable(responseDtos);
     }
 }

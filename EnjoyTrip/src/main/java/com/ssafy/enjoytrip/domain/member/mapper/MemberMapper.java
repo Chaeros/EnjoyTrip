@@ -40,4 +40,6 @@ public interface MemberMapper {
     Member save(Member member);
 
     void updateMember(MemberUpdateDto memberUpdateDto);
+
+    List<Member> findMembersByNickNameKeyword(String keyword);
 }

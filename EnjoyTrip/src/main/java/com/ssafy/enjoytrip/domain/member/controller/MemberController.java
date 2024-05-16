@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -51,6 +53,14 @@ public class MemberController {
     public ResponseEntity<MemberResponseDto> getMemberById(@PathVariable("id") long id) throws Exception {
         log.info("[get member by id] memberId : {}", id);
         return memberService.getMemberById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+    }
+
+    @GetMapping("/member/keyword/{keyword}")
+    public ResponseEntity<List<MemberResponseDto>> getMemberByNicnnameKeyword(@PathVariable("keyword") String keyword) throws Exception {
+        log.info("[get member by keyword] keyword : {}", keyword);
+        return memberService.getMemberByNicknameKeyword(keyword)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }

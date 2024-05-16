@@ -26,6 +26,9 @@
             @click="searchAttractions"
           />
         </div>
+        <template v-for="member in members" :key="member.id">
+          <MemberItem :member="member"></MemberItem>
+        </template>
       </div>
       <div class="right-current-my-friend-box"></div>
     </div>
@@ -36,6 +39,7 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import Modal from "@/modal/FriendManagementModal.vue";
+import MemberItem from "@/components/item/member/MemberItem.vue";
 import { ref } from "vue";
 const showModal = ref(false);
 const callFriendManagement = () => {};

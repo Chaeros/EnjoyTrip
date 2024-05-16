@@ -69,6 +69,13 @@ function getUserInfomationById(id, success, fail) {
     .catch(fail);
 }
 
+function searchMemberByKeyNicnnameKeword(keyword, success, fail) {
+  local
+    .get(`/member/keyword/` + keyword)
+    .then(success)
+    .catch(fail);
+}
+
 export {
   addUserInformation,
   kakaoLogin,
@@ -78,4 +85,5 @@ export {
   normalSignUp,
   getUserInfomation,
   getUserInfomationById,
+  searchMemberByKeyword,
 };

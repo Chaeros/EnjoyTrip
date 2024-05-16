@@ -65,6 +65,14 @@
 		)
 	</insert>
 
+	<select id="findMembersByNickNameKeyword" parameterType="string" resultType="com.ssafy.enjoytrip.domain.member.Member">
+		select id, email, password, nickname, role
+		from members
+		where nickname like CONCAT('%', #{keyword}, '%')
+	</select>
+
+
+
 <!--	<select id="listMember" parameterType="string" resultType="Member">-->
 <!--		select id, name, role, join_date-->
 <!--		from members-->
