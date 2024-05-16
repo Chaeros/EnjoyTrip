@@ -9,6 +9,7 @@ import DateCheck from '@/components/DateCheck.vue';
 import TotalSelectedAttractions from '@/components/TotalSelectedAttractions.vue';
 import DateContainer from '@/components/DateContainer.vue';
 import AttractionAddModal from '@/components/AttractionAddModal.vue';
+import AccomodationAddModal from '@/components/AccomodationAddModal.vue';
 import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
 
 import { useRouter } from 'vue-router';
@@ -108,6 +109,23 @@ async function registerTripPlan(param) {
 }
 
 const createPlan = () => {
+  console.dir('예외 처리');
+  // 예외 처리
+  if (!departureDate.value || !arrivalDate.value) {
+    window.alert('날짜를 정확히 입력해주세요');
+    return;
+  }
+
+  if (selectedAttractions.value.length === 0) {
+    window.alert('1개 이상의 관광지를 선택해주세요');
+    return;
+  }
+
+  if (selectedAccomodations.value.length === 0) {
+    window.alert('1개 이상의 숙소를 선택해주세요');
+    return;
+  }
+
   tripPlanRequest.value.tripPlan.departureDate = departureDate.value;
   tripPlanRequest.value.tripPlan.arrivalDate = arrivalDate.value;
 
@@ -177,6 +195,11 @@ const attractionAddModalToggle = () => {
   attractionAddModalOpen.value = !attractionAddModalOpen.value;
 };
 
+const accomodationAddModalOpen = ref(false);
+const accomodationAddModalToggle = () => {
+  accomodationAddModalOpen.value = !accomodationAddModalOpen.value;
+};
+
 const showPlanDetailModalOpen = ref(false);
 const showPlanDetailModalToggle = () => {
   showPlanDetailModalOpen.value = !showPlanDetailModalOpen.value;
@@ -244,6 +267,23 @@ const updateTripPlan = (title, content) => {
 
 const removeAttraction = (date, index) => {
   selectedAttractionsByDate.value[date].splice(index, 1);
+};
+
+const modalAttractionAdd = (attraction) => {
+  if (!selectedAttractions.value.includes(attraction)) {
+    selectedAttractions.value.push(attraction);
+  }
+};
+
+const modalAccomodationAdd = (attraction) => {
+  if (!selectedAccomodations.value.includes(attraction)) {
+    selectedAccomodations.value.push(attraction);
+  }
+};
+
+const currentModalViewToggle = () => {
+  attractionAddModalOpen.value = !attractionAddModalOpen.value;
+  accomodationAddModalOpen.value = !accomodationAddModalOpen.value;
 };
 </script>
 
@@ -359,8 +399,16 @@ const removeAttraction = (date, index) => {
 
     <div class="all-content" v-if="currentView === 'plan'">
       <AttractionAddModal
+        @current-modal-view-toggle="currentModalViewToggle"
         @attraction-add-modal-toggle="attractionAddModalToggle"
+        @modal-attraction-add="modalAttractionAdd"
         v-show="attractionAddModalOpen"
+      />
+      <AccomodationAddModal
+        @current-modal-view-toggle="currentModalViewToggle"
+        @accomodation-add-modal-toggle="accomodationAddModalToggle"
+        @modal-accomodation-add="modalAccomodationAdd"
+        v-show="accomodationAddModalOpen"
       />
       <ShowPlanDetailModal
         @update-trip-plan="updateTripPlan"

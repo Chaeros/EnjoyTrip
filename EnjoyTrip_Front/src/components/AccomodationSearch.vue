@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { defineEmits } from 'vue';
 import AccomodationItem from '@/components/item/AccomodationItem.vue';
-const emit = defineEmits(['clickAccomodationAdd']);
+const emit = defineEmits(['clickAccomodationAdd', 'modalAccomodationAdd']);
 
 import {
   getListAccomodation,
@@ -21,6 +21,7 @@ const inputInformation = ref({
 
 const clickAccomodationAdd = (attraction) => {
   emit('clickAccomodationAdd', attraction);
+  emit('modalAccomodationAdd', attraction);
 };
 
 async function callSidos(sido) {

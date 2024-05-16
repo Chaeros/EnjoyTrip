@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import { defineEmits } from 'vue';
 import AttractionItem from '@/components/item/AttractionItem.vue';
-const emit = defineEmits(['clickAttractionAdd']);
+const emit = defineEmits(['clickAttractionAdd', 'modalAttractionAdd']);
 
 import {
   getListAttraction,
@@ -25,6 +25,7 @@ const inputInformation = ref({
 
 const clickAttractionAdd = (attraction) => {
   emit('clickAttractionAdd', attraction);
+  emit('modalAttractionAdd', attraction);
 };
 
 async function callSidos(sido) {
