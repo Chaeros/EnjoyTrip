@@ -15,6 +15,10 @@ function removeFriend(id, success, fail) {
     .catch(fail);
 }
 
+function removeFriendByDto(friendDto, success, fail) {
+  local.delete(`/friend`, { data: friendDto }).then(success).catch(fail);
+}
+
 function bringFriendList(myId, success, fail) {
   local
     .get(`/friend/list/` + myId)
@@ -22,4 +26,14 @@ function bringFriendList(myId, success, fail) {
     .catch(fail);
 }
 
-export { addFriend, removeFriend, bringFriendList };
+function isMyFriend(myId, friendId, success, fail) {
+  local.get(`friend`, { params: { myId, friendId } }).then(success).catch(fail);
+}
+
+export {
+  addFriend,
+  removeFriend,
+  removeFriendByDto,
+  bringFriendList,
+  isMyFriend,
+};

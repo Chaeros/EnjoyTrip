@@ -7,6 +7,7 @@ import java.util.List;
 public interface FriendService {
     int addFriend(Friend friend);
     int removeFriend(long id);
+    int removeFriendByDto(Friend friend);
     List<Friend> searchFriendList(long myId);
     int searchDuplicateRelationship(Friend friend);
 }

@@ -37,7 +37,25 @@
             <div class="regdate">{{ article.regdate }}</div>
           </div>
           <div class="post-detail-info-right">
-            <button>팔로우</button>
+            <template v-if="isMyArticle"> </template>
+            <template v-else-if="isItMyFriend === false">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                @click="clickFollow"
+              >
+                <b> Follow </b>
+              </button>
+            </template>
+            <template v-else>
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                @click="clickUnFollow"
+              >
+                <b> UnFollow </b>
+              </button>
+            </template>
           </div>
         </div>
       </div>
@@ -64,19 +82,83 @@ import { getAttractionReviewArticle } from "@/api/attraction-board/attraction-bo
 import { getUserInfomationById } from "@/api/member/member.js";
 import { useRoute } from "vue-router";
 import { ref, onMounted } from "vue";
+import {
+  getLocalStorage,
+  setLocalStorage,
+} from "@/util/localstorage/localstorage.js";
+import {
+  addFriend,
+  removeFriend,
+  removeFriendByDto,
+  bringFriendList,
+  isMyFriend,
+} from "@/api/friend/friend.js";
 const imageServerURL = ref(import.meta.env.VITE_VUE_IMAGE_SERVER_URL);
 const route = useRoute(); // useRoute 훅을 사용해서 현재 라우트 객체에 접근합니다.
 const attractionBoardReviewId = route.params.attractionBoardReviewId; // params로 전달받은 데이터를 가져옵니다.
 const article = ref();
 const writerInfo = ref(null);
+const isMyArticle = ref(true);
+const isItMyFriend = ref(false);
+
+const friendDto = ref({
+  myId: getLocalStorage("userId"),
+  friendId: "",
+});
+
+const isFriend = () => {
+  isMyFriend(
+    getLocalStorage("userId"),
+    article.value.memberId,
+    (response) => {
+      isItMyFriend.value = true;
+    },
+    (error) => {
+      isItMyFriend.value = false;
+    }
+  );
+};
+
+const clickFollow = () => {
+  console.log(friendDto.value);
+  addFriend(
+    friendDto.value,
+    (response) => {
+      console.log(response.data);
+      isItMyFriend.value = true;
+    },
+    (error) => {
+      console.log(error);
+      isItMyFriend.value = false;
+    }
+  );
+};
+
+const clickUnFollow = () => {
+  removeFriendByDto(
+    friendDto.value,
+    (response) => {
+      isItMyFriend.value = false;
+    },
+    (error) => {
+      isItMyFriend.value = true;
+    }
+  );
+};
 
 onMounted(() => {
   getAttractionReviewArticle(
     attractionBoardReviewId,
     (response) => {
-      console.log(response);
       article.value = response.data;
+      friendDto.value.friendId = article.value.memberId;
       getWriterInfo();
+      if (article.value.memberId == getLocalStorage("userId")) {
+        isMyArticle.value = true;
+      } else {
+        isMyArticle.value = false;
+        isFriend();
+      }
     },
     (error) => {
       console.log(error);
@@ -88,9 +170,7 @@ const getWriterInfo = () => {
   getUserInfomationById(
     article.value.memberId,
     (response) => {
-      console.log(response);
       writerInfo.value = response.data;
-      console.log(writerInfo.value);
     },
     (error) => {
       console.error(error);

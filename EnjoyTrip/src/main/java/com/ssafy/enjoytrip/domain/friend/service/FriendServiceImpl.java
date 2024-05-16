@@ -24,6 +24,11 @@ public class FriendServiceImpl implements FriendService{
     }
 
     @Override
+    public int removeFriendByDto(Friend friend) {
+        return friendMapper.deleteFriendByDto(friend);
+    }
+
+    @Override
     public List<Friend> searchFriendList(long myId) {
         return friendMapper.findFriendList(myId);
     }
