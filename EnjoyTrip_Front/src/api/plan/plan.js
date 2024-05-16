@@ -8,4 +8,10 @@ function registTripPlan(param, success, fail) {
   local.post(`/plan`, param).then(success).catch(fail);
 }
 
-export { registTripPlan };
+function editTripPlan(param, success, fail) {
+  console.log('파람');
+  console.dir(param);
+  local.put(`/plan`, param).then(success).catch(fail);
+}
+
+export { registTripPlan, editTripPlan };
