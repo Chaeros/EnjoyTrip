@@ -16,8 +16,8 @@ const sidos = ref([]);
 const guguns = ref([]);
 const attractions = ref([]);
 const inputInformation = ref({
-  sidoCode: '',
-  gugunCode: '',
+  sidoCode: 0,
+  gugunCode: 0,
   keyword: '',
 });
 
