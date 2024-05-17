@@ -15,12 +15,22 @@
             v-model="commentDto.content"
             @keyup.enter="clickAddCommentBtn"
           />
-          <button @click="clickAddCommentBtn">댓글 작성</button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            @click="clickAddCommentBtn"
+          >
+            댓글 작성
+          </button>
         </div>
       </div>
       <div class="comment-list">
         <template v-for="comment in comments" :key="comment.id">
-          <CommentItem :comment="comment" />
+          <CommentItem
+            :comment="comment"
+            @click-remove-commentBtn="clickRemoveCommentBtn"
+            @click-modify-commentBtn="clickModifyCommentBtn"
+          />
         </template>
       </div>
     </div>
@@ -53,6 +63,15 @@ const commentDto = ref({
   memberId: "",
 });
 const router = useRouter();
+
+const clickRemoveCommentBtn = () => {
+  bringCommentList();
+  bringCommentCount();
+};
+
+const clickModifyCommentBtn = () => {
+  bringCommentList();
+};
 
 console.log(userInfo);
 if (userInfo.value !== null) {

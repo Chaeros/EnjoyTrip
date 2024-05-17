@@ -19,9 +19,9 @@ function getCommentList(attractionBoardReviewId, success, fail) {
     .catch(fail);
 }
 
-function removeComment(attractionBoardId, success, fail) {
+function removeComment(commentId, success, fail) {
   local
-    .delete(`/attractionboardcommnet/` + attractionBoardId)
+    .delete(`/attractionboardcommnet/` + commentId)
     .then(success)
     .catch(fail);
 }

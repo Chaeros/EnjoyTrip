@@ -22,23 +22,112 @@
               <div>{{ writerInfo.nickname }}</div>
             </div>
           </div>
-          <div class="description-top-right">
-            <button>수정</button>
-            <button>삭제</button>
-          </div>
+          <template v-if="isMyComment">
+            <div class="description-top-right">
+              <template v-if="isModifyMode">
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  @click="clickModifyCommentBtn"
+                >
+                  수정
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-danger"
+                  @click="clickModifyCommentToggleBtn"
+                >
+                  취소
+                </button>
+              </template>
+              <template v-else>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  @click="clickModifyCommentToggleBtn"
+                >
+                  수정
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary"
+                  @click="clickRemoveCommentBtn"
+                >
+                  삭제
+                </button>
+              </template>
+            </div>
+          </template>
         </div>
         <div class="date">{{ comment.regdate }}</div>
       </div>
     </div>
-    <div class="comment-content">{{ comment.content }}</div>
+    <template v-if="isModifyMode">
+      <input
+        type="text"
+        v-model="modifyCommentContent"
+        @keyup.enter="clickModifyCommentBtn"
+      />
+    </template>
+    <template v-else>
+      <div class="comment-content">{{ comment.content }}</div>
+    </template>
   </div>
 </template>
 
 <script setup>
 import { getUserInfomationById } from "@/api/member/member.js";
 import { ref, onMounted } from "vue";
+import { getLocalStorage } from "@/util/localstorage/localstorage.js";
+import {
+  addComment,
+  getCommentList,
+  removeComment,
+  modifyComment,
+} from "@/api/attraction-board-comment/attraction-board-comment.js";
+import { defineEmits } from "vue";
+const emit = defineEmits(["clickRemoveCommentBtn", "clickModifyCommentBtn"]);
 const { comment } = defineProps({ comment: Object });
 const writerInfo = ref(null);
+const isMyComment = ref(true);
+const isModifyMode = ref(false);
+const modifyCommentContent = ref("");
+
+const clickModifyCommentToggleBtn = () => {
+  isModifyMode.value = !isModifyMode.value;
+  if (isModifyMode.value == true) {
+    modifyCommentContent.value = comment.content;
+  }
+};
+
+const clickModifyCommentBtn = () => {
+  modifyComment(
+    {
+      id: comment.id,
+      content: modifyCommentContent.value,
+    },
+    (response) => {
+      isModifyMode.value = false;
+      emit("clickModifyCommentBtn");
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const clickRemoveCommentBtn = () => {
+  removeComment(
+    comment.id,
+    (response) => {
+      console.log(response);
+      emit("clickRemoveCommentBtn");
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 
 onMounted(() => {
   getWriterInfo();
@@ -52,6 +141,11 @@ const getWriterInfo = () => {
       console.log(response);
       writerInfo.value = response.data;
       console.log(writerInfo.value);
+      if (comment.memberId == getLocalStorage("userId")) {
+        isMyComment.value = true;
+      } else {
+        isMyComment.value = false;
+      }
     },
     (error) => {
       console.error(error);

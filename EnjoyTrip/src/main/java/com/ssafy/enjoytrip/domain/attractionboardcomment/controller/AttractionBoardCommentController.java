@@ -31,6 +31,7 @@ public class AttractionBoardCommentController {
 
     @PatchMapping
     public ResponseEntity<Void> modifyAttractionBoardComment(@RequestBody AttractionBoardCommentModifyRequestDto attractionBoardCommentModifyRequestDto){
+        log.info("[comment modify] attractionBoardCommentModifyRequestDto {} : ",attractionBoardCommentModifyRequestDto);
         if ( attractionBoardCommentService.modifyAttractionBoardComment(attractionBoardCommentModifyRequestDto) == 0 ){
             return ResponseEntity.badRequest().build();
         }
