@@ -5,8 +5,16 @@ const headers = {
 };
 
 function clickAttractionBoardLikeBtn(likeDto, success, fail) {
+  console.log(likeDto);
+  local.post(`/attractionboardlike`, likeDto).then(success).catch(fail);
+}
+
+function removeAttractionBoardLike(memberId, attractionBoardId, success, fail) {
+  console.log(memberId, attractionBoardId);
   local
-    .post(`/attractionboardlike`, likeDto, { headers })
+    .delete(`/attractionboardlike`, {
+      params: { memberId: memberId, attractionBoardId: attractionBoardId },
+    })
     .then(success)
     .catch(fail);
 }
@@ -18,4 +26,18 @@ function getAttractionBoardLikeCount(attractionBoardId, success, fail) {
     .catch(fail);
 }
 
-export { clickAttractionBoardLikeBtn, getAttractionBoardLikeCount };
+function isMyLikeReview(memberId, attractionBoardId, success, fail) {
+  local
+    .get(`/attractionboardlike/isLikeReview`, {
+      params: { memberId, attractionBoardId },
+    })
+    .then(success)
+    .catch(fail);
+}
+
+export {
+  clickAttractionBoardLikeBtn,
+  removeAttractionBoardLike,
+  getAttractionBoardLikeCount,
+  isMyLikeReview,
+};

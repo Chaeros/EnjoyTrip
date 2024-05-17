@@ -6,25 +6,25 @@
         insert into attraction_board_likes (
             attraction_board_id, member_id
         ) values (
-            #{attraction_board_id}, #{member_id}
+            #{attractionBoardId}, #{memberId}
         )
     </insert>
 
-    <delete id="deleteAttractionBoardLike" parameterType="long">
+    <delete id="deleteAttractionBoardLike" parameterType="com.ssafy.enjoytrip.domain.attractionboardlike.AttractionBoardLike">
         delete
           from attraction_board_likes
-         where member_id = #{member_id}
+         where member_id = #{memberId} and attraction_board_id = #{attractionBoardId}
     </delete>
 
-    <select id="findAttractionBoardLike" parameterType="long" resultType="int">
+    <select id="findAttractionBoardLike" parameterType="com.ssafy.enjoytrip.domain.attractionboardlike.AttractionBoardLike" resultType="int">
         select count(*)
           from attraction_board_likes
-         where member_id = #{member_id}
+         where member_id = #{memberId} and attraction_board_id = #{attractionBoardId}
     </select>
 
     <select id="findAttractionBoardLikeCount" parameterType="int" resultType="int">
         select count(*)
           from attraction_board_likes
-         where attraction_board_id = #{attraction_board_id}
+         where attraction_board_id = #{attractionBoardId}
     </select>
 </mapper>

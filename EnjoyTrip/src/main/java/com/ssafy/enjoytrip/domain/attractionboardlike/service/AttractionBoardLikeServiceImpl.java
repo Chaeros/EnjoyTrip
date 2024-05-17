@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.domain.attractionboardlike.service;
 
+import com.ssafy.enjoytrip.domain.attractionboardlike.AttractionBoardLike;
 import com.ssafy.enjoytrip.domain.attractionboardlike.dto.AttractionBoardLikeAddRequestDto;
 import com.ssafy.enjoytrip.domain.attractionboardlike.mapper.AttractionBoardLikeMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,13 @@ public class AttractionBoardLikeServiceImpl implements AttractionBoardLikeServic
     }
 
     @Override
-    public int removeAttractionBoardLike(long memberId) {
-        return attractionBoardLikeMapper.deleteAttractionBoardLike(memberId);
+    public int removeAttractionBoardLike(AttractionBoardLike attractionBoardLike) {
+        return attractionBoardLikeMapper.deleteAttractionBoardLike(attractionBoardLike);
     }
 
     @Override
-    public int searchAttractionBoardLike(long memberId) {
-        return attractionBoardLikeMapper.findAttractionBoardLike(memberId);
+    public int searchAttractionBoardLike(AttractionBoardLike attractionBoardLike) {
+        return attractionBoardLikeMapper.findAttractionBoardLike(attractionBoardLike);
     }
 
     @Override
