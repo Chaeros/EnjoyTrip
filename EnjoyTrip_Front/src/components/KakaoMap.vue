@@ -1,16 +1,19 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { mapKey } from '../config/index.ts';
-import { defineExpose, watch } from 'vue';
 
 const { selectedAttractions, selectedAccomodations } = defineProps({
-  selectedAttractions: Object,
-  selectedAccomodations: Object,
+  selectedAttractions: Array,
+  selectedAccomodations: Array,
 });
+console.dir('셀렉트');
+console.dir(selectedAttractions);
+console.dir(selectedAccomodations);
 let map = ref(null);
 
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
+    console.dir('카카오 잘됨');
     initMap();
   } else {
     const script = document.createElement('script');
@@ -22,6 +25,7 @@ onMounted(() => {
 });
 
 const initMap = () => {
+  console.dir('initmap 호출');
   const container = document.getElementById('map');
   const options = {
     center: new kakao.maps.LatLng(36.35537731926109, 127.29847072801634),
@@ -31,6 +35,19 @@ const initMap = () => {
   // 지도 객체를 등록합니다.
   // 지도 객체는 반응형 관리 대상이 아니므로 initMap에서 선언합니다.
   map.value = new kakao.maps.Map(container, options);
+
+  if (
+    typeof selectedAttractions.value === 'undefined' ||
+    typeof selectedAccomodations.value === 'undefined' ||
+    selectedAttractions.value.length === 0 ||
+    selectedAccomodations.value.length === 0
+  ) {
+    console.log('ㅂㅂ');
+    console.log(typeof selectedAttractions.value);
+    console.log(selectedAccomodations.value);
+    return;
+  }
+
   updateMapLocation();
 };
 
@@ -43,6 +60,7 @@ const accomodationOverlays = ref([]);
 const updateMapLocation = () => {
   clearMarkersAndOverlays();
   makeMarkersAndOverlays();
+  adjustMapToBounds();
   toggleOverlays();
 };
 
@@ -167,6 +185,20 @@ const getOverlayContent = (attraction) => {
   );
 };
 
+const adjustMapToBounds = () => {
+  const bounds = new kakao.maps.LatLngBounds();
+
+  attractionMarkers.value.forEach((marker) => {
+    bounds.extend(marker.getPosition());
+  });
+
+  accomodationMarkers.value.forEach((marker) => {
+    bounds.extend(marker.getPosition());
+  });
+
+  map.value.setBounds(bounds);
+};
+
 const toggleOverlays = () => {
   for (let i = 0; i < attractionMarkers.value.length; i++) {
     const marker = attractionMarkers.value[i];
@@ -197,14 +229,16 @@ const selectedAttractionsWatch = watch(
   selectedAttractions,
   (newValue, oldValue) => {
     updateMapLocation();
-  }
+  },
+  { deep: true }
 );
 
 const selectedAccomodationsWatch = watch(
   selectedAccomodations,
   (newValue, oldValue) => {
     updateMapLocation();
-  }
+  },
+  { deep: true }
 );
 </script>
 

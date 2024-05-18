@@ -51,7 +51,7 @@ const updateDates = () => {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Select Travel Dates</h5>
+          <h5 class="modal-title">여행 일자를 선택하세요!</h5>
           <button type="button" class="btn-close" @click="toggleModal"></button>
         </div>
         <div class="modal-body">

@@ -9,6 +9,8 @@ const title = ref('');
 const content = ref('');
 const updateTripPlan = () => {
   emit('updateTripPlan', title.value, content.value);
+  window.alert('일정이 업데이트 되었습니다.');
+  emit('showPlanDetailModalToggle');
 };
 </script>
 

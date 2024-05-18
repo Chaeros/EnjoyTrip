@@ -26,8 +26,13 @@ const startDrag = (event, item, index) => {
       @dragstart="startDrag($event, attraction, index)"
     >
       <div class="attraction-element">
-        <p>{{ attraction.attractionInfo.title }}</p>
-        <button @click.prevent="removeAttraction(date - 1, index)">-</button>
+        <div>{{ attraction.attractionInfo.title }}</div>
+        <button
+          class="remove-btn"
+          @click.prevent="removeAttraction(date - 1, index)"
+        >
+          -
+        </button>
       </div>
     </div>
   </div>
@@ -35,8 +40,9 @@ const startDrag = (event, item, index) => {
 
 <style scoped>
 .container {
-  width: 100px;
-  height: 100vh;
+  min-width: 200px;
+  max-width: 200px;
+  height: 97vh;
   overflow-y: auto;
   padding: 0;
   border: 1px solid black;
@@ -44,6 +50,7 @@ const startDrag = (event, item, index) => {
 
 .attraction-element {
   display: flex;
+  font-size: 13px;
   justify-content: space-between;
   align-items: center;
   width: 100%;
@@ -52,7 +59,7 @@ const startDrag = (event, item, index) => {
   margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  background-color: #fff;
+  background-color: #f1f5f6;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -84,7 +91,7 @@ const startDrag = (event, item, index) => {
   font-weight: bold;
   margin-bottom: 10px;
   padding: 10px;
-  background-color: #f0f0f0;
+  background-color: #e0e7e9;
   border: 1px solid #ddd;
   border-radius: 0;
   text-align: center;

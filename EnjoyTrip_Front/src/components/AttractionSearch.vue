@@ -1,12 +1,15 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { defineEmits } from 'vue';
 import AttractionItem from '@/components/item/AttractionItem.vue';
-const emit = defineEmits(['clickAttractionAdd', 'modalAttractionAdd']);
+const emit = defineEmits([
+  'clickAttractionAdd',
+  'modalAttractionAdd',
+  'toggleSelectContent',
+]);
 
 import {
   getListAttraction,
-  getListAccomodation,
   getListSido,
   getListGugun,
   getListContentType,
@@ -26,6 +29,10 @@ const inputInformation = ref({
 const clickAttractionAdd = (attraction) => {
   emit('clickAttractionAdd', attraction);
   emit('modalAttractionAdd', attraction);
+};
+
+const toggleSelectContent = () => {
+  emit('toggleSelectContent');
 };
 
 async function callSidos(sido) {
@@ -87,31 +94,17 @@ const observer = new IntersectionObserver(
 );
 
 async function initSearchAttractions() {
+  // 페이지 번호와 결과를 초기화
+  page.value = 1;
   attractions.value = [];
+  hasMore.value = true;
+  isLoading.value = false;
 
   if (bottomElement.value) {
     observer.observe(bottomElement.value);
   }
 
-  getListAttraction(
-    {
-      ...inputInformation.value,
-      page: page.value,
-      size: size.value,
-    },
-    ({ data }) => {
-      if (data.length < size.value) {
-        hasMore.value = false;
-      }
-      attractions.value.push(...data);
-      page.value++;
-      isLoading.value = false;
-    },
-    (error) => {
-      console.log(error);
-      isLoading.value = false;
-    }
-  );
+  loadMoreAttractions();
 }
 
 async function loadMoreAttractions() {
@@ -142,176 +135,215 @@ async function loadMoreAttractions() {
 
 <template>
   <div class="left-content">
-    <div class="selects">
-      <select
-        class="custom-select w-100"
-        v-model="inputInformation.sidoCode"
-        @change="callGuguns(inputInformation.sidoCode)"
-      >
-        <option value="-1">시도</option>
-        <option
-          v-for="sido in sidos"
-          :value="sido.sidoCode"
-          :key="sido.sidoCode"
+    <div class="left-content-container">
+      <div class="select-title-container">
+        <div class="select-title">관광지를 검색하세요!</div>
+        <button
+          type="button"
+          class="btn btn-outline-light toggle-btn"
+          @click.prevent="toggleSelectContent"
         >
-          {{ sido.sidoName }}
-        </option>
-      </select>
+          <>
+        </button>
+      </div>
+      <div class="selects">
+        <select
+          class="custom-select w-100"
+          v-model="inputInformation.sidoCode"
+          @change="callGuguns(inputInformation.sidoCode)"
+        >
+          <option value="-1">시도</option>
+          <option
+            v-for="sido in sidos"
+            :value="sido.sidoCode"
+            :key="sido.sidoCode"
+          >
+            {{ sido.sidoName }}
+          </option>
+        </select>
 
-      <select class="custom-select w-100" v-model="inputInformation.gugunCode">
-        <option disabled value="-1">구군</option>
-        <option
-          v-for="gugun in guguns"
-          :value="gugun.gugunCode"
-          :key="gugun.gugunCode"
+        <select
+          class="custom-select w-100"
+          v-model="inputInformation.gugunCode"
         >
-          {{ gugun.gugunName }}
-        </option>
-      </select>
+          <option disabled value="-1">구군</option>
+          <option
+            v-for="gugun in guguns"
+            :value="gugun.gugunCode"
+            :key="gugun.gugunCode"
+          >
+            {{ gugun.gugunName }}
+          </option>
+        </select>
 
-      <select
-        class="custom-select w-100"
-        v-model="inputInformation.contentTypeId"
-      >
-        <option value="-1">컨텐츠</option>
-        <option
-          v-for="content in contentTypes"
-          :value="content.contentId"
-          :key="content.contentId"
+        <select
+          class="custom-select w-100"
+          v-model="inputInformation.contentTypeId"
         >
-          {{ content.contentName }}
-        </option>
-      </select>
+          <option value="-1">컨텐츠</option>
+          <option
+            v-for="content in contentTypes"
+            :value="content.contentId"
+            :key="content.contentId"
+          >
+            {{ content.contentName }}
+          </option>
+        </select>
+      </div>
+
+      <form class="d-flex search-form">
+        <input
+          class="form-control"
+          type="search"
+          placeholder="검색어를 입력하세요"
+          aria-label="Search"
+          v-model="inputInformation.keyword"
+        />
+        <button
+          class="btn btn-outline-success"
+          type="submit"
+          @click.prevent="initSearchAttractions"
+        >
+          검색
+        </button>
+      </form>
     </div>
 
-    <form class="d-flex">
-      <input
-        class="form-control me-2"
-        type="search"
-        placeholder="검색어를 입력하세요"
-        aria-label="Search"
-        v-model="inputInformation.keyword"
-      />
-      <button
-        class="btn btn-outline-success"
-        type="submit"
-        @click.prevent="initSearchAttractions"
-      >
-        search
-      </button>
-    </form>
-
     <div class="attractions">
-      <div class="attraction" v-for="attraction in attractions">
-        <AttractionItem
-          :attraction="attraction"
-          @click-attraction-add="clickAttractionAdd"
-        />
-      </div>
+      <AttractionItem
+        v-for="attraction in attractions"
+        :attraction="attraction"
+        @click-attraction-add="clickAttractionAdd"
+      />
       <div ref="bottomElement" class="bottom-element"></div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.wrap {
-  margin: 0 auto;
-  width: 100%; /* 부모 요소 너비 100% */
-  display: flex;
-  justify-content: center; /* 내부 컨텐츠 가운데 정렬 */
-}
-
-.all-content {
-  display: flex;
-  height: 100vh;
-  max-width: 100%; /* 최대 너비 설정 */
-  width: 100%; /* 내부 요소 전체 너비 사용 */
-}
-
-#header {
-  display: flex;
-  flex-direction: column;
-  width: 80px;
-  background-color: antiquewhite;
-}
-
 .left-content {
-  display: flex;
-  flex-direction: column;
-  width: 400px;
+  width: 100%;
+  padding: 20px;
+  background-color: #e0e7e9;
+  border-right: 1px solid #adb5bd;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.select-content-bar {
-  z-index: 10;
-  position: absolute;
+/* Custom Scrollbar for WebKit (Chrome, Safari) */
+.left-content::-webkit-scrollbar {
+  width: 8px;
 }
 
-.select-content-wrap {
-  position: static;
-  display: flex;
+.left-content::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 10px;
 }
 
-.select-content {
-  width: 400px;
-  height: 100vh;
-  background-color: white;
-  z-index: 1000;
-  overflow-y: auto; /* 세로 스크롤바 자동 표시 */
-  /* display: none; */
+.left-content::-webkit-scrollbar-thumb {
+  background-color: #6c7a89;
+  border-radius: 10px;
+  border: 2px solid #f8f9fa;
 }
 
-.select-attraction {
-  display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: center; /* 수직 가운데 정렬 */
-  border: 1px solid; /* 테두리 설정 */
-  border-radius: 8px; /* 모서리 둥글게 만들기 */
-  padding: 20px; /* 내부 여백 설정 */
-  margin: 5px;
+.left-content::-webkit-scrollbar-thumb:hover {
+  background-color: #6c7a89;
 }
 
-.select-content-button {
-  height: 100%;
+.left-content-container {
+  margin-bottom: 20px;
 }
 
-.right-content {
-  flex: 1; /* 나머지 공간을 채우도록 설정 */
-  background-color: blueviolet;
-  width: 100%; /* right-content 영역을 전체 너비로 설정 */
-  display: flex; /* 자식 요소들을 수직으로 배치하기 위해 추가 */
-  position: relative;
+.select-title {
+  height: 50px;
+  line-height: 50px;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .selects {
   display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.kakao-map-container {
-  width: 100%;
-  height: 100%;
-  position: absolute;
+.custom-select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #adb5bd;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+
+.search-form {
+  display: flex;
+  gap: 10px;
+}
+
+.form-control {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #adb5bd;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+
+.btn-outline-success {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: 1px solid #218838;
+  color: #218838;
+  background-color: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-outline-success:hover {
+  background-color: #218838;
+  color: #fff;
 }
 
 .attractions {
-  overflow-y: auto; /* 세로 스크롤바 자동 표시 */
-  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  padding: 10px 0;
 }
 
 .attraction {
-  border: 1px solid; /* 테두리 설정 */
-  border-radius: 8px; /* 모서리 둥글게 만들기 */
-  padding: 20px; /* 내부 여백 설정 */
-  margin: 5px;
+  border: 1px solid #adb5bd;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
-
-/* */
 
 .attraction-img {
   width: 100px;
+  border-radius: 8px;
+  object-fit: cover;
 }
 
 .bottom-element {
   height: 1px;
   width: 100%;
+}
+
+.select-title-container {
+  align-items: center;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.toggle-btn {
+  width: 60px;
+  height: 50px;
+  font-size: 20px;
+  background-color: #a3c6c4;
 }
 </style>

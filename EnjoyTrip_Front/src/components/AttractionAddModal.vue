@@ -4,7 +4,8 @@ import AttractionSearch from '@/components/AttractionSearch.vue';
 const emit = defineEmits([
   'attractionAddModalToggle',
   'modalAttractionAdd',
-  'currentModalViewToggle',
+  'currentModalViewAttraction',
+  'currentModalViewAccomodation',
 ]);
 const attractionAddModalToggle = () => {
   emit('attractionAddModalToggle');
@@ -12,15 +13,19 @@ const attractionAddModalToggle = () => {
 const modalAttractionAdd = (attraction) => {
   emit('modalAttractionAdd', attraction);
 };
-const currentModalViewToggle = (attraction) => {
-  emit('currentModalViewToggle', attraction);
+const currentModalViewAttraction = (attraction) => {
+  emit('currentModalViewAttraction', attraction);
+};
+const currentModalViewAccomodation = (attraction) => {
+  emit('currentModalViewAccomodation', attraction);
 };
 </script>
 
 <template>
   <div class="attraction-add-modal-wrap">
     <div class="attraction-add-modal-container">
-      <button @click.prevent="currentModalViewToggle">숙소 선택하기</button>
+      <button @click.prevent="currentModalViewAttraction">관광지</button>
+      <button @click.prevent="currentModalViewAccomodation">숙소</button>
       <AttractionSearch @modal-attraction-add="modalAttractionAdd" />
       <button
         class="attraction-add-modal-close-btn"

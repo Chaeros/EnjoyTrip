@@ -46,16 +46,16 @@ function toggleModal() {
   showModal.value = !showModal.value;
 }
 
-const isExistSelectView = ref(true);
+const isExistSelectView = ref(false);
 const toggleSelectContent = () => {
   isExistSelectView.value = !isExistSelectView.value;
 };
 
 const selectAttractionReset = () => {
-  selectedAttractions.value = [];
+  selectedAttractions.value.length = 0;
 };
 const selectAccomodationReset = () => {
-  selectedAccomodations.value = [];
+  selectedAccomodations.value.length = 0;
 };
 
 const deleteAttraction = (index) => {
@@ -281,21 +281,23 @@ const modalAccomodationAdd = (attraction) => {
   }
 };
 
-const currentModalViewToggle = () => {
-  attractionAddModalOpen.value = !attractionAddModalOpen.value;
-  accomodationAddModalOpen.value = !accomodationAddModalOpen.value;
+const currentModalViewAttraction = () => {
+  attractionAddModalOpen.value = true;
+  accomodationAddModalOpen.value = false;
+};
+const currentModalViewAccomodation = () => {
+  attractionAddModalOpen.value = false;
+  accomodationAddModalOpen.value = true;
 };
 </script>
 
 <template>
   <div class="wrap">
-    <div class="all-content" v-if="currentView === 'search'">
+    <div class="all-content" v-show="currentView === 'search'">
       <div class="left-tab">
-        <header id="header">
-          <div class="logo-nav">
-            <h1>
-              <img src="@/img/coldragon.png" width="80px" />
-            </h1>
+        <header class="search-header">
+          <div class="logo-nav-search">
+            <img src="@/img/coldragon.png" class="coldragon-img-search" />
             <nav>
               <div class="list-group">
                 <div class="select-group">
@@ -328,11 +330,11 @@ const currentModalViewToggle = () => {
           <div class="make-plan">
             <button
               type="button"
-              class="btn btn-dark"
+              class="btn btn-dark make-plan-btn"
               style="
                 --bs-btn-padding-y: 1rem;
                 --bs-btn-padding-x: 0.25rem;
-                --bs-btn-font-size: 1rem;
+                --bs-btn-font-size: 0.8rem;
               "
               @click="createPlan"
             >
@@ -349,103 +351,85 @@ const currentModalViewToggle = () => {
         <AttractionSearch
           v-if="activeTab === 'attraction'"
           @click-attraction-add="clickAttractionAdd"
+          @toggle-select-content="toggleSelectContent"
         />
         <AccomodationSearch
           v-if="activeTab === 'accomodation'"
           @click-accomodation-add="clickAccomodationAdd"
+          @toggle-select-content="toggleSelectContent"
         />
       </div>
-
-      <div class="right-content">
-        <div class="right-content-search">
-          <AttractionSearchBar
-            class="search-bar"
-            v-if="
-              activeTab === 'attraction' &&
-              currentView === 'search' &&
-              isExistSelectView === true
-            "
-            @select-attraction-reset="selectAttractionReset"
-            @delete-attraction="deleteAttraction"
-            :selected-attractions="selectedAttractions"
-          ></AttractionSearchBar>
-          <AccomodationSearchBar
-            class="search-bar"
-            v-if="
-              activeTab === 'accomodation' &&
-              currentView === 'search' &&
-              isExistSelectView === true
-            "
-            @select-accomodation-reset="selectAccomodationReset"
-            @delete-accomodation="deleteAccomodation"
-            :selected-accomodations="selectedAccomodations"
-          ></AccomodationSearchBar>
-          <button
-            class="select-content-button"
-            v-if="currentView === 'search'"
-            @click="toggleSelectContent"
-          >
-            <>
-          </button>
-        </div>
-        <KakaoMap
-          ref="kakaoMapRef"
-          class="kakao-map-container"
-          :selectedAttractions="selectedAttractions"
-          :selectedAccomodations="selectedAccomodations"
-        ></KakaoMap>
-      </div>
     </div>
+    <AttractionSearchBar
+      class="search-bar"
+      v-if="
+        activeTab === 'attraction' &&
+        currentView === 'search' &&
+        isExistSelectView === true
+      "
+      @select-attraction-reset="selectAttractionReset"
+      @delete-attraction="deleteAttraction"
+      :selected-attractions="selectedAttractions"
+    ></AttractionSearchBar>
+    <AccomodationSearchBar
+      class="search-bar"
+      v-if="
+        activeTab === 'accomodation' &&
+        currentView === 'search' &&
+        isExistSelectView === true
+      "
+      @select-accomodation-reset="selectAccomodationReset"
+      @delete-accomodation="deleteAccomodation"
+      :selected-accomodations="selectedAccomodations"
+    ></AccomodationSearchBar>
 
-    <div class="all-content" v-if="currentView === 'plan'">
-      <AttractionAddModal
-        @current-modal-view-toggle="currentModalViewToggle"
-        @attraction-add-modal-toggle="attractionAddModalToggle"
-        @modal-attraction-add="modalAttractionAdd"
-        v-show="attractionAddModalOpen"
-      />
-      <AccomodationAddModal
-        @current-modal-view-toggle="currentModalViewToggle"
-        @accomodation-add-modal-toggle="accomodationAddModalToggle"
-        @modal-accomodation-add="modalAccomodationAdd"
-        v-show="accomodationAddModalOpen"
-      />
-      <ShowPlanDetailModal
-        @update-trip-plan="updateTripPlan"
-        @show-plan-detail-modal-toggle="showPlanDetailModalToggle"
-        v-show="showPlanDetailModalOpen"
-      />
+    <AttractionAddModal
+      @current-modal-view-attraction="currentModalViewAttraction"
+      @current-modal-view-accomodation="currentModalViewAccomodation"
+      @attraction-add-modal-toggle="attractionAddModalToggle"
+      @modal-attraction-add="modalAttractionAdd"
+      v-show="attractionAddModalOpen"
+    />
+    <AccomodationAddModal
+      @current-modal-view-attraction="currentModalViewAttraction"
+      @current-modal-view-accomodation="currentModalViewAccomodation"
+      @accomodation-add-modal-toggle="accomodationAddModalToggle"
+      @modal-accomodation-add="modalAccomodationAdd"
+      v-show="accomodationAddModalOpen"
+    />
+    <ShowPlanDetailModal
+      @update-trip-plan="updateTripPlan"
+      @show-plan-detail-modal-toggle="showPlanDetailModalToggle"
+      v-show="showPlanDetailModalOpen"
+    />
+
+    <div class="all-content-plan" v-show="currentView === 'plan'">
       <div class="left-tab-plan">
-        <header id="header">
-          <div class="logo-nav">
-            <h1>
-              <img src="@/img/coldragon.png" width="80px" />
-            </h1>
-            <nav>
-              <div class="list-group">
-                <div class="select-group">
-                  <a
-                    href="#"
-                    class="list-group-item list-group-item-action"
-                    :class="{ active: activeDate === 0 }"
-                    @click.prevent="setActiveDate(0)"
-                    >전체 일정</a
-                  >
-                  <a
-                    href="#"
-                    v-for="number in totalTripDates"
-                    class="list-group-item list-group-item-action"
-                    :class="{ active: activeDate === number }"
-                    @click.prevent="setActiveDate(number)"
-                    >{{ number }}일차</a
-                  >
-                </div>
-              </div>
+        <header id="header" class="plan-header">
+          <div class="logo-nav-plan">
+            <img src="@/img/coldragon.png" class="coldragon-img-plan" />
+            <nav class="select-group-plan">
+              <a
+                href="#"
+                class="list-group-item list-group-item-action"
+                :class="{ active: activeDate === 0 }"
+                @click.prevent="setActiveDate(0)"
+                >전체 일정</a
+              >
+              <a
+                href="#"
+                v-for="number in totalTripDates"
+                class="list-group-item list-group-item-action"
+                :class="{ active: activeDate === number }"
+                @click.prevent="setActiveDate(number)"
+                >{{ number }}일차</a
+              >
             </nav>
           </div>
           <div class="make-plan">
             <button
               type="button"
+              id="save-btn"
               class="btn btn-dark"
               style="
                 --bs-btn-padding-y: 1rem;
@@ -460,7 +444,6 @@ const currentModalViewToggle = () => {
         </header>
 
         <div class="place-save">
-          <div><h3>장소 보관함</h3></div>
           <TotalSelectedAttractions
             @attraction-add-modal-toggle="attractionAddModalToggle"
             @dragged="handleDragged"
@@ -469,7 +452,9 @@ const currentModalViewToggle = () => {
           />
         </div>
       </div>
+    </div>
 
+    <div class="date-container-container" v-if="currentView === 'plan'">
       <DateContainer
         v-for="number in totalTripDates"
         v-show="activeDate === 0 || activeDate === number"
@@ -480,18 +465,13 @@ const currentModalViewToggle = () => {
         @dragover.prevent
         @remove-attraction="removeAttraction"
       ></DateContainer>
-
-      <div class="right-content">
-        <div class="right-content-plan"></div>
-        <KakaoMap
-          :key="currentView"
-          ref="kakaoMapRef"
-          class="kakao-map-container"
-          :selectedAttractions="selectedAttractions"
-          :selectedAccomodations="selectedAccomodations"
-        ></KakaoMap>
-      </div>
     </div>
+
+    <KakaoMap
+      class="kakao-map-container"
+      :selectedAttractions="selectedAttractions"
+      :selectedAccomodations="selectedAccomodations"
+    ></KakaoMap>
   </div>
 </template>
 
@@ -506,54 +486,132 @@ const currentModalViewToggle = () => {
 .all-content {
   display: flex;
   height: 100vh;
-  max-width: 100%; /* 최대 너비 설정 */
-  width: 100%; /* 내부 요소 전체 너비 사용 */
+  width: 40%; /* 내부 요소 전체 너비 사용 */
   padding: 0;
 }
 
-#header {
+.all-content-plan {
+  display: flex;
+  height: 100vh;
+  width: 320px; /* 내부 요소 전체 너비 사용 */
+  padding: 0;
+}
+
+.search-header {
   display: flex;
   flex-direction: column;
-  width: 80px;
-  background-color: antiquewhite;
+  width: 17%;
+  background-color: #f1f5f6;
   justify-content: space-between;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.plan-header {
+  width: 120px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #f1f5f6;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  align-items: center;
+}
+
+.logo-nav-plan {
+  width: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.select-group {
+  width: 100%;
+  padding: 0 10px;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.select-group-plan {
+  width: 100%;
+  height: 72vh;
+  padding: 0 10px;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+/* Custom Scrollbar for WebKit (Chrome, Safari) */
+.select-group-plan::-webkit-scrollbar {
+  width: 7px;
+}
+
+.select-group-plan::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.select-group-plan::-webkit-scrollbar-thumb {
+  background-color: #e0e7e9;
+  border-radius: 10px;
+  border: 2px solid #f8f9fa;
+}
+
+.select-group-plan::-webkit-scrollbar-thumb:hover {
+  background-color: #6c7a89;
+}
+
+.list-group-item {
+  padding: 10px 10px;
+  font-size: 14px;
+  text-align: center;
+  text-decoration: none;
+  color: #333;
+  border: 1px solid #a3c6c4;
+  border-radius: 4px;
+  background-color: #fff;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.list-group-item:hover,
+.list-group-item.active {
+  background-color: #a3c6c4;
+  color: #fff;
+  border-color: #a3c6c4;
+}
+
+.make-plan {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.btn.btn-dark {
+  padding: 15px 8px;
+  font-size: 15px;
+  background-color: #354649;
+  border-color: #354649;
+  color: #fff;
+  border-radius: 4px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.btn.btn-dark:hover {
+  background-color: #23272b;
+  border-color: #1d2124;
 }
 
 .left-tab {
   display: flex;
-  width: 400px;
+  width: 100%;
 }
 
-.left-content {
+.left-tab-plan {
   display: flex;
-  flex-direction: column;
-  width: 400px;
-}
-
-.resizer {
-  background-color: #cbd5e0;
-  cursor: ew-resize;
-  height: 100%;
-  width: 2px;
-}
-
-.select-content-bar {
-  z-index: 10;
-  position: absolute;
-}
-
-.select-content-wrap {
-  position: static;
-  display: flex;
-}
-
-.select-content {
-  width: 400px;
-  height: 100vh;
-  background-color: white;
-  z-index: 1000;
-  overflow-y: auto; /* 세로 스크롤바 자동 표시 */
-  /* display: none; */
+  width: 320px;
 }
 
 .select-attraction {
@@ -570,36 +628,18 @@ const currentModalViewToggle = () => {
   position: static;
 }
 
-.select-content-button {
-  position: static;
-  height: 100%;
-  z-index: 100;
-}
-
-.right-content {
-  flex: 1; /* 나머지 공간을 채우도록 설정 */
-  background-color: blueviolet;
-  width: 100%; /* right-content 영역을 전체 너비로 설정 */
-  display: flex; /* 자식 요소들을 수직으로 배치하기 위해 추가 */
-  position: relative;
-}
-
-.right-content-search {
-  display: flex;
-  position: absolute;
-}
-
 .selects {
   display: flex;
 }
 
 .kakao-map-container {
-  width: 100%;
-  height: 100%;
-  position: absolute;
+  height: 100vh;
+  flex-grow: 1;
+  z-index: 10;
 }
 
 .attractions {
+  width: 50%;
   overflow-y: auto; /* 세로 스크롤바 자동 표시 */
 }
 
@@ -614,14 +654,48 @@ const currentModalViewToggle = () => {
   width: 100px;
 }
 
-.list-group {
+.date-container-container {
   display: flex;
-  flex-direction: column;
-  justify-content: space-around;
+  max-width: 500px;
+  overflow-x: auto;
+  border-right: 1px solid #6c7a89;
 }
 
-.left-tab-plan {
-  display: flex;
-  width: 250px;
+/* Custom Scrollbar for WebKit (Chrome, Safari) */
+.date-container-container::-webkit-scrollbar {
+  width: 7px;
+}
+
+.date-container-container::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.date-container-container::-webkit-scrollbar-thumb {
+  background-color: #e0e7e9;
+  border-radius: 10px;
+  border: 2px solid #f8f9fa;
+}
+
+.date-container-container::-webkit-scrollbar-thumb:hover {
+  background-color: #6c7a89;
+}
+
+.coldragon-img-search {
+  width: 90px;
+}
+
+.coldragon-img-plan {
+  width: 100px;
+  padding: 0 10px;
+  padding-top: 5px;
+}
+
+.place-save {
+  width: 200px;
+}
+
+#save-btn {
+  margin-top: 5px;
 }
 </style>

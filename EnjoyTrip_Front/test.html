@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .container {
+        display: flex;
+        border: 1px black solid;
+      }
+
+      .container div {
+        border: 1px blue solid;
+      }
+
+      .kakaoMap {
+        flex-grow: 1;
+      }
+
+      .container .second {
+        display: flex;
+      }
+
+      .first {
+        width: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="first">1</div>
+      <div class="second" id="second">2222222222222222</div>
+      <div class="kakaoMap">3</div>
+    </div>
+    <button onclick="makeDiv()">등록</button>
+    <script>
+      function makeDiv() {
+        let second = document.getElementById('second');
+        second.innerHTML = `
+          <div>1일차</div>
+          <div>1일차</div>
+          <div>1일차</div>
+          <div>1일차</div>
+          <div>1일차</div>
+          <div>1일차</div>
+          <div>1일차</div>
+          <div>1일차</div>
+        `;
+      }
+    </script>
+  </body>
+</html>
