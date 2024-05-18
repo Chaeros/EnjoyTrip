@@ -1,11 +1,6 @@
 <script setup>
-import { ref, defineProps } from 'vue';
-// const { attraction } = defineProps({ attraction: Object });
-// const emit = defineEmits(["clickAttractionAdd"]);
+import { ref, defineProps, defineEmits } from 'vue';
 
-// const clickAttractionAdd = () => {
-//   emit("clickAttractionAdd", attraction);
-// };
 const { selectedAttractions, selectedAccomodations } = defineProps({
   selectedAttractions: Object,
   selectedAccomodations: Object,
@@ -27,83 +22,153 @@ const startDrag = (event, item) => {
 <template>
   <div class="container">
     <div class="title-button">
-      <h5>관광지</h5>
-      <button type="button" @click="attractionAddModalToggle">추가</button>
+      <div class="container-title">장소 보관함</div>
+      <button
+        type="button"
+        class="btn btn-light"
+        @click="attractionAddModalToggle"
+      >
+        추가
+      </button>
     </div>
 
-    <div
-      class="select-attraction"
-      v-for="(attraction, index) in selectedAttractions"
-      draggable="true"
-      @dragstart="startDrag($event, attraction)"
-    >
-      <img class="attraction-img" :src="attraction.attractionInfo.firstImage" />
-      <div class="select-attraction-content">
-        <h6>{{ attraction.attractionInfo.title }}</h6>
-        <!-- <p>주소 : {{ attraction.attractionInfo.addr1 }}</p>
-        <div class="attraction-indicators">
-          <p>좋아요 : {{ attraction.likeCnt }}</p>
-        </div> -->
+    <div class="total-section">
+      <div class="section-title">관광지</div>
+      <div
+        class="select-attraction"
+        v-for="(attraction, index) in selectedAttractions"
+        :key="index"
+        draggable="true"
+        @dragstart="startDrag($event, attraction)"
+      >
+        <img
+          class="attraction-img"
+          :src="attraction.attractionInfo.firstImage"
+        />
+        <div class="select-attraction-content">
+          <h6 class="attraction-title">
+            {{ attraction.attractionInfo.title }}
+          </h6>
+        </div>
       </div>
-    </div>
 
-    <h5>숙소</h5>
-    <div
-      class="select-attraction"
-      v-for="(attraction, index) in selectedAccomodations"
-      draggable="true"
-      @dragstart="startDrag($event, attraction)"
-    >
-      <img class="attraction-img" :src="attraction.attractionInfo.firstImage" />
-      <div class="select-attraction-content">
-        <h6>{{ attraction.attractionInfo.title }}</h6>
-        <!-- <p>주소 : {{ attraction.attractionInfo.addr1 }}</p>
-        <div class="attraction-indicators">
-          <p>좋아요 : {{ attraction.likeCnt }}</p>
-        </div> -->
+      <div class="section-title">숙소</div>
+      <div
+        class="select-attraction"
+        v-for="(accommodation, index) in selectedAccomodations"
+        :key="index"
+        draggable="true"
+        @dragstart="startDrag($event, accommodation)"
+      >
+        <img
+          class="attraction-img"
+          :src="accommodation.attractionInfo.firstImage"
+        />
+        <div class="select-attraction-content">
+          <h6 class="attraction-title">
+            {{ accommodation.attractionInfo.title }}
+          </h6>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.select-attraction {
-  display: flex;
-  justify-content: center; /* 수평 가운데 정렬 */
-  align-items: center; /* 수직 가운데 정렬 */
-  border: 1px solid; /* 테두리 설정 */
-  border-radius: 8px; /* 모서리 둥글게 만들기 */
-  padding: 20px; /* 내부 여백 설정 */
-  margin: 5px;
-}
-
-.attractions {
-  overflow-y: auto; /* 세로 스크롤바 자동 표시 */
-}
-
-.attraction {
-  border: 1px solid; /* 테두리 설정 */
-  border-radius: 8px; /* 모서리 둥글게 만들기 */
-  padding: 20px; /* 내부 여백 설정 */
-  margin: 5px;
-}
-
-.attraction-img {
-  width: 50px;
-}
-
 .container {
   width: 100%;
+  background-color: #e0e7e9;
   height: 100vh;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
-.select-attraction-content {
-  font-size: 10px;
+.container-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
 .title-button {
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.btn-light {
+  width: 100%;
+  font-size: 14px;
+  background-color: #a3c6c4;
+  color: white;
+}
+
+.btn-light:hover {
+  background-color: #96b3b6;
+  color: white;
+}
+
+.select-attraction {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.select-attraction:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.attraction-img {
+  width: 40px;
+  height: 50px;
+  border-radius: 8px;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.select-attraction-content {
+  flex-grow: 1;
+}
+
+.attraction-title {
+  font-size: 12px;
+  color: #333;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #343a40;
+}
+
+.total-section {
+  height: 80vh;
+  overflow-y: auto;
+  padding: 0 10px;
+}
+
+/* Custom Scrollbar for WebKit (Chrome, Safari) */
+.total-section::-webkit-scrollbar {
+  width: 7px;
+}
+
+.total-section::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.total-section::-webkit-scrollbar-thumb {
+  background-color: #e0e7e9;
+  border-radius: 10px;
+  border: 2px solid #f8f9fa;
+}
+
+.total-section::-webkit-scrollbar-thumb:hover {
+  background-color: #6c7a89;
 }
 </style>
