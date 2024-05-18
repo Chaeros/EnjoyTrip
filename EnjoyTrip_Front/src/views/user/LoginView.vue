@@ -4,6 +4,7 @@ import { normalLogin } from "@/api/member/member.js";
 import { getCookie, setCookie } from "@/util/cookie";
 import { useRouter } from "vue-router";
 import { useMemberStore } from "@/store/member";
+import { useFriendManagementStore } from "@/store/friend-management/friend-management.js";
 import { storeToRefs } from "pinia";
 import { setLocalStorage } from "@/util/localstorage/localstorage.js";
 
@@ -14,7 +15,9 @@ const loginInfo = ref({
   password: "",
 });
 const memberStore = useMemberStore();
+const friendManagementStore = useFriendManagementStore();
 const { userInfo, isLogin } = storeToRefs(memberStore);
+const { bringMyFriendsList } = friendManagementStore;
 const { getUserInfo } = memberStore;
 
 const clickKakaoLogin = () => {
@@ -65,6 +68,7 @@ const clickNormalLogin = () => {
         console.info(isLogin);
         console.log(getCookie("accessToken"));
         isLogin.value = true;
+        bringMyFriendsList();
       }
       // navigate('/');
     },

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.domain.privatechatroom.mapper.PrivateChatRoomMapper">
+
+    <insert id="insertPrivateChatRoom" parameterType="PrivateChatRoom">
+        <selectKey keyProperty="roomId" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into private_chat_room (my_id, opponent_id)
+        values (#{myId}, #{opponentId})
+    </insert>
+
+    <select id="findPrivateChatRoom" parameterType="PrivateChatRoom" resultType="int">
+        select room_id
+          from private_chat_room
+         where ( my_id = #{myId} and opponent_id = #{opponentId} )
+            or ( my_id = #{opponentId} and opponent_id = #{myId} )
+    </select>
+
+    <select id="findPrivateChatRoomList" parameterType="long" resultType="PrivateChatRoom">
+        select room_id, my_id, opponent_id, regdate, recent_date
+        from private_chat_room
+        where member_id = #{memberId}
+           or opponent_id = #{opponentId}
+    </select>
+
+</mapper>

@@ -1,0 +1,40 @@
+import { localAxios } from "@/util/http-commons";
+const local = localAxios();
+const headers = {
+  "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+};
+
+function enterOrMakeChatRoom(myId, friendId, success, fail) {
+  console.log(myId, friendId);
+  local
+    .post(`/attractionboardcommnet`, comment, headers)
+    .then(success)
+    .catch(fail);
+}
+
+function getCommentList(attractionBoardReviewId, success, fail) {
+  local
+    .get(`/attractionboardcommnet/` + attractionBoardReviewId)
+    .then(success)
+    .catch(fail);
+}
+
+function removeComment(commentId, success, fail) {
+  local
+    .delete(`/attractionboardcommnet/` + commentId)
+    .then(success)
+    .catch(fail);
+}
+
+function modifyComment(comment, success, fail) {
+  local.patch(`/attractionboardcommnet`, comment).then(success).catch(fail);
+}
+
+function getCommentCount(attractionBoardReviewId, success, fail) {
+  local
+    .get(`/attractionboardcommnet/count/` + attractionBoardReviewId)
+    .then(success)
+    .catch(fail);
+}
+
+export {};

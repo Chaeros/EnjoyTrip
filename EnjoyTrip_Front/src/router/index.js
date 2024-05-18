@@ -9,6 +9,7 @@ import ReviewListView from "@/views/review-board/ReviewListView.vue";
 import ReviewDetailView from "@/views/review-board/ReviewDetailView.vue";
 import MakePlanView from "@/views/plan/MakePlanView.vue";
 import MyPageView from "@/views/user/MyPageView.vue";
+import ChattingTest from "@/views/test/ChattingTest.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +68,11 @@ const router = createRouter({
       path: "/mypage",
       name: "myPage",
       component: MyPageView,
+    },
+    {
+      path: "/chat",
+      name: "chatPage",
+      component: ChattingTest,
     },
     // {
     //   path: '/board',
