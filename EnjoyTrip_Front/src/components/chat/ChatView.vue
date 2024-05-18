@@ -38,8 +38,7 @@
               v-for="friend in friendList"
               :key="friend.id"
               :friend="friend"
-              @select-friend="selectFriend"
-              @click="enterChatRoom"
+              @select-friend="selectFriend(friend.id)"
             />
           </div>
         </div>
@@ -94,144 +93,158 @@
   </div>
 </template>
 
-<script>
-import { getLocalStorage } from "@/util/localstorage/localstorage";
-import { ref } from "vue";
-import {
-  addFriend,
-  removeFriend,
-  bringFriendList,
-} from "@/api/friend/friend.js";
-import {
-  getUserInfomation,
-  getUserInfomationById,
-} from "@/api/member/member.js";
+<script setup>
+import { ref, onMounted } from "vue";
 import ChatMemberItem from "@/components/item/chat/ChatMemberItem.vue";
-
+import { getLocalStorage } from "@/util/localstorage/localstorage";
+import { getUserInfomationById } from "@/api/member/member.js";
+import { bringFriendList } from "@/api/friend/friend.js";
+import { storeToRefs } from "pinia";
+import { useChatStore } from "@/store/chat/chat";
+import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
+// Pinia 스토어 사용
 const userId = getLocalStorage("userId");
+const chatStore = useChatStore();
+const webSocketChat = useWebSocketChatStore();
+const { chatRoom, currentSelectedRoomId } = storeToRefs(chatStore);
+const { enterOrRegistChatRoom, bringMyChatRoomList } = chatStore;
+const { socket } = storeToRefs(webSocketChat);
+const { sendMsg, sendEnterMsg, sendEscapeMsg } = webSocketChat;
 
-export default {
-  components: {
-    ChatMemberItem, // ChatMemberItem 컴포넌트를 등록합니다.
-  },
-  data() {
-    return {
-      isMinimized: false,
-      receiverId: ref(-1),
-      position: {
-        x: window.innerWidth / 2 - 400,
-        y: window.innerHeight / 2 - 325,
-      },
-      dragging: false,
-      offset: { x: 0, y: 0 },
-      friendList: [
-        {
-          id: 1,
-          name: "조이마미",
-          lastMessage: "메시지를 보냈어요",
-          avatar: "avatar1.png",
-          messages: [],
-        },
-        {
-          id: 2,
-          name: "강태호",
-          lastMessage: "안녕하세요",
-          avatar: "avatar2.png",
-          messages: [],
-        },
-        // 다른 채팅 목록 추가...
-      ],
-      activeChat: {
-        id: 1,
-        name: "조이마미",
-        avatar: "avatar1.png",
-        messages: [
-          { id: 1, sender: "other", text: "안녕하세요" },
-          { id: 2, sender: "me", text: "네, 안녕하세요" },
-          // 다른 메시지 추가...
-        ],
-      },
-      newMessage: "",
-    };
-  },
-  methods: {
-    toggleMinimize() {
-      this.isMinimized = !this.isMinimized;
+// 반응형 변수
+const isMinimized = ref(false);
+const receiverId = ref(-1);
+const position = ref({
+  x: window.innerWidth / 2 - 400,
+  y: window.innerHeight / 2 - 325,
+});
+const dragging = ref(false);
+const offset = ref({ x: 0, y: 0 });
+const friendList = ref([]);
+const activeChat = ref({
+  id: 1,
+  name: "조이마미",
+  avatar: "avatar1.png",
+  messages: [
+    { id: 1, sender: "other", text: "안녕하세요" },
+    { id: 2, sender: "me", text: "네, 안녕하세요" },
+  ],
+});
+const newMessage = ref("");
+
+// DOM 참조
+const chatContainer = ref(null);
+const minimizedButton = ref(null);
+
+onMounted(() => {
+  // DOM 요소가 렌더링된 후 참조할 수 있도록 onMounted 사용
+  chatContainer.value = document.querySelector(".chat-container");
+  minimizedButton.value = document.querySelector(".chat-minimized");
+});
+
+const toggleMinimize = () => {
+  isMinimized.value = !isMinimized.value;
+};
+
+const startDrag = (e) => {
+  const target = e.target;
+  if (
+    target === chatContainer.value ||
+    target === minimizedButton.value ||
+    target.classList.contains("chat-header") ||
+    target.classList.contains("chat-top-bar")
+  ) {
+    dragging.value = true;
+    offset.value.x = e.clientX - target.getBoundingClientRect().left;
+    offset.value.y = e.clientY - target.getBoundingClientRect().top;
+    document.addEventListener("mousemove", onDrag);
+    document.addEventListener("mouseup", stopDrag);
+  }
+};
+
+const onDrag = (e) => {
+  if (dragging.value) {
+    position.value.x = e.clientX - offset.value.x;
+    position.value.y = e.clientY - offset.value.y;
+  }
+};
+
+const stopDrag = () => {
+  dragging.value = false;
+  document.removeEventListener("mousemove", onDrag);
+  document.removeEventListener("mouseup", stopDrag);
+};
+
+const sendMessage = () => {
+  if (newMessage.value.trim() !== "") {
+    sendMsg(newMessage.value);
+    newMessage.value = "";
+  } else {
+    console.error("No chat room selected or message is empty");
+  }
+};
+
+// const sendMessage = () => {
+//   console.log(newMessage.value);
+//   console.log(currentSelectedRoomId.value);
+//   sendMsg(newMessage.value, currentSelectedRoomId.value);
+//   // if (newMessage.value.trim() !== "") {
+//   //   activeChat.value.messages.push({
+//   //     id: Date.now(),
+//   //     sender: "me",
+//   //     text: newMessage.value,
+//   //   });
+//   //   newMessage.value = "";
+//   // }
+// };
+
+const selectFriend = (friendId) => {
+  // activeChat.value = chat;
+  enterChatRoom(friendId);
+  enterOrRegistChatRoom({ myId: userId, opponentId: receiverId.value });
+  sendEnterMsg();
+};
+
+const clickCallMyFriendList = () => {
+  bringFriendList(
+    userId,
+    (response) => {
+      console.log(response.data);
+      friendList.value = [];
+      response.data.forEach((friend) => {
+        bringFriendInfo(friend.friendId);
+      });
+      console.log(friendList.value);
     },
-    startDrag(e) {
-      const target = e.target;
-      if (
-        target === this.$refs.chatContainer ||
-        target === this.$refs.minimizedButton ||
-        target.classList.contains("chat-header") ||
-        target.classList.contains("chat-top-bar")
-      ) {
-        this.dragging = true;
-        this.offset.x = e.clientX - target.getBoundingClientRect().left;
-        this.offset.y = e.clientY - target.getBoundingClientRect().top;
-        document.addEventListener("mousemove", this.onDrag);
-        document.addEventListener("mouseup", this.stopDrag);
-      }
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const bringFriendInfo = (friendId) => {
+  getUserInfomationById(
+    friendId,
+    (response) => {
+      console.log(friendList.value);
+      console.log(response.data);
+      friendList.value.push(response.data);
+      console.log(friendList.value);
     },
-    onDrag(e) {
-      if (this.dragging) {
-        this.position.x = e.clientX - this.offset.x;
-        this.position.y = e.clientY - this.offset.y;
-      }
-    },
-    stopDrag() {
-      this.dragging = false;
-      document.removeEventListener("mousemove", this.onDrag);
-      document.removeEventListener("mouseup", this.stopDrag);
-    },
-    sendMessage() {
-      if (this.newMessage.trim() !== "") {
-        this.activeChat.messages.push({
-          id: Date.now(),
-          sender: "me",
-          text: this.newMessage,
-        });
-        this.newMessage = "";
-      }
-    },
-    selectFriend(chat) {
-      this.activeChat = chat;
-    },
-    clickCallMyFriendList() {
-      bringFriendList(
-        userId,
-        (response) => {
-          console.log(response.data);
-          this.friendList = [];
-          response.data.forEach((friend) => {
-            this.bringFriendInfo(friend.friendId);
-          });
-          console.log(this.friendList);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    },
-    bringFriendInfo(friendId) {
-      getUserInfomationById(
-        friendId,
-        (response) => {
-          console.log(this.friendList);
-          console.log(response.data);
-          this.friendList.push(response.data);
-          console.log(this.friendList);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    },
-    clickCallMyChatRoomList() {},
-    enterChatRoom(friendId) {
-      receiverId.value = friendId;
-    },
-  },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const clickCallMyChatRoomList = () => {
+  // 여기에 로직 추가
+};
+
+const enterChatRoom = (friendId) => {
+  console.log("@@@@@@@@@@@@@@@@@@@22");
+  console.log(friendId);
+  receiverId.value = friendId;
 };
 </script>
 

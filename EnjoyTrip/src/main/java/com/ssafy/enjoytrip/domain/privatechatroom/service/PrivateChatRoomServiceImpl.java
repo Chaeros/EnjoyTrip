@@ -19,7 +19,7 @@ public class PrivateChatRoomServiceImpl implements PrivateChatRoomService{
     }
 
     @Override
-    public int searchPrivateChatRoom(PrivateChatRoom privateChatRoom) {
+    public Integer searchPrivateChatRoom(PrivateChatRoom privateChatRoom) {
         return privateChatRoomMapper.findPrivateChatRoom(privateChatRoom);
     }
 

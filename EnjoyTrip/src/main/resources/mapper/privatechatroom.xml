@@ -12,7 +12,7 @@
         values (#{myId}, #{opponentId})
     </insert>
 
-    <select id="findPrivateChatRoom" parameterType="PrivateChatRoom" resultType="int">
+    <select id="findPrivateChatRoom" parameterType="PrivateChatRoom">
         select room_id
           from private_chat_room
          where ( my_id = #{myId} and opponent_id = #{opponentId} )

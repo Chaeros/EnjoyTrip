@@ -8,6 +8,6 @@ import java.util.List;
 @Mapper
 public interface PrivateChatRoomMapper {
     int insertPrivateChatRoom(PrivateChatRoom privateChatRoom);
-    int findPrivateChatRoom(PrivateChatRoom privateChatRoom);
+    Integer findPrivateChatRoom(PrivateChatRoom privateChatRoom);
     List<PrivateChatRoom> findPrivateChatRoomList(long memberId);
 }

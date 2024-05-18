@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-item" @click="selectChat">
+  <div class="chat-item" @click="selectFriend">
     <div class="chat-avatar">
       <img :src="friend.avatar" alt="Avatar" />
     </div>
@@ -20,7 +20,7 @@ export default {
     },
   },
   methods: {
-    selectChat() {
+    selectFriend() {
       this.$emit("select-friend", this.friend);
     },
   },

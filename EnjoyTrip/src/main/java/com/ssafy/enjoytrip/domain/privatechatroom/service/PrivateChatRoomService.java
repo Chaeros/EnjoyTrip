@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface PrivateChatRoomService {
     int addPrivateChatRoom(PrivateChatRoom privateChatRoom);
-    int searchPrivateChatRoom(PrivateChatRoom privateChatRoom);
+    Integer searchPrivateChatRoom(PrivateChatRoom privateChatRoom);
     List<PrivateChatRoom> searchPrivateChatRoomList(long memberId);
 }

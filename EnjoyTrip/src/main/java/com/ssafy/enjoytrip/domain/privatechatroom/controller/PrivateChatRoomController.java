@@ -17,8 +17,8 @@ public class PrivateChatRoomController {
 
     @PostMapping
     public ResponseEntity<Integer> enterOrRegistPrivateChatRoom(@RequestBody PrivateChatRoom privateChatRoom){
-        if ( privateChatRoomService.searchPrivateChatRoom(privateChatRoom) == 0 ){
-            return ResponseEntity.ok(privateChatRoomService.addPrivateChatRoom(privateChatRoom));
+        if ( privateChatRoomService.searchPrivateChatRoom(privateChatRoom) == null ){
+            ResponseEntity.ok(privateChatRoomService.addPrivateChatRoom(privateChatRoom));
         }
         return ResponseEntity.ok(privateChatRoomService.searchPrivateChatRoom(privateChatRoom));
     }
