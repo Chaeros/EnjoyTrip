@@ -28,7 +28,7 @@ const startDrag = (event, item) => {
         class="btn btn-light"
         @click="attractionAddModalToggle"
       >
-        추가
+        장소 추가
       </button>
     </div>
 
@@ -91,7 +91,7 @@ const startDrag = (event, item) => {
 
 .title-button {
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .btn-light {

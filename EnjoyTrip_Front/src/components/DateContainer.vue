@@ -4,16 +4,25 @@ const { selectedAttractionsByDate, date } = defineProps({
   selectedAttractionsByDate: Array,
   date: Number,
 });
-const emit = defineEmits(['removeAttraction']);
+const emit = defineEmits([
+  'removeAttraction',
+  'dateContainerDragged',
+  'onDateDrop',
+]);
 const removeAttraction = (date, index) => {
   emit('removeAttraction', date, index);
 };
 
-const startDrag = (event, item, index) => {
+const startDrag = (event, date, index) => {
   event.dataTransfer.dropEffect = 'move';
   event.dataTransfer.effectAllowed = 'move';
-  event.dataTransfer.setData('attraction', JSON.stringify(item));
-  emit('dragged', item, index);
+  event.dataTransfer.setData('date', date);
+  event.dataTransfer.setData('index', index);
+  emit('dateContainerDragged', date, index);
+};
+
+const onDateDrop = (event, date, index) => {
+  emit('onDateDrop', event, date, index);
 };
 </script>
 
@@ -23,7 +32,10 @@ const startDrag = (event, item, index) => {
     <div
       v-for="(attraction, index) in selectedAttractionsByDate[date - 1]"
       draggable="true"
-      @dragstart="startDrag($event, attraction, index)"
+      @dragstart="startDrag($event, date, index)"
+      @drop="onDateDrop($event, date, index)"
+      @dragenter.prevent
+      @dragover.prevent
     >
       <div class="attraction-element">
         <div>{{ attraction.attractionInfo.title }}</div>

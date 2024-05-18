@@ -66,12 +66,21 @@ const deleteAccomodation = (index) => {
 };
 
 const clickAttractionAdd = (attraction) => {
-  if (!selectedAttractions.value.includes(attraction)) {
+  if (
+    !selectedAttractions.value.some(
+      (e) => e.attractionInfo.contentId === attraction.attractionInfo.contentId
+    )
+  ) {
     selectedAttractions.value.push(attraction);
   }
 };
 const clickAccomodationAdd = (accomodation) => {
-  if (!selectedAccomodations.value.includes(accomodation)) {
+  if (
+    !selectedAccomodations.value.some(
+      (e) =>
+        e.attractionInfo.contentId === accomodation.attractionInfo.contentId
+    )
+  ) {
     selectedAccomodations.value.push(accomodation);
   }
 };
@@ -184,10 +193,29 @@ const handleDragged = (attraction) => {
   console.dir('드래그 됨');
 };
 
+const dateContainerDragged = (date, index) => {
+  console.dir('dateContainer 드래그 처리');
+};
+
 const onDrop = (event, date) => {
   const attraction = JSON.parse(event.dataTransfer.getData('attraction'));
   console.dir(date);
   selectedAttractionsByDate.value[date - 1].push(attraction);
+};
+
+const onDateDrop = (event, date, index) => {
+  const fromDate = JSON.parse(event.dataTransfer.getData('date'));
+  const fromIndex = JSON.parse(event.dataTransfer.getData('index'));
+  console.dir('fromDate');
+  console.dir(fromDate);
+  console.dir('fromIndex');
+  console.dir(fromIndex);
+  console.dir(date);
+  console.dir(index);
+  const temp = selectedAttractionsByDate.value[date - 1][index];
+  selectedAttractionsByDate.value[date - 1][index] =
+    selectedAttractionsByDate.value[fromDate - 1][fromIndex];
+  selectedAttractionsByDate.value[fromDate - 1][fromIndex] = temp;
 };
 
 const attractionAddModalOpen = ref(false);
@@ -463,7 +491,9 @@ const currentModalViewAccomodation = () => {
         @drop="onDrop($event, number)"
         @dragenter.prevent
         @dragover.prevent
+        @date-container-dragged="dateContainerDragged"
         @remove-attraction="removeAttraction"
+        @on-date-drop="onDateDrop"
       ></DateContainer>
     </div>
 
@@ -481,6 +511,9 @@ const currentModalViewAccomodation = () => {
   width: 100%; /* 부모 요소 너비 100% */
   display: flex;
   justify-content: center; /* 내부 컨텐츠 가운데 정렬 */
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  font-style: normal;
 }
 
 .all-content {
