@@ -202,6 +202,7 @@ const activeChat = ref({
   messages: [],
 });
 const newMessage = ref("");
+const currentMode = ref("FRIEND");
 
 // DOM 참조
 const chatContainer = ref(null);
@@ -229,6 +230,16 @@ socket.value.onmessage = function (e) {
     memberId: parsedData.senderId,
     message: parsedData.message,
   };
+
+  // 내가 보낸 메시지가 아니면서
+  if (parsedData.senderId != getLocalStorage("userId")) {
+    if (currentMode.value === "FRIEND") {
+      console.log("친구 갱신");
+    } else if (currentMode.value === "CHATTING") {
+      console.log("채팅 갱신");
+    }
+  }
+
   activeChat.value.messages.push(tempData);
 };
 
@@ -328,6 +339,7 @@ const selectFriend = (friendId) => {
 };
 
 const clickCallMyFriendList = () => {
+  currentMode.value = "FRIEND";
   bringFriendList(
     getLocalStorage("userId"),
     (response) => {
@@ -355,6 +367,7 @@ const bringFriendInfo = (friendId) => {
 };
 
 const clickCallMyChatRoomList = () => {
+  currentMode.value = "CHATTING";
   getChattingMemberId(
     getLocalStorage("userId"),
     (response) => {

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.domain.unreadmessagecount.mapper.UnreadMessageCountMapper">
+
+    <insert id="insertUnreadMessageCount" parameterType="UnreadMessageCount">
+        insert into unread_message_count (room_id, receiver_id)
+        values (#{roomId}, #{receiverId})
+    </insert>
+
+    <update id="updateAddUnreadMessageCount" parameterType="UnreadMessageCount">
+        update unread_message_count
+           set count = count+1
+         where room_id = #{roomId} and receiver_id = #{receiver_id}
+    </update>
+
+    <update id="updateResetUnreadMessageCount" parameterType="UnreadMessageCount">
+        update unread_message_count
+           set count = 0
+         where room_id = #{roomId} and receiver_id = #{receiver_id}
+    </update>
+
+    <select id="findUnreadMessageCount" parameterType="UnreadMessageCount">
+        select count
+          from unread_message_count
+         where room_id = #{roomId} and receiver_id = #{receiver_id}
+    </select>
+
+</mapper>
