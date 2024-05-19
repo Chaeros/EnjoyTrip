@@ -140,7 +140,6 @@ const createPlan = () => {
 
   for (let i = 0; i < selectedAttractions.value.length; i++) {
     const attraction = selectedAttractions.value[i];
-    // console.dir(attraction);
     const mtp = {
       sequence: 0,
       departureTime: null,
@@ -157,7 +156,6 @@ const createPlan = () => {
 
   for (let i = 0; i < selectedAccomodations.value.length; i++) {
     const attraction = selectedAccomodations.value[i];
-    // console.dir(attraction);
     const mtp = {
       sequence: 0,
       departureTime: null,
@@ -173,8 +171,12 @@ const createPlan = () => {
   }
 
   registerTripPlan(tripPlanRequest.value);
-  console.dir('트립플랜아이디');
-  console.dir(tripPlanId.value);
+
+  for (let i = 0; i < totalTripDates.value; i++) {
+    selectedAttractionsByDate.value[i] = [];
+    selectedAccomodationsByDate.value[i] = [];
+  }
+
   currentView.value = 'plan';
 };
 
@@ -199,23 +201,28 @@ const dateContainerDragged = (date, index) => {
 
 const onDrop = (event, date) => {
   const attraction = JSON.parse(event.dataTransfer.getData('attraction'));
-  console.dir(date);
   selectedAttractionsByDate.value[date - 1].push(attraction);
 };
 
 const onDateDrop = (event, date, index) => {
-  const fromDate = JSON.parse(event.dataTransfer.getData('date'));
-  const fromIndex = JSON.parse(event.dataTransfer.getData('index'));
-  console.dir('fromDate');
-  console.dir(fromDate);
-  console.dir('fromIndex');
-  console.dir(fromIndex);
-  console.dir(date);
-  console.dir(index);
+  const fromDate = event.dataTransfer.getData('date');
+  const fromIndex = event.dataTransfer.getData('index');
   const temp = selectedAttractionsByDate.value[date - 1][index];
   selectedAttractionsByDate.value[date - 1][index] =
     selectedAttractionsByDate.value[fromDate - 1][fromIndex];
   selectedAttractionsByDate.value[fromDate - 1][fromIndex] = temp;
+};
+
+const onBetweenDrop = (event, date, index) => {
+  try {
+    const attraction = JSON.parse(attractionData);
+    // 유효한 JSON 문자열인 경우 처리
+    console.log('Valid JSON:', attraction);
+  } catch (error) {
+    // 유효하지 않은 JSON 문자열인 경우 처리
+    console.error('Invalid JSON:', error);
+    // 특정 로직 작성
+  }
 };
 
 const attractionAddModalOpen = ref(false);
@@ -317,6 +324,36 @@ const currentModalViewAccomodation = () => {
   attractionAddModalOpen.value = false;
   accomodationAddModalOpen.value = true;
 };
+
+/* 드래그로 화면 분할 처리*/
+const dateContainerMaxWidth = ref('500px');
+const isDragging = ref(false);
+
+const startDragging = () => {
+  isDragging.value = true;
+};
+
+const stopDragging = () => {
+  isDragging.value = false;
+};
+
+const handleMouseMove = (event) => {
+  if (!isDragging.value) return;
+  const container = document.querySelector('.date-container-container');
+  const containerOffsetLeft = container.getBoundingClientRect().left;
+  const newWidth = event.clientX - containerOffsetLeft;
+  dateContainerMaxWidth.value = `${newWidth}px`;
+};
+
+onMounted(() => {
+  window.addEventListener('mousemove', handleMouseMove);
+  window.addEventListener('mouseup', stopDragging);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('mousemove', handleMouseMove);
+  window.removeEventListener('mouseup', stopDragging);
+});
 </script>
 
 <template>
@@ -482,8 +519,12 @@ const currentModalViewAccomodation = () => {
       </div>
     </div>
 
-    <div class="date-container-container" v-if="currentView === 'plan'">
-      <DateContainer
+    <div
+      class="date-container-container"
+      v-if="currentView === 'plan'"
+      :style="{ maxWidth: dateContainerMaxWidth }"
+    >
+      <!-- <DateContainer
         v-for="number in totalTripDates"
         v-show="activeDate === 0 || activeDate === number"
         :selected-attractions-by-date="selectedAttractionsByDate"
@@ -494,7 +535,21 @@ const currentModalViewAccomodation = () => {
         @date-container-dragged="dateContainerDragged"
         @remove-attraction="removeAttraction"
         @on-date-drop="onDateDrop"
+        @on-between-drop="onBetweenDrop"
+      ></DateContainer> -->
+      <DateContainer
+        v-for="number in totalTripDates"
+        v-show="activeDate === 0 || activeDate === number"
+        :selected-attractions-by-date="selectedAttractionsByDate"
+        :date="number"
+        @dragenter.prevent
+        @dragover.prevent
+        @date-container-dragged="dateContainerDragged"
+        @remove-attraction="removeAttraction"
+        @on-date-drop="onDateDrop"
+        @on-between-drop="onBetweenDrop"
       ></DateContainer>
+      <div class="splitter" @mousedown="startDragging"></div>
     </div>
 
     <KakaoMap
@@ -692,6 +747,17 @@ const currentModalViewAccomodation = () => {
   max-width: 500px;
   overflow-x: auto;
   border-right: 1px solid #6c7a89;
+  position: relative;
+}
+
+.splitter {
+  width: 5px;
+  background-color: yellow;
+  cursor: col-resize;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
 }
 
 /* Custom Scrollbar for WebKit (Chrome, Safari) */

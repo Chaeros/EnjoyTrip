@@ -8,6 +8,7 @@ const emit = defineEmits([
   'removeAttraction',
   'dateContainerDragged',
   'onDateDrop',
+  'onBetweenDrop',
 ]);
 const removeAttraction = (date, index) => {
   emit('removeAttraction', date, index);
@@ -24,20 +25,27 @@ const startDrag = (event, date, index) => {
 const onDateDrop = (event, date, index) => {
   emit('onDateDrop', event, date, index);
 };
+
+const onBetweenDrop = (event, date, index) => {
+  emit('onBetweenDrop', event, date, index);
+};
 </script>
 
 <template>
   <div class="container">
     <div class="date-title">{{ date }}일차</div>
     <div
+      class="attraction-container"
       v-for="(attraction, index) in selectedAttractionsByDate[date - 1]"
-      draggable="true"
-      @dragstart="startDrag($event, date, index)"
-      @drop="onDateDrop($event, date, index)"
-      @dragenter.prevent
-      @dragover.prevent
     >
-      <div class="attraction-element">
+      <div
+        class="attraction-element"
+        draggable="true"
+        @dragstart="startDrag($event, date, index)"
+        @drop="onDateDrop($event, date, index)"
+        @dragenter.prevent
+        @dragover.prevent
+      >
         <div>{{ attraction.attractionInfo.title }}</div>
         <button
           class="remove-btn"
@@ -46,6 +54,10 @@ const onDateDrop = (event, date, index) => {
           -
         </button>
       </div>
+      <div
+        class="attraction-between"
+        @drop="onBetweenDrop($event, date, index)"
+      ></div>
     </div>
   </div>
 </template>
@@ -108,5 +120,10 @@ const onDateDrop = (event, date, index) => {
   border-radius: 0;
   text-align: center;
   color: #333;
+}
+
+.attraction-between {
+  height: 100px;
+  background-color: skyblue;
 }
 </style>

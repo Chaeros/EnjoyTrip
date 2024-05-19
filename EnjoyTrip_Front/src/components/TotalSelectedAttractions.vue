@@ -11,11 +11,11 @@ const attractionAddModalToggle = () => {
   emit('attractionAddModalToggle');
 };
 
-const startDrag = (event, item) => {
+const startDrag = (event, attraction) => {
   event.dataTransfer.dropEffect = 'move';
   event.dataTransfer.effectAllowed = 'move';
-  event.dataTransfer.setData('attraction', JSON.stringify(item));
-  emit('dragged', item);
+  event.dataTransfer.setData('attraction', JSON.stringify(attraction));
+  emit('dragged', attraction);
 };
 </script>
 
