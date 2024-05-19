@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, watch } from 'vue';
 import { get } from 'vue-cookie';
 
 const props = defineProps({
@@ -39,6 +39,20 @@ const updateDates = () => {
   getTotalTripDates();
   emit('updateDates', startDate.value, endDate.value, totalTripDates.value);
 };
+
+watch([startDate, endDate], ([newStartDate, newEndDate]) => {
+  if (newStartDate && newEndDate) {
+    const firstDate = new Date(newStartDate);
+    const secondDate = new Date(newEndDate);
+    const timeDifference = secondDate - firstDate;
+    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+    if (Math.abs(daysDifference) >= 7) {
+      alert('여행 기간은 7일 이내로 선택해야 합니다.');
+      endDate.value = '';
+    }
+  }
+});
 </script>
 
 <template>
@@ -51,7 +65,9 @@ const updateDates = () => {
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">여행 일자를 선택하세요!</h5>
+          <h5 class="modal-title">
+            여행 일자를 선택하세요!(7일 이내로만 선택가능)
+          </h5>
           <button type="button" class="btn-close" @click="toggleModal"></button>
         </div>
         <div class="modal-body">
