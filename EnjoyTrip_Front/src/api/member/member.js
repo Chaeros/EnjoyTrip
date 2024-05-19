@@ -76,6 +76,13 @@ function searchMemberByKeyNicknameKeword(keyword, userId, success, fail) {
     .catch(fail);
 }
 
+function getChattingMemberId(memberId, success, fail) {
+  local
+    .get(`/member/chat/` + memberId)
+    .then(success)
+    .catch(fail);
+}
+
 export {
   addUserInformation,
   kakaoLogin,
@@ -86,4 +93,5 @@ export {
   getUserInfomation,
   getUserInfomationById,
   searchMemberByKeyNicknameKeword,
+  getChattingMemberId,
 };

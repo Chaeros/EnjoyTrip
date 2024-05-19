@@ -1,11 +1,17 @@
 <template>
   <div class="chat-item" @click="selectFriend">
     <div class="chat-avatar">
-      <img :src="friend.avatar" alt="Avatar" />
+      <!-- <img :src="friend.avatar" alt="Avatar" /> -->
+      <template v-if="friend.image == null">
+        <img src="@/img/member/default_img.jpg" />
+      </template>
+      <template v-else>
+        <img :src="friend.image" alt="Profile" />
+      </template>
     </div>
     <div class="chat-details">
       <div class="chat-name">{{ friend.nickname }}</div>
-      <div class="chat-last-message">{{ friend.lastMessage }}</div>
+      <!-- <div class="chat-last-message">{{ friend.lastMessage }}</div> -->
     </div>
   </div>
 </template>

@@ -41,10 +41,13 @@
 <script setup>
 import { useRoute, useRouter } from "vue-router";
 import { useMemberStore } from "@/store/member";
+import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 const memberStore = useMemberStore();
+const webSocketChatStore = useWebSocketChatStore();
 const { userInfo, isLogin } = storeToRefs(memberStore);
+const { sendEscapeMsg } = webSocketChatStore;
 const router = useRouter();
 console.log(userInfo);
 const clickLogin = () => {
@@ -67,6 +70,7 @@ const clickLogOut = () => {
   console.log(userInfo);
   userInfo.value = null;
   isLogin.value = false;
+  sendEscapeMsg();
 };
 const clickMyPage = () => {
   router.push({ name: "myPage" });

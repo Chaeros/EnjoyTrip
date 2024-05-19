@@ -6,12 +6,15 @@ import com.ssafy.enjoytrip.domain.member.dto.request.MemberSignUpDto;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.enjoytrip.domain.member.dto.response.MemberResponseDto;
 import com.ssafy.enjoytrip.domain.member.service.MemberService;
+import com.ssafy.enjoytrip.domain.privatechatroom.PrivateChatRoom;
+import com.ssafy.enjoytrip.domain.privatechatroom.service.PrivateChatRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +27,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final FriendService friendService;
+    private final PrivateChatRoomService privateChatRoomService;
 
     @PostMapping("/sign-up")
     public String signUp(@RequestBody MemberSignUpDto memberSignUpDto) throws Exception{
@@ -83,5 +87,20 @@ public class MemberController {
         } else {
             return ResponseEntity.ok(filteredMembers);
         }
+    }
+
+    @GetMapping("/member/chat/{memberId}")
+    public ResponseEntity<List<Long>> getChattingMemberId(@PathVariable("memberId") long memberId) throws Exception {
+        List<PrivateChatRoom> privateChatRooms = privateChatRoomService.searchPrivateChatRoomList(memberId);
+        List<Long> opponentMembers = new ArrayList<>();
+        for ( PrivateChatRoom privateChatRoom : privateChatRooms ){
+            if ( privateChatRoom.getMyId() != memberId){
+                opponentMembers.add(privateChatRoom.getMyId());
+            }
+            else{
+                opponentMembers.add(privateChatRoom.getOpponentId());
+            }
+        }
+        return ResponseEntity.ok(opponentMembers);
     }
 }

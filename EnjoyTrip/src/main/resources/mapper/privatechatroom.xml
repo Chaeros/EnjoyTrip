@@ -22,7 +22,7 @@
     <select id="findPrivateChatRoomList" parameterType="long" resultType="PrivateChatRoom">
         select room_id, my_id, opponent_id, regdate, recent_date
         from private_chat_room
-        where member_id = #{memberId}
+        where my_id = #{myId}
            or opponent_id = #{opponentId}
     </select>
 

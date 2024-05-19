@@ -1,4 +1,6 @@
 import { localAxios } from "@/util/http-commons";
+import { getLocalStorage } from "@/util/localstorage/localstorage";
+const userId = getLocalStorage("userId");
 const local = localAxios();
 const headers = {
   "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
@@ -20,6 +22,8 @@ function removeFriendByDto(friendDto, success, fail) {
 }
 
 function bringFriendList(myId, success, fail) {
+  console.log(userId);
+  console.log(myId);
   local
     .get(`/friend/list/` + myId)
     .then(success)

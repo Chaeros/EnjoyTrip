@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="userInfo">
     <div
       v-if="!isMinimized"
       class="chat-container"
@@ -17,19 +17,50 @@
           <img src="@/img/coldragon.png" alt="Logo" />
           <div class="logo-title">Cold Dragon</div>
         </div>
-        <div class="profile">
-          <img src="" alt="Profile" />
-          <span>조이마미</span>
+        <div class="chat-top-bar-right">
+          <div class="profile">
+            <template v-if="userInfo.image == null">
+              <img src="@/img/member/default_img.jpg" />
+            </template>
+            <template v-else>
+              <img :src="userInfo.image" alt="Profile" />
+            </template>
+            <span>{{ userInfo.nickname }}</span>
+          </div>
+          <button
+            type="button"
+            class="btn btn-outline-primary minimize-button"
+            @click="toggleMinimize"
+          >
+            접기
+          </button>
         </div>
-        <button class="minimize-button" @click="toggleMinimize">-</button>
       </div>
       <div class="chat-content">
         <div class="chat-selectbar">
-          <div class="chat-selectbar-img">
-            <img src="" alt="내친구" @click="clickCallMyFriendList" />
+          <div class="chat-selectbar-wrap" @click="clickCallMyFriendList">
+            <img
+              src="@/img/chat/friend.png"
+              alt="내친구"
+              class="chat-selectbar-img"
+            />
+            <p class="chat-selectbar-title">친구</p>
           </div>
-          <div class="chat-selectbar-img">
-            <img src="" alt="내채팅방" @click="clickCallMyChatRoomList" />
+          <div class="chat-selectbar-wrap" @click="clickCallMyChatRoomList">
+            <img
+              src="@/img/chat/talkballoon.png"
+              alt="내채팅방"
+              class="chat-selectbar-img"
+            />
+            <p class="chat-selectbar-title">채팅</p>
+          </div>
+          <div class="chat-selectbar-wrap" @click="clickCallMyChatRoomList">
+            <img
+              src="@/img/chat/grouptalk.png"
+              alt="그룹채팅"
+              class="chat-selectbar-img"
+            />
+            <p class="chat-selectbar-title">그룹채팅</p>
           </div>
         </div>
         <div class="chat-sidebar">
@@ -45,50 +76,80 @@
         <div class="chat-main">
           <div class="chat-header">
             <div class="chat-header-details">
-              <img
-                :src="activeChat.avatar"
-                alt="Avatar"
-                class="chat-header-avatar"
-              />
-              <div>{{ activeChat.name }}</div>
+              <template v-if="activeChat.name === ``">
+                <div class="chat-header-details-notice">
+                  대화할 상대를 선택하세요!
+                </div>
+              </template>
+              <template v-else>
+                <template v-if="activeChat.image == null">
+                  <img
+                    src="@/img/member/default_img.jpg"
+                    alt="ProfileImage"
+                    class="chat-header-avatar"
+                  />
+                </template>
+                <template v-else>
+                  <img
+                    :src="activeChat.image"
+                    alt="ProfileImage"
+                    class="chat-header-avatar"
+                  />
+                </template>
+                <div class="chat-header-details-nickname">
+                  {{ activeChat.name }}
+                </div>
+              </template>
             </div>
           </div>
           <div class="chat-body">
             <div
               class="chat-message"
               v-for="message in activeChat.messages"
-              :key="message.id"
+              :key="message.messageId"
             >
               <div
                 :class="[
                   'message',
-                  message.sender === 'me' ? 'sent' : 'received',
+                  message.memberId == userId ? 'sent' : 'received',
                 ]"
               >
-                <div class="message-text">{{ message.text }}</div>
+                <div class="message-text">{{ message.message }}</div>
               </div>
             </div>
           </div>
           <div class="chat-footer">
-            <input
-              type="text"
-              v-model="newMessage"
-              @keydown.enter="sendMessage"
-              placeholder="메시지를 입력하세요..."
-            />
+            <template v-if="activeChat.name === ``">
+              <input
+                type="text"
+                v-model="newMessage"
+                @keydown.enter="sendMessage"
+                placeholder="대화할 상대를 선택하세요!"
+                readonly
+            /></template>
+            <template v-else>
+              <input
+                type="text"
+                v-model="newMessage"
+                @keydown.enter="sendMessage"
+                placeholder="메시지를 입력하세요..."
+              />
+            </template>
           </div>
         </div>
       </div>
     </div>
-    <div
-      v-else
-      class="chat-minimized"
-      ref="minimizedButton"
-      @mousedown="startDrag"
-      @dblclick="toggleMinimize"
-      :style="{ left: `${position.x}px`, top: `${position.y}px` }"
-    >
-      💬
+    <div v-else>
+      <button
+        type="button"
+        class="chat-minimized btn btn-outline-secondary"
+        ref="minimizedButton"
+        @mousedown="startDrag"
+        @dblclick="toggleMinimize"
+        :style="{ left: `${position.x}px`, top: `${position.y}px` }"
+      >
+        💬
+      </button>
     </div>
   </div>
 </template>
@@ -97,11 +158,21 @@
 import { ref, onMounted } from "vue";
 import ChatMemberItem from "@/components/item/chat/ChatMemberItem.vue";
 import { getLocalStorage } from "@/util/localstorage/localstorage";
-import { getUserInfomationById } from "@/api/member/member.js";
+import {
+  getUserInfomationById,
+  getChattingMemberId,
+} from "@/api/member/member.js";
 import { bringFriendList } from "@/api/friend/friend.js";
+import {
+  registChatMessage,
+  searchChatMessageList,
+  enterOrRegistPrivateChatRoom,
+} from "@/api/chat/chat.js";
 import { storeToRefs } from "pinia";
 import { useChatStore } from "@/store/chat/chat";
 import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
+import { useMemberStore } from "@/store/member";
+
 // Pinia 스토어 사용
 const userId = getLocalStorage("userId");
 const chatStore = useChatStore();
@@ -110,6 +181,8 @@ const { chatRoom, currentSelectedRoomId } = storeToRefs(chatStore);
 const { enterOrRegistChatRoom, bringMyChatRoomList } = chatStore;
 const { socket } = storeToRefs(webSocketChat);
 const { sendMsg, sendEnterMsg, sendEscapeMsg } = webSocketChat;
+const memberStore = useMemberStore();
+const { userInfo, isLogin } = storeToRefs(memberStore);
 
 // 반응형 변수
 const isMinimized = ref(false);
@@ -123,12 +196,9 @@ const offset = ref({ x: 0, y: 0 });
 const friendList = ref([]);
 const activeChat = ref({
   id: 1,
-  name: "조이마미",
-  avatar: "avatar1.png",
-  messages: [
-    { id: 1, sender: "other", text: "안녕하세요" },
-    { id: 2, sender: "me", text: "네, 안녕하세요" },
-  ],
+  name: "",
+  avatar: "",
+  messages: [],
 });
 const newMessage = ref("");
 
@@ -136,10 +206,28 @@ const newMessage = ref("");
 const chatContainer = ref(null);
 const minimizedButton = ref(null);
 
+socket.value.onmessage = function (e) {
+  console.log(e.data);
+  // let msgArea = document.querySelector(".msgArea");
+  // let newMsg = document.createElement("div");
+  // newMsg.innerText = e.data;
+  // msgArea.append(newMsg);
+  const parsedData = JSON.parse(e.data);
+  console.log(parsedData.message);
+  const tempData = {
+    roomId: parsedData.chatRoomId,
+    memberId: parsedData.senderId,
+    message: parsedData.message,
+  };
+  console.log(tempData);
+  activeChat.value.messages.push(tempData);
+};
+
 onMounted(() => {
   // DOM 요소가 렌더링된 후 참조할 수 있도록 onMounted 사용
   chatContainer.value = document.querySelector(".chat-container");
   minimizedButton.value = document.querySelector(".chat-minimized");
+  clickCallMyFriendList();
 });
 
 const toggleMinimize = () => {
@@ -176,8 +264,22 @@ const stopDrag = () => {
 };
 
 const sendMessage = () => {
+  console.log(activeChat.value.messages);
   if (newMessage.value.trim() !== "") {
-    sendMsg(newMessage.value);
+    sendMsg(newMessage.value, getLocalStorage("userId"));
+    registChatMessage(
+      {
+        roomId: currentSelectedRoomId.value,
+        memberId: getLocalStorage("userId"),
+        message: newMessage.value,
+      },
+      (response) => {
+        console.log(response.data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
     newMessage.value = "";
   } else {
     console.error("No chat room selected or message is empty");
@@ -201,13 +303,45 @@ const sendMessage = () => {
 const selectFriend = (friendId) => {
   // activeChat.value = chat;
   enterChatRoom(friendId);
-  enterOrRegistChatRoom({ myId: userId, opponentId: receiverId.value });
-  sendEnterMsg();
+  // enterOrRegistChatRoom({ myId: userId, opponentId: receiverId.value });
+  enterOrRegistPrivateChatRoom(
+    { myId: getLocalStorage("userId"), opponentId: receiverId.value },
+    (response) => {
+      currentSelectedRoomId.value = response.data;
+      console.log(currentSelectedRoomId.value);
+      sendEnterMsg();
+      searchChatMessageList(
+        (response) => {
+          activeChat.value.messages = response.data;
+          console.log(response.data);
+          console.log(activeChat.value.messages);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+      getUserInfomationById(
+        friendId,
+        (response) => {
+          console.log(response.data);
+          activeChat.value.id = response.data.id;
+          activeChat.value.name = response.data.nickname;
+          activeChat.value.avatar = response.data.image;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
 };
 
 const clickCallMyFriendList = () => {
   bringFriendList(
-    userId,
+    getLocalStorage("userId"),
     (response) => {
       console.log(response.data);
       friendList.value = [];
@@ -239,6 +373,21 @@ const bringFriendInfo = (friendId) => {
 
 const clickCallMyChatRoomList = () => {
   // 여기에 로직 추가
+  console.log("진입");
+  getChattingMemberId(
+    getLocalStorage("userId"),
+    (response) => {
+      console.log(response.data);
+      friendList.value = [];
+      response.data.forEach((chatMemberId) => {
+        bringFriendInfo(chatMemberId);
+      });
+      console.log(friendList.value);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
 };
 
 const enterChatRoom = (friendId) => {
@@ -252,6 +401,7 @@ const enterChatRoom = (friendId) => {
 .chat-container {
   position: fixed;
   border: 1px solid #ccc;
+  border-radius: 10px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -262,8 +412,12 @@ const enterChatRoom = (friendId) => {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  background-color: white;
+  /* background-color: white; */
   border-bottom: 1px solid #ccc;
+  border-radius: 10px;
+}
+.chat-top-bar-right {
+  display: flex;
 }
 .logo {
   display: flex;
@@ -286,8 +440,10 @@ const enterChatRoom = (friendId) => {
 .minimize-button {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 15px;
   cursor: pointer;
+  margin-left: 10px;
+  font-weight: bold;
 }
 .chat-content {
   display: flex;
@@ -295,29 +451,59 @@ const enterChatRoom = (friendId) => {
 }
 .chat-selectbar {
   width: 60px;
-  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+  /* background-color: rgb(234, 226, 226); */
+}
+.chat-selectbar-logo {
+  width: 60px;
+}
+.chat-header-details {
+  display: flex;
+}
+.chat-header-details-notice {
+  font-size: 15px;
+}
+.chat-header-details-nickname {
+  font-size: 25px;
+  font-weight: bold;
+}
+.chat-selectbar-wrap {
+  border-radius: 10px;
+  margin: 5px 0;
+  cursor: pointer;
 }
 .chat-selectbar-img {
   margin: 30px, 2px;
-  cursor: pointer;
+  width: 50px;
+  margin: 0 auto;
 }
-.chat-selectbar-img:hover {
+.chat-selectbar-title {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0 auto;
+  text-align: center;
+}
+.chat-selectbar-wrap:hover {
   background-color: #e9e9e9;
 }
 .chat-sidebar {
   width: 200px;
-  background-color: white;
+  /* background-color: white; */
+  border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
   overflow-y: auto;
   flex-shrink: 0;
 }
 .chat-list {
-  padding: 10px;
+  /* padding: 10px; */
 }
 .chat-item {
   display: flex;
   align-items: center;
-  padding: 10px;
+  /* padding: 10px; */
   cursor: pointer;
   border-bottom: 1px solid #ccc;
 }
@@ -382,7 +568,7 @@ const enterChatRoom = (friendId) => {
   border-radius: 10px;
 }
 .sent .message-text {
-  background-color: #dcf8c6;
+  background-color: #c1c5fd;
   text-align: right;
 }
 .received .message-text {
@@ -392,7 +578,7 @@ const enterChatRoom = (friendId) => {
 }
 .chat-footer {
   padding: 10px;
-  background-color: #fff;
+  /* background-color: #fff; */
   border-top: 1px solid #ccc;
 }
 .chat-footer input {
@@ -406,7 +592,8 @@ const enterChatRoom = (friendId) => {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  background-color: #007bff;
+  /* border: 2px solid; */
+  /* background-color: #007bff; */
   color: white;
   display: flex;
   justify-content: center;

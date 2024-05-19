@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <ChatComponent v-if="isLogin" />
+    <ChatComponent v-if="isLogin" z />
     <RouterView />
   </div>
 </template>

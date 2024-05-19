@@ -3,12 +3,11 @@ import { getLocalStorage } from "@/util/localstorage/localstorage";
 import { defineStore, storeToRefs } from "pinia";
 import { useChatStore } from "@/store/chat/chat";
 
-const userId = getLocalStorage("userId");
-
 export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
   const chatStore = useChatStore();
   const { chatRoom, currentSelectedRoomId } = storeToRefs(chatStore);
   const webSocketURL = import.meta.env.VITE_WEB_SOCKET_URL;
+  const userId = getLocalStorage("userId");
   let socket = ref(null);
 
   const connect = () => {
@@ -25,18 +24,19 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
 
     socket.value.onmessage = function (e) {
       console.log(e.data);
-      let msgArea = document.querySelector(".msgArea");
-      let newMsg = document.createElement("div");
-      newMsg.innerText = e.data;
-      msgArea.append(newMsg);
+      // let msgArea = document.querySelector(".msgArea");
+      // let newMsg = document.createElement("div");
+      // newMsg.innerText = e.data;
+      // msgArea.append(newMsg);
     };
   };
 
-  const sendMsg = (content) => {
+  const sendMsg = (content, senderId) => {
+    console.log(senderId);
     if (socket.value) {
       let payload = {
         messageType: "TALK",
-        senderId: userId,
+        senderId: senderId,
         message: content,
         chatRoomId: currentSelectedRoomId.value,
       };
@@ -48,15 +48,15 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
   };
 
   const sendEnterMsg = () => {
-    let content = document.querySelector(".content").value;
     if (socket.value) {
-      let message = {
+      let payload = {
         messageType: "ENTER",
         senderId: userId,
         message: userId + "님이 입장하셨습니다.",
         chatRoomId: currentSelectedRoomId.value,
       };
-      socket.value.send(JSON.stringify(message));
+      console.log(payload);
+      socket.value.send(JSON.stringify(payload));
     } else {
       console.log("WebSocket 연결이 열리지 않았습니다.");
     }
@@ -64,13 +64,13 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
 
   const sendEscapeMsg = () => {
     if (socket.value) {
-      let message = {
+      let payload = {
         messageType: "LEAVE",
-        senderId: 13,
+        senderId: userId,
         message: "사용자가 방을 떠났습니다.",
-        chatRoomId: 1,
+        chatRoomId: currentSelectedRoomId.value,
       };
-      socket.value.send(JSON.stringify(message));
+      socket.value.send(JSON.stringify(payload));
       socket.value.close();
       console.log("서버와 연결이 끊어졌습니다.");
     } else {
