@@ -102,7 +102,7 @@
               </template>
             </div>
           </div>
-          <div class="chat-body">
+          <div class="chat-body" ref="chatBody">
             <div
               class="chat-message"
               v-for="message in activeChat.messages"
@@ -126,7 +126,8 @@
                 @keydown.enter="sendMessage"
                 placeholder="대화할 상대를 선택하세요!"
                 readonly
-            /></template>
+              />
+            </template>
             <template v-else>
               <input
                 type="text"
@@ -155,7 +156,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch, onMounted, nextTick } from "vue";
 import ChatMemberItem from "@/components/item/chat/ChatMemberItem.vue";
 import { getLocalStorage } from "@/util/localstorage/localstorage";
 import {
@@ -205,21 +206,29 @@ const newMessage = ref("");
 // DOM 참조
 const chatContainer = ref(null);
 const minimizedButton = ref(null);
+const chatBody = ref(null); // 추가: chat-body 참조
+
+// 메시지가 업데이트될 때마다 스크롤 조정
+watch(
+  () => activeChat.value.messages,
+  (newMessages) => {
+    if (newMessages.length > 0) {
+      nextTick(() => {
+        const chatBodyElement = chatBody.value;
+        chatBodyElement.scrollTop = chatBodyElement.scrollHeight;
+      });
+    }
+  },
+  { deep: true }
+);
 
 socket.value.onmessage = function (e) {
-  console.log(e.data);
-  // let msgArea = document.querySelector(".msgArea");
-  // let newMsg = document.createElement("div");
-  // newMsg.innerText = e.data;
-  // msgArea.append(newMsg);
   const parsedData = JSON.parse(e.data);
-  console.log(parsedData.message);
   const tempData = {
     roomId: parsedData.chatRoomId,
     memberId: parsedData.senderId,
     message: parsedData.message,
   };
-  console.log(tempData);
   activeChat.value.messages.push(tempData);
 };
 
@@ -264,7 +273,6 @@ const stopDrag = () => {
 };
 
 const sendMessage = () => {
-  console.log(activeChat.value.messages);
   if (newMessage.value.trim() !== "") {
     sendMsg(newMessage.value, getLocalStorage("userId"));
     registChatMessage(
@@ -286,35 +294,16 @@ const sendMessage = () => {
   }
 };
 
-// const sendMessage = () => {
-//   console.log(newMessage.value);
-//   console.log(currentSelectedRoomId.value);
-//   sendMsg(newMessage.value, currentSelectedRoomId.value);
-//   // if (newMessage.value.trim() !== "") {
-//   //   activeChat.value.messages.push({
-//   //     id: Date.now(),
-//   //     sender: "me",
-//   //     text: newMessage.value,
-//   //   });
-//   //   newMessage.value = "";
-//   // }
-// };
-
 const selectFriend = (friendId) => {
-  // activeChat.value = chat;
   enterChatRoom(friendId);
-  // enterOrRegistChatRoom({ myId: userId, opponentId: receiverId.value });
   enterOrRegistPrivateChatRoom(
     { myId: getLocalStorage("userId"), opponentId: receiverId.value },
     (response) => {
       currentSelectedRoomId.value = response.data;
-      console.log(currentSelectedRoomId.value);
       sendEnterMsg();
       searchChatMessageList(
         (response) => {
           activeChat.value.messages = response.data;
-          console.log(response.data);
-          console.log(activeChat.value.messages);
         },
         (error) => {
           console.log(error);
@@ -323,7 +312,6 @@ const selectFriend = (friendId) => {
       getUserInfomationById(
         friendId,
         (response) => {
-          console.log(response.data);
           activeChat.value.id = response.data.id;
           activeChat.value.name = response.data.nickname;
           activeChat.value.avatar = response.data.image;
@@ -343,12 +331,10 @@ const clickCallMyFriendList = () => {
   bringFriendList(
     getLocalStorage("userId"),
     (response) => {
-      console.log(response.data);
       friendList.value = [];
       response.data.forEach((friend) => {
         bringFriendInfo(friend.friendId);
       });
-      console.log(friendList.value);
     },
     (error) => {
       console.log(error);
@@ -360,10 +346,7 @@ const bringFriendInfo = (friendId) => {
   getUserInfomationById(
     friendId,
     (response) => {
-      console.log(friendList.value);
-      console.log(response.data);
       friendList.value.push(response.data);
-      console.log(friendList.value);
     },
     (error) => {
       console.log(error);
@@ -372,17 +355,13 @@ const bringFriendInfo = (friendId) => {
 };
 
 const clickCallMyChatRoomList = () => {
-  // 여기에 로직 추가
-  console.log("진입");
   getChattingMemberId(
     getLocalStorage("userId"),
     (response) => {
-      console.log(response.data);
       friendList.value = [];
       response.data.forEach((chatMemberId) => {
         bringFriendInfo(chatMemberId);
       });
-      console.log(friendList.value);
     },
     (error) => {
       console.log(error);
@@ -391,8 +370,6 @@ const clickCallMyChatRoomList = () => {
 };
 
 const enterChatRoom = (friendId) => {
-  console.log("@@@@@@@@@@@@@@@@@@@22");
-  console.log(friendId);
   receiverId.value = friendId;
 };
 </script>
