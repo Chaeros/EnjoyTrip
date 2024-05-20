@@ -74,6 +74,12 @@ public class AttractionServiceImpl implements AttractionService {
     }
 
     @Override
+    public AttractionInfo getDetailAttractionInfo(int contentId) {
+        AttractionInfo attractionInfo = attractionMapper.selectAttractionInfoByContentId(contentId);
+        return attractionInfo;
+    }
+
+    @Override
     public AttractionDetail getAttractionDetailByContentId(int contentId) {
         AttractionInfo AttractionInfo = attractionMapper.selectAttractionInfoByContentId(contentId);
         AttractionDescription AttractionDescription = attractionMapper.selectAttractionDescriptionByContentId(contentId);

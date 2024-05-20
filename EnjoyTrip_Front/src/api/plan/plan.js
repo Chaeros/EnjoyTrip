@@ -18,4 +18,8 @@ function getListMyTripPlan(memberId, success, fail) {
   local.get(`/plan/myplan/${memberId}`).then(success).catch(fail);
 }
 
-export { registTripPlan, editTripPlan, getListMyTripPlan };
+function getDetailTripPlan(planId, success, fail) {
+  local.get(`/plan/planid/${planId}`).then(success).catch(fail);
+}
+
+export { registTripPlan, editTripPlan, getListMyTripPlan, getDetailTripPlan };

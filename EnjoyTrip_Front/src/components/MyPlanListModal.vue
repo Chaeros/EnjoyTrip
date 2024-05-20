@@ -51,7 +51,7 @@ getMyTripPlans(userId);
           <button
             @click.prevent="modifyPlanDetail(tripPlanRequest.tripPlan.id)"
           >
-            수정하기
+            상세보기 & 수정
           </button>
         </div>
       </div>

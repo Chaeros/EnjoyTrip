@@ -16,10 +16,14 @@ import AccomodationAddModal from '@/components/AccomodationAddModal.vue';
 import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
 import fillDetailPlanModal from '@/components/FillDetailPlanModal.vue';
 import MyPlanListModal from '@/components/MyPlanListModal.vue';
-import MyPlanDetailModal from '@/components/MyPlanDetailModal.vue';
 
 import { useRouter } from 'vue-router';
-import { registTripPlan, editTripPlan } from '@/api/plan/plan';
+import {
+  registTripPlan,
+  editTripPlan,
+  getListMyTripPlan,
+  getDetailTripPlan,
+} from '@/api/plan/plan';
 
 const router = useRouter();
 const currentView = ref('search');
@@ -406,7 +410,65 @@ const homeRoute = () => {
   router.push({ name: 'home' });
 };
 
-const modifyPlanDetail = (tripPlanId) => {};
+function getTotalTripDates(startDate, endDate) {
+  // Date 객체로 변환
+  const firstDate = new Date(startDate);
+  const secondDate = new Date(endDate);
+  console.log(firstDate);
+  console.log(secondDate);
+
+  // 두 날짜의 차이를 밀리초 단위로 계산
+  const timeDifference = secondDate - firstDate;
+  console.log(timeDifference);
+
+  // 밀리초를 일자로 변환
+  // 하루는 24시간, 시간은 60분, 분은 60초, 초는 1000밀리초
+  const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+  // 소수점 아래는 버리고 정수 부분만 반환
+  totalTripDates.value = Math.abs(Math.floor(daysDifference)) + 1;
+}
+
+async function getMyTripPlans(planId) {
+  getDetailTripPlan(
+    planId,
+    ({ data }) => {
+      getTotalTripDates(data.tripPlan.departureDate, data.tripPlan.arrivalDate);
+      console.dir(totalTripDates.value);
+      for (let i = 0; i < totalTripDates.value; i++) {
+        selectedAttractionsByDate.value[i] = [];
+        selectedAttractionDetailsByDate.value[i] = [];
+      }
+
+      for (let i = 0; i < data.makeTripPlans.length; i++) {
+        const makeTripPlan = data.makeTripPlans[i];
+        console.dir('메이크트립');
+        console.dir(makeTripPlan);
+        selectedAttractionsByDate.value[
+          parseInt(makeTripPlan.tripDate, 10)
+        ].push(makeTripPlan.attractionId);
+      }
+
+      console.dir(selectedAttractionsByDate.value);
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+}
+
+const modifyPlanDetail = (tripPlanId) => {
+  departureDate.value = '';
+  arrivalDate.value = '';
+  totalTripDates.value = 0;
+  selectedAttractions.value = [];
+  selectedAccomodations.value = [];
+  selectedAttractionsByDate.value = [];
+
+  getMyTripPlans(tripPlanId);
+
+  currentView.value = 'plan';
+};
 </script>
 
 <template>

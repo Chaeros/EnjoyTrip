@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.domain.attraction.controller;
 
 import java.util.List;
 
+import com.ssafy.enjoytrip.domain.attraction.AttractionInfo;
 import com.ssafy.enjoytrip.domain.attraction.ContentType;
 import com.ssafy.enjoytrip.domain.attraction.Gugun;
 import com.ssafy.enjoytrip.domain.attraction.Sido;
@@ -47,6 +48,17 @@ public class AttractionController {
 
         if (list != null && !list.isEmpty()) {
             return new ResponseEntity<List<AttractionInfoLike>>(list, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/attraction/{contentId}")
+    public ResponseEntity<?> getDetailAttractionInfo(@PathVariable("contentId") int contentId) {
+        AttractionInfo attractionInfo = attractionService.getDetailAttractionInfo(contentId);
+
+        if (attractionInfo != null) {
+            return new ResponseEntity<AttractionInfo>(attractionInfo, HttpStatus.OK);
         } else {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
