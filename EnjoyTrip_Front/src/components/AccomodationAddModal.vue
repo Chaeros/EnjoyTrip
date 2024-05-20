@@ -1,20 +1,26 @@
 <script setup>
 import { defineEmits } from 'vue';
 import AccomodationSearch from '@/components/AccomodationSearch.vue';
+
 const emit = defineEmits([
   'accomodationAddModalToggle',
   'modalAccomodationAdd',
   'currentModalViewAttraction',
+  'currentModalViewAccomodation',
 ]);
+
 const accomodationAddModalToggle = () => {
   emit('accomodationAddModalToggle');
 };
+
 const modalAccomodationAdd = (attraction) => {
   emit('modalAccomodationAdd', attraction);
 };
+
 const currentModalViewAttraction = (attraction) => {
   emit('currentModalViewAttraction', attraction);
 };
+
 const currentModalViewAccomodation = (attraction) => {
   emit('currentModalViewAccomodation', attraction);
 };
@@ -23,11 +29,15 @@ const currentModalViewAccomodation = (attraction) => {
 <template>
   <div class="attraction-add-modal-wrap">
     <div class="attraction-add-modal-container">
-      <button @click.prevent="currentModalViewAttraction">관광지</button>
-      <button @click.prevent="currentModalViewAccomodation">숙소</button>
+      <button @click.prevent="currentModalViewAttraction" class="view-button">
+        관광지
+      </button>
+      <button @click.prevent="currentModalViewAccomodation" class="view-button">
+        숙소
+      </button>
       <AccomodationSearch @modal-accomodation-add="modalAccomodationAdd" />
       <button
-        class="attraction-add-modal-close-btn"
+        class="attraction-add-modal-close-btn close-button"
         @click.prevent="accomodationAddModalToggle"
       >
         닫기
@@ -60,9 +70,42 @@ const currentModalViewAccomodation = (attraction) => {
   padding: 20px;
   box-sizing: border-box;
 }
+
+.view-button {
+  display: inline-block;
+  margin: 5px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #88a0a7; /* 버튼 배경색 */
+  color: #fff; /* 텍스트 색상 */
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.view-button:hover {
+  background-color: #6c7a89; /* 버튼 호버 색상 */
+}
+
 .attraction-add-modal-close-btn {
   position: absolute;
   top: 10px;
   right: 10px;
+}
+
+.close-button {
+  background-color: #96b3b6; /* 닫기 버튼 배경색 */
+  color: #fff; /* 텍스트 색상 */
+  font-size: 14px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.close-button:hover {
+  background-color: #354649; /* 닫기 버튼 호버 색상 */
 }
 </style>

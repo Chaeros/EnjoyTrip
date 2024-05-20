@@ -1,4 +1,7 @@
 <script setup>
+import { getLocalStorage } from '@/util/localstorage/localstorage';
+const userId = getLocalStorage('userId');
+
 import { ref, watch } from 'vue';
 import AttractionSearchBar from '@/components/AttractionSearchBar.vue';
 import AccomodationSearchBar from '@/components/AccomodationSearchBar.vue';
@@ -12,6 +15,7 @@ import AttractionAddModal from '@/components/AttractionAddModal.vue';
 import AccomodationAddModal from '@/components/AccomodationAddModal.vue';
 import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
 import fillDetailPlanModal from '@/components/FillDetailPlanModal.vue';
+import MyPlanListModal from '@/components/MyPlanListModal.vue';
 
 import { useRouter } from 'vue-router';
 import { registTripPlan, editTripPlan } from '@/api/plan/plan';
@@ -101,7 +105,7 @@ const tripPlanRequest = ref({
     departureDate: '',
     arrivalDate: '',
     image: '',
-    memberId: 1,
+    memberId: userId,
   },
   makeTripPlans: [],
 });
@@ -149,7 +153,7 @@ const createPlan = () => {
       memo: '',
       moveTime: null,
       tripDate: 0,
-      memberId: 1,
+      memberId: userId,
       tripPlanId: 0,
       attractionId: attraction.attractionInfo.contentId,
     };
@@ -165,7 +169,7 @@ const createPlan = () => {
       memo: '',
       moveTime: null,
       tripDate: 0,
-      memberId: 1,
+      memberId: userId,
       tripPlanId: 0,
       attractionId: attraction.attractionInfo.contentId,
     };
@@ -214,7 +218,7 @@ const onDrop = (event, date) => {
       memo: '',
       moveTime: '',
       tripDate: date,
-      memberId: 1,
+      memberId: userId,
       tripPlanId: tripPlanId.value,
       attractionId: attraction.attractionInfo.contentId,
     };
@@ -281,7 +285,7 @@ const updateTripPlan = (title, content) => {
       departureDate: '',
       arrivalDate: '',
       image: '',
-      memberId: 1,
+      memberId: userId,
     },
     makeTripPlans: [],
   });
@@ -353,6 +357,9 @@ const detailPlanModalOpen = (date, index) => {
   fillDetailPlanModalOpen.value = true;
   modalDate.value = date;
   modalIndex.value = index;
+  console.dir(modalDate.value);
+  console.dir(modalIndex.value);
+  console.dir(selectedAttractionsByDate.value);
 };
 
 const fillDetailPlanModalOpen = ref(false);
@@ -371,7 +378,7 @@ const submitPlanDetail = (
   console.dir('받은 모달');
   console.dir(modalDate);
   console.dir(modalIndex);
-  console.dir(selectedAttractionDetailsByDate.value[modalDate][modalIndex]);
+
   selectedAttractionDetailsByDate.value[modalDate][modalIndex].departureTime =
     departureTime;
   selectedAttractionDetailsByDate.value[modalDate][modalIndex].arrivalTime =
@@ -380,6 +387,14 @@ const submitPlanDetail = (
   selectedAttractionDetailsByDate.value[modalDate][modalIndex].moveTime =
     moveTime;
   console.dir(selectedAttractionDetailsByDate);
+};
+
+const myPlanListModalOpen = ref(false);
+const MyPlanListModalClose = () => {
+  myPlanListModalOpen.value = false;
+};
+const OpenMyPlanListModal = () => {
+  myPlanListModalOpen.value = true;
 };
 </script>
 
@@ -494,14 +509,29 @@ const submitPlanDetail = (
       @show-plan-detail-modal-toggle="showPlanDetailModalToggle"
       v-show="showPlanDetailModalOpen"
     />
-    <fillDetailPlanModal
-      v-show="fillDetailPlanModalOpen"
-      @submit-plan-detail="submitPlanDetail"
-      @plan-detail-toggle="planDetailToggle"
-      :modal-date="modalDate"
-      :modal-index="modalIndex"
-    >
-    </fillDetailPlanModal>
+    <template v-for="(date, dateIndex) in selectedAttractionsByDate">
+      <fillDetailPlanModal
+        v-for="(attraction, attractionIndex) in selectedAttractionsByDate[
+          dateIndex
+        ]"
+        v-show="
+          fillDetailPlanModalOpen &&
+          modalDate - 1 === dateIndex &&
+          modalIndex === attractionIndex
+        "
+        @submit-plan-detail="submitPlanDetail"
+        @plan-detail-toggle="planDetailToggle"
+        :modal-date="dateIndex"
+        :modal-index="attractionIndex - 1"
+      >
+      </fillDetailPlanModal>
+    </template>
+
+    <MyPlanListModal
+      v-show="myPlanListModalOpen"
+      @my-plan-list-modal-close="MyPlanListModalClose"
+      :user-id="userId"
+    ></MyPlanListModal>
 
     <div class="all-content-plan" v-show="currentView === 'plan'">
       <div class="left-tab-plan">
@@ -580,6 +610,14 @@ const submitPlanDetail = (
       :selectedAttractions="selectedAttractions"
       :selectedAccomodations="selectedAccomodations"
     ></KakaoMap>
+
+    <div class="plan-buttons">
+      <button type="button" @click.prevent="OpenMyPlanListModal">
+        내 계획
+      </button>
+      <button type="button">댓글</button>
+      <button type="button">공유</button>
+    </div>
   </div>
 </template>
 
@@ -592,6 +630,7 @@ const submitPlanDetail = (
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-style: normal;
+  /* position: relative; */
 }
 
 .all-content {
@@ -808,5 +847,16 @@ const submitPlanDetail = (
 
 #save-btn {
   margin-top: 5px;
+}
+
+.plan-buttons {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  top: 5px;
+  right: 5px;
+  width: 180px;
+  height: 35px;
+  z-index: 30;
 }
 </style>
