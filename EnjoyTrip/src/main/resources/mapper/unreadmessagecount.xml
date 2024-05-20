@@ -12,19 +12,19 @@
     <update id="updateAddUnreadMessageCount" parameterType="UnreadMessageCount">
         update unread_message_count
            set count = count+1
-         where room_id = #{roomId} and receiver_id = #{receiver_id}
+         where room_id = #{roomId} and receiver_id != #{receiverId}
     </update>
 
     <update id="updateResetUnreadMessageCount" parameterType="UnreadMessageCount">
         update unread_message_count
            set count = 0
-         where room_id = #{roomId} and receiver_id = #{receiver_id}
+         where room_id = #{roomId} and receiver_id = #{receiverId}
     </update>
 
     <select id="findUnreadMessageCount" parameterType="UnreadMessageCount">
         select count
           from unread_message_count
-         where room_id = #{roomId} and receiver_id = #{receiver_id}
+         where room_id = #{roomId} and receiver_id = #{receiverId}
     </select>
 
 </mapper>

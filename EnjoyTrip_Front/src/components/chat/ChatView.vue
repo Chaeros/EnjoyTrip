@@ -169,6 +169,7 @@ import {
   searchChatMessageList,
   enterOrRegistPrivateChatRoom,
 } from "@/api/chat/chat.js";
+import { countResetUnreadMessageCount } from "@/api/unreadmessagecount/unreadmessagecount.js";
 import { storeToRefs } from "pinia";
 import { useChatStore } from "@/store/chat/chat";
 import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
@@ -231,12 +232,18 @@ socket.value.onmessage = function (e) {
     message: parsedData.message,
   };
 
+  if (parsedData.chatRoomId == currentSelectedRoomId.value) {
+    resetCount(parsedData.chatRoomId);
+  }
+
   // 내가 보낸 메시지가 아니면서
   if (parsedData.senderId != getLocalStorage("userId")) {
     if (currentMode.value === "FRIEND") {
       console.log("친구 갱신");
+      clickCallMyFriendList();
     } else if (currentMode.value === "CHATTING") {
       console.log("채팅 갱신");
+      clickCallMyChatRoomList();
     }
   }
 
@@ -326,11 +333,35 @@ const selectFriend = (friendId) => {
           activeChat.value.id = response.data.id;
           activeChat.value.name = response.data.nickname;
           activeChat.value.avatar = response.data.image;
+          resetCount(response.data);
         },
         (error) => {
           console.log(error);
         }
       );
+      console.log(friendList.value);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const resetCount = (roomId) => {
+  console.log(friendList.value);
+  countResetUnreadMessageCount(
+    roomId,
+    getLocalStorage("userId"),
+    (response) => {
+      console.log(friendList.value);
+      if (currentMode.value === "FRIEND") {
+        console.log("친구 갱신");
+        clickCallMyFriendList();
+      } else if (currentMode.value === "CHATTING") {
+        console.log("채팅 갱신");
+        clickCallMyChatRoomList();
+      }
+      console.log(friendList.value);
     },
     (error) => {
       console.log(error);

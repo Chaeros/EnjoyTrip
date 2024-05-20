@@ -1,6 +1,8 @@
 package com.ssafy.enjoytrip.global.chat.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.enjoytrip.domain.unreadmessagecount.UnreadMessageCount;
+import com.ssafy.enjoytrip.domain.unreadmessagecount.service.UnreadMessageCountService;
 import com.ssafy.enjoytrip.global.chat.dto.ChatMessageDto;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
@@ -19,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class WebSocketChatHandler extends TextWebSocketHandler {
     private final ObjectMapper mapper;
+    private final UnreadMessageCountService unreadMessageCountService;
 
     // 현재 연결된 세션들
     private final Set<WebSocketSession> sessions = new HashSet<>();
@@ -57,6 +60,15 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         }
         else if (chatMessageDto.getMessageType().equals(ChatMessageDto.MessageType.LEAVE)) {
             handleLeaveMessage(session);
+        }
+        else if (chatMessageDto.getMessageType().equals(ChatMessageDto.MessageType.TALK)) {
+            // 안 읽은 메시지 카운팅
+            unreadMessageCountService.modifyAddUnreadMessageCount(
+                    UnreadMessageCount.builder()
+                            .roomId(Math.toIntExact(chatRoomId))
+                            .receiverId(chatMessageDto.getSenderId())
+                            .build()
+            );
         }
         if (chatRoomSession.size() >= 3) {
             removeClosedSession(chatRoomSession);

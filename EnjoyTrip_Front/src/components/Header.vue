@@ -3,9 +3,9 @@
     <div class="header">
       <div class="left-side-header">
         <h3 class="header-logo" @click="clickTitle">ChanGon</h3>
-        <a @click="clickAttraction">관광지찾기</a>
-        <a @click="clickCummunity">커뮤니티</a>
-        <a>공지사항</a>
+        <a class="header-link" @click="clickAttraction">관광지찾기</a>
+        <a class="header-link" @click="clickCummunity">커뮤니티</a>
+        <a class="header-link">공지사항</a>
       </div>
       <div class="right-side-header">
         <div class="search-box">
@@ -25,13 +25,25 @@
           />
         </div>
         <template v-if="isLogin === false">
-          <a class="login-btn" @click="clickLogin">로그인</a>
-          <a class="sign-up-btn" @click="clickSignUp">회원가입</a>
+          <button
+            type="button"
+            @click="clickLogin"
+            class="btn btn-outline-dark header-btn"
+          >
+            로그인
+          </button>
+          <button
+            type="button"
+            @click="clickSignUp"
+            class="btn btn-outline-dark header-btn"
+          >
+            회원가입
+          </button>
         </template>
         <template v-else>
-          <a @click="clickLogOut">로그아웃</a>
-          <a @click="clickMyPage">내 정보</a>
-          <p>{{ displayMember.id }}</p>
+          <a class="header-btn" @click="clickLogOut">로그아웃</a>
+          <a class="header-btn" @click="clickMyPage">내 정보</a>
+          <p class="user-id">{{ displayMember.id }}</p>
         </template>
       </div>
     </div>
@@ -44,12 +56,13 @@ import { useMemberStore } from "@/store/member";
 import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
+
 const memberStore = useMemberStore();
 const webSocketChatStore = useWebSocketChatStore();
 const { userInfo, isLogin } = storeToRefs(memberStore);
 const { sendEscapeMsg } = webSocketChatStore;
 const router = useRouter();
-console.log(userInfo);
+
 const clickLogin = () => {
   router.push({ name: "login" });
 };
@@ -66,8 +79,6 @@ const clickCummunity = () => {
   router.push({ name: "reviewBoardList" });
 };
 const clickLogOut = () => {
-  console.log("dd");
-  console.log(userInfo);
   userInfo.value = null;
   isLogin.value = false;
   sendEscapeMsg();
@@ -82,38 +93,79 @@ const displayMember = ref({
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
+
 .header-wrap {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /*그림자 효과 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   height: 80px;
   align-content: center;
+  background-color: #fff;
+  border-bottom: 1px solid #eaeaea;
 }
+
 .header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 0 auto;
-  width: 1200px;
+  width: 90%;
+  max-width: 1200px;
+  padding: 0 20px;
 }
+
 .header-logo {
   font-size: 30px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s;
 }
-.header > * > a {
+
+.header-logo:hover {
+  color: #007bff;
+}
+
+.header-link {
   margin: 0 10px;
+  font-family: "Noto Sans KR", sans-serif;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
 }
+
+.header-link:hover {
+  color: #007bff;
+  cursor: pointer;
+}
+
 .left-side-header {
   display: flex;
   align-items: center;
-  width: 500px;
 }
+
 .right-side-header {
   display: flex;
   align-items: center;
 }
+
 .search-box {
   position: relative;
 }
+
 .search-text {
-  width: 400px;
+  width: 300px;
+  padding: 8px 40px 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  transition: border-color 0.3s;
 }
+
+.search-text:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
 .search_icon {
   width: 20px;
   position: absolute;
@@ -122,16 +174,27 @@ const displayMember = ref({
   transform: translateY(-50%);
   cursor: pointer;
 }
-.login-btn {
-  width: 100px;
-  color: inherit;
-  text-decoration: none;
+
+.header-btn {
+  width: auto;
+  padding: 8px 10px;
+  margin: 0 5px;
+  border-radius: 10px;
   text-align: center;
+  /* text-decoration: none; */
+  font-family: "Noto Sans KR", sans-serif;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  /* font-weight: bold; */
 }
-.sign-up-btn {
-  width: 100px;
-  color: inherit;
-  text-decoration: none;
-  text-align: center;
+
+.header-btn:hover {
+  /* background-color: #0056b3; */
+}
+
+.user-id {
+  margin: 0 10px;
+  font-weight: bold;
+  color: #333;
 }
 </style>

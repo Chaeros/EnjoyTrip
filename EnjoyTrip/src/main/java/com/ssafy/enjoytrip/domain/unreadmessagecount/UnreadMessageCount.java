@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class UnreadMessageCount {
     int roomId;
-    int recieverId;
+    long receiverId;
     int count;
     String lastEnterDate;
 }

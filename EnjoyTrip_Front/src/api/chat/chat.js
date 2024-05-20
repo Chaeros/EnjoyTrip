@@ -18,6 +18,14 @@ function bringPrivateChatRoomList(memberId, success, fail) {
     .catch(fail);
 }
 
+function searchPrivateChatRoom(myId, opponentId, success, fail) {
+  console.log(myId, opponentId);
+  local
+    .get(`/privatechatroom`, { params: { myId, opponentId } })
+    .then(success)
+    .catch(fail);
+}
+
 function registChatMessage(chatMessage, success, fail) {
   local.post(`/chatmessage`, chatMessage).then(success).catch(fail);
 }
@@ -36,5 +44,6 @@ export {
   enterOrRegistPrivateChatRoom,
   bringPrivateChatRoomList,
   registChatMessage,
+  searchPrivateChatRoom,
   searchChatMessageList,
 };
