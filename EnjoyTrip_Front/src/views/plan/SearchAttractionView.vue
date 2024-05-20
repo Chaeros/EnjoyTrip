@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, watch } from 'vue';
 import AttractionSearchBar from '@/components/AttractionSearchBar.vue';
 import AccomodationSearchBar from '@/components/AccomodationSearchBar.vue';
 import KakaoMap from '@/components/KakaoMap.vue';
@@ -11,6 +11,7 @@ import DateContainer from '@/components/DateContainer.vue';
 import AttractionAddModal from '@/components/AttractionAddModal.vue';
 import AccomodationAddModal from '@/components/AccomodationAddModal.vue';
 import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
+import fillDetailPlanModal from '@/components/FillDetailPlanModal.vue';
 
 import { useRouter } from 'vue-router';
 import { registTripPlan, editTripPlan } from '@/api/plan/plan';
@@ -25,6 +26,7 @@ const selectedAttractions = ref([]);
 const selectedAccomodations = ref([]);
 const selectedAttractionsByDate = ref([]);
 const selectedAccomodationsByDate = ref([]);
+const selectedAttractionDetailsByDate = ref([]);
 
 const showModal = ref(false);
 
@@ -140,7 +142,7 @@ const createPlan = () => {
 
   for (let i = 0; i < selectedAttractions.value.length; i++) {
     const attraction = selectedAttractions.value[i];
-    const mtp = {
+    const makeTripPlan = {
       sequence: 0,
       departureTime: null,
       arrivalTime: null,
@@ -151,12 +153,12 @@ const createPlan = () => {
       tripPlanId: 0,
       attractionId: attraction.attractionInfo.contentId,
     };
-    tripPlanRequest.value.makeTripPlans.push(mtp);
+    tripPlanRequest.value.makeTripPlans.push(makeTripPlan);
   }
 
   for (let i = 0; i < selectedAccomodations.value.length; i++) {
     const attraction = selectedAccomodations.value[i];
-    const mtp = {
+    const makeTripPlan = {
       sequence: 0,
       departureTime: null,
       arrivalTime: null,
@@ -167,14 +169,14 @@ const createPlan = () => {
       tripPlanId: 0,
       attractionId: attraction.attractionInfo.contentId,
     };
-    tripPlanRequest.value.makeTripPlans.push(mtp);
+    tripPlanRequest.value.makeTripPlans.push(makeTripPlan);
   }
 
   registerTripPlan(tripPlanRequest.value);
 
   for (let i = 0; i < totalTripDates.value; i++) {
     selectedAttractionsByDate.value[i] = [];
-    selectedAccomodationsByDate.value[i] = [];
+    selectedAttractionDetailsByDate.value[i] = [];
   }
 
   currentView.value = 'plan';
@@ -200,8 +202,28 @@ const dateContainerDragged = (date, index) => {
 };
 
 const onDrop = (event, date) => {
-  const attraction = JSON.parse(event.dataTransfer.getData('attraction'));
-  selectedAttractionsByDate.value[date - 1].push(attraction);
+  try {
+    const attraction = JSON.parse(event.dataTransfer.getData('attraction'));
+    console.dir('어트랙션 아이디');
+    console.dir(attraction.contentId);
+    selectedAttractionsByDate.value[date - 1].push(attraction);
+    const makeTripPlan = {
+      sequence: selectedAttractionsByDate.value[date - 1].length - 1,
+      departureTime: '',
+      arrivalTime: '',
+      memo: '',
+      moveTime: '',
+      tripDate: date,
+      memberId: 1,
+      tripPlanId: tripPlanId.value,
+      attractionId: attraction.attractionInfo.contentId,
+    };
+    selectedAttractionDetailsByDate.value[date - 1].push(makeTripPlan);
+    console.dir(selectedAttractionsByDate);
+  } catch (error) {
+    console.log('Invalid JSON:', error);
+    // handleMouseMove(event);
+  }
 };
 
 const onDateDrop = (event, date, index) => {
@@ -211,6 +233,11 @@ const onDateDrop = (event, date, index) => {
   selectedAttractionsByDate.value[date - 1][index] =
     selectedAttractionsByDate.value[fromDate - 1][fromIndex];
   selectedAttractionsByDate.value[fromDate - 1][fromIndex] = temp;
+
+  const detailTemp = selectedAttractionDetailsByDate.value[date - 1][index];
+  selectedAttractionDetailsByDate.value[date - 1][index] =
+    selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex];
+  selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex] = detailTemp;
 };
 
 const onBetweenDrop = (event, date, index) => {
@@ -279,18 +306,8 @@ const updateTripPlan = (title, content) => {
   for (let i = 0; i < selectedAttractionsByDate.value.length; i++) {
     for (let j = 0; j < selectedAttractionsByDate.value[i].length; j++) {
       const attraction = selectedAttractionsByDate.value[i][j];
-      const mtp = {
-        sequence: j,
-        departureTime: null,
-        arrivalTime: null,
-        memo: '',
-        moveTime: null,
-        tripDate: i + 1,
-        memberId: 1,
-        tripPlanId: tripPlanId.value,
-        attractionId: attraction.attractionInfo.contentId,
-      };
-      tripPlanRequest.value.makeTripPlans.push(mtp);
+      const attractionDetailInfo = selectedAttractionDetailsByDate.value[i][j];
+      tripPlanRequest.value.makeTripPlans.push(attractionDetailInfo);
     }
   }
 
@@ -325,35 +342,45 @@ const currentModalViewAccomodation = () => {
   accomodationAddModalOpen.value = true;
 };
 
-/* 드래그로 화면 분할 처리*/
-const dateContainerMaxWidth = ref('500px');
-const isDragging = ref(false);
-
-const startDragging = () => {
-  isDragging.value = true;
-};
-
-const stopDragging = () => {
-  isDragging.value = false;
-};
-
-const handleMouseMove = (event) => {
-  if (!isDragging.value) return;
-  const container = document.querySelector('.date-container-container');
-  const containerOffsetLeft = container.getBoundingClientRect().left;
-  const newWidth = event.clientX - containerOffsetLeft;
-  dateContainerMaxWidth.value = `${newWidth}px`;
-};
-
-onMounted(() => {
-  window.addEventListener('mousemove', handleMouseMove);
-  window.addEventListener('mouseup', stopDragging);
+const dateContainerMaxWidth = ref('');
+watch(totalTripDates, (newTotalTripDates) => {
+  dateContainerMaxWidth.value = `${newTotalTripDates * 170}px`;
 });
 
-onUnmounted(() => {
-  window.removeEventListener('mousemove', handleMouseMove);
-  window.removeEventListener('mouseup', stopDragging);
-});
+const modalDate = ref(0);
+const modalIndex = ref(0);
+const detailPlanModalOpen = (date, index) => {
+  fillDetailPlanModalOpen.value = true;
+  modalDate.value = date;
+  modalIndex.value = index;
+};
+
+const fillDetailPlanModalOpen = ref(false);
+const planDetailToggle = () => {
+  fillDetailPlanModalOpen.value = false;
+};
+
+const submitPlanDetail = (
+  modalDate,
+  modalIndex,
+  departureTime,
+  arrivalTime,
+  memo,
+  moveTime
+) => {
+  console.dir('받은 모달');
+  console.dir(modalDate);
+  console.dir(modalIndex);
+  console.dir(selectedAttractionDetailsByDate.value[modalDate][modalIndex]);
+  selectedAttractionDetailsByDate.value[modalDate][modalIndex].departureTime =
+    departureTime;
+  selectedAttractionDetailsByDate.value[modalDate][modalIndex].arrivalTime =
+    arrivalTime;
+  selectedAttractionDetailsByDate.value[modalDate][modalIndex].memo = memo;
+  selectedAttractionDetailsByDate.value[modalDate][modalIndex].moveTime =
+    moveTime;
+  console.dir(selectedAttractionDetailsByDate);
+};
 </script>
 
 <template>
@@ -467,6 +494,14 @@ onUnmounted(() => {
       @show-plan-detail-modal-toggle="showPlanDetailModalToggle"
       v-show="showPlanDetailModalOpen"
     />
+    <fillDetailPlanModal
+      v-show="fillDetailPlanModalOpen"
+      @submit-plan-detail="submitPlanDetail"
+      @plan-detail-toggle="planDetailToggle"
+      :modal-date="modalDate"
+      :modal-index="modalIndex"
+    >
+    </fillDetailPlanModal>
 
     <div class="all-content-plan" v-show="currentView === 'plan'">
       <div class="left-tab-plan">
@@ -524,7 +559,7 @@ onUnmounted(() => {
       v-if="currentView === 'plan'"
       :style="{ maxWidth: dateContainerMaxWidth }"
     >
-      <!-- <DateContainer
+      <DateContainer
         v-for="number in totalTripDates"
         v-show="activeDate === 0 || activeDate === number"
         :selected-attractions-by-date="selectedAttractionsByDate"
@@ -536,20 +571,8 @@ onUnmounted(() => {
         @remove-attraction="removeAttraction"
         @on-date-drop="onDateDrop"
         @on-between-drop="onBetweenDrop"
-      ></DateContainer> -->
-      <DateContainer
-        v-for="number in totalTripDates"
-        v-show="activeDate === 0 || activeDate === number"
-        :selected-attractions-by-date="selectedAttractionsByDate"
-        :date="number"
-        @dragenter.prevent
-        @dragover.prevent
-        @date-container-dragged="dateContainerDragged"
-        @remove-attraction="removeAttraction"
-        @on-date-drop="onDateDrop"
-        @on-between-drop="onBetweenDrop"
+        @detail-plan-modal-open="detailPlanModalOpen"
       ></DateContainer>
-      <div class="splitter" @mousedown="startDragging"></div>
     </div>
 
     <KakaoMap
@@ -724,6 +747,7 @@ onUnmounted(() => {
   height: 100vh;
   flex-grow: 1;
   z-index: 10;
+  position: relative;
 }
 
 .attractions {
@@ -744,20 +768,8 @@ onUnmounted(() => {
 
 .date-container-container {
   display: flex;
-  max-width: 500px;
-  overflow-x: auto;
-  border-right: 1px solid #6c7a89;
+  /* overflow-x: auto; */
   position: relative;
-}
-
-.splitter {
-  width: 5px;
-  background-color: yellow;
-  cursor: col-resize;
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
 }
 
 /* Custom Scrollbar for WebKit (Chrome, Safari) */

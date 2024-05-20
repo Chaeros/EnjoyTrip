@@ -9,6 +9,7 @@ const emit = defineEmits([
   'dateContainerDragged',
   'onDateDrop',
   'onBetweenDrop',
+  'detailPlanModalOpen',
 ]);
 const removeAttraction = (date, index) => {
   emit('removeAttraction', date, index);
@@ -29,6 +30,10 @@ const onDateDrop = (event, date, index) => {
 const onBetweenDrop = (event, date, index) => {
   emit('onBetweenDrop', event, date, index);
 };
+
+const detailPlanModalOpen = (date, index) => {
+  emit('detailPlanModalOpen', date, index);
+};
 </script>
 
 <template>
@@ -46,13 +51,22 @@ const onBetweenDrop = (event, date, index) => {
         @dragenter.prevent
         @dragover.prevent
       >
-        <div>{{ attraction.attractionInfo.title }}</div>
-        <button
-          class="remove-btn"
-          @click.prevent="removeAttraction(date - 1, index)"
-        >
-          -
-        </button>
+        <div class="attraction-element-title-container">
+          <div class="attraction-element-title">
+            {{ attraction.attractionInfo.title }}
+          </div>
+          <button
+            class="remove-btn"
+            @click.prevent="removeAttraction(date - 1, index)"
+          >
+            -
+          </button>
+        </div>
+        <div class="attraction-element-detail">
+          <button @click.prevent="detailPlanModalOpen(date, index)">
+            상세 계획
+          </button>
+        </div>
       </div>
       <div
         class="attraction-between"
@@ -64,16 +78,16 @@ const onBetweenDrop = (event, date, index) => {
 
 <style scoped>
 .container {
-  min-width: 200px;
-  max-width: 200px;
-  height: 97vh;
+  min-width: 170px;
+  max-width: 170px;
+  height: 100vh;
   overflow-y: auto;
   padding: 0;
   border: 1px solid black;
 }
 
 .attraction-element {
-  display: flex;
+  /* display: flex; */
   font-size: 13px;
   justify-content: space-between;
   align-items: center;
@@ -99,7 +113,7 @@ const onBetweenDrop = (event, date, index) => {
   padding: 5px 10px;
   font-size: 10px;
   color: #fff;
-  background-color: skyblue;
+  background-color: #a3c6c4;
   border: none;
   border-radius: 3px;
   cursor: pointer;
@@ -107,7 +121,7 @@ const onBetweenDrop = (event, date, index) => {
 }
 
 .attraction-element button:hover {
-  background-color: #c9302c;
+  background-color: #6c7a89;
 }
 
 .date-title {
@@ -123,7 +137,27 @@ const onBetweenDrop = (event, date, index) => {
 }
 
 .attraction-between {
-  height: 100px;
+  height: 0;
   background-color: skyblue;
+}
+
+.attraction-element-title-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.attraction-element-detail button {
+  background-color: #d1dfe0;
+  width: 100%;
+  height: 20px;
+  padding: 0;
+}
+
+.attraction-element-title {
+  font-size: 11px;
+  line-height: 25px;
+  min-width: 120px;
+  max-width: 120px;
 }
 </style>
