@@ -45,3 +45,9 @@ npm install vuex --save
 ```sh
 npm install pinia
 ```
+
+### JWT 디코더
+
+```sh
+npm install jwt-decode
+```

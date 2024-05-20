@@ -41,8 +41,20 @@
           </button>
         </template>
         <template v-else>
-          <a class="header-btn" @click="clickLogOut">로그아웃</a>
-          <a class="header-btn" @click="clickMyPage">내 정보</a>
+          <button
+            type="button"
+            @click="clickLogOut"
+            class="btn btn-outline-dark header-btn"
+          >
+            로그아웃
+          </button>
+          <button
+            type="button"
+            @click="clickMyPage"
+            class="btn btn-outline-dark header-btn"
+          >
+            내 정보
+          </button>
           <p class="user-id">{{ displayMember.id }}</p>
         </template>
       </div>
