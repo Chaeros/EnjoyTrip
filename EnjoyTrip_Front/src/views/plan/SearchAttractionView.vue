@@ -16,6 +16,7 @@ import AccomodationAddModal from '@/components/AccomodationAddModal.vue';
 import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
 import fillDetailPlanModal from '@/components/FillDetailPlanModal.vue';
 import MyPlanListModal from '@/components/MyPlanListModal.vue';
+import MyPlanDetailModal from '@/components/MyPlanDetailModal.vue';
 
 import { useRouter } from 'vue-router';
 import { registTripPlan, editTripPlan } from '@/api/plan/plan';
@@ -105,7 +106,7 @@ const tripPlanRequest = ref({
     departureDate: '',
     arrivalDate: '',
     image: '',
-    memberId: userId,
+    memberId: 1,
   },
   makeTripPlans: [],
 });
@@ -153,7 +154,7 @@ const createPlan = () => {
       memo: '',
       moveTime: null,
       tripDate: 0,
-      memberId: userId,
+      memberId: 1,
       tripPlanId: 0,
       attractionId: attraction.attractionInfo.contentId,
     };
@@ -169,7 +170,7 @@ const createPlan = () => {
       memo: '',
       moveTime: null,
       tripDate: 0,
-      memberId: userId,
+      memberId: 1,
       tripPlanId: 0,
       attractionId: attraction.attractionInfo.contentId,
     };
@@ -218,7 +219,7 @@ const onDrop = (event, date) => {
       memo: '',
       moveTime: '',
       tripDate: date,
-      memberId: userId,
+      memberId: 1,
       tripPlanId: tripPlanId.value,
       attractionId: attraction.attractionInfo.contentId,
     };
@@ -285,7 +286,7 @@ const updateTripPlan = (title, content) => {
       departureDate: '',
       arrivalDate: '',
       image: '',
-      memberId: userId,
+      memberId: 1,
     },
     makeTripPlans: [],
   });
@@ -396,6 +397,16 @@ const MyPlanListModalClose = () => {
 const OpenMyPlanListModal = () => {
   myPlanListModalOpen.value = true;
 };
+
+const searchAttractionRoute = () => {
+  router.push({ name: 'searchattraction' });
+};
+
+const homeRoute = () => {
+  router.push({ name: 'home' });
+};
+
+const modifyPlanDetail = (tripPlanId) => {};
 </script>
 
 <template>
@@ -404,7 +415,11 @@ const OpenMyPlanListModal = () => {
       <div class="left-tab">
         <header class="search-header">
           <div class="logo-nav-search">
-            <img src="@/img/coldragon.png" class="coldragon-img-search" />
+            <img
+              @click="homeRoute"
+              src="@/img/coldragon.png"
+              class="coldragon-img-search"
+            />
             <nav>
               <div class="list-group">
                 <div class="select-group">
@@ -434,19 +449,35 @@ const OpenMyPlanListModal = () => {
               </div>
             </nav>
           </div>
-          <div class="make-plan">
-            <button
-              type="button"
-              class="btn btn-dark make-plan-btn"
-              style="
-                --bs-btn-padding-y: 1rem;
-                --bs-btn-padding-x: 0.25rem;
-                --bs-btn-font-size: 0.8rem;
-              "
-              @click="createPlan"
-            >
-              일정 생성
-            </button>
+          <div class="black-btns">
+            <div class="show-my-plans">
+              <button
+                type="button"
+                class="btn btn-dark make-plan-btn show-my-plans-btn"
+                style="
+                  --bs-btn-padding-y: 1rem;
+                  --bs-btn-padding-x: 0.25rem;
+                  --bs-btn-font-size: 0.8rem;
+                "
+                @click="OpenMyPlanListModal"
+              >
+                내 계획 보기
+              </button>
+            </div>
+            <div class="make-plan">
+              <button
+                type="button"
+                class="btn btn-dark make-plan-btn"
+                style="
+                  --bs-btn-padding-y: 1rem;
+                  --bs-btn-padding-x: 0.25rem;
+                  --bs-btn-font-size: 0.8rem;
+                "
+                @click="createPlan"
+              >
+                일정 생성
+              </button>
+            </div>
           </div>
         </header>
 
@@ -529,15 +560,20 @@ const OpenMyPlanListModal = () => {
 
     <MyPlanListModal
       v-show="myPlanListModalOpen"
+      @modify-plan-detail="modifyPlanDetail"
       @my-plan-list-modal-close="MyPlanListModalClose"
-      :user-id="userId"
+      :user-id="1"
     ></MyPlanListModal>
 
     <div class="all-content-plan" v-show="currentView === 'plan'">
       <div class="left-tab-plan">
         <header id="header" class="plan-header">
           <div class="logo-nav-plan">
-            <img src="@/img/coldragon.png" class="coldragon-img-plan" />
+            <img
+              @click="homeRoute"
+              src="@/img/coldragon.png"
+              class="coldragon-img-plan"
+            />
             <nav class="select-group-plan">
               <a
                 href="#"
@@ -555,21 +591,38 @@ const OpenMyPlanListModal = () => {
                 >{{ number }}일차</a
               >
             </nav>
-          </div>
-          <div class="make-plan">
-            <button
-              type="button"
-              id="save-btn"
-              class="btn btn-dark"
-              style="
-                --bs-btn-padding-y: 1rem;
-                --bs-btn-padding-x: 0.25rem;
-                --bs-btn-font-size: 1.1rem;
-              "
-              @click="showPlanDetailModalToggle"
-            >
-              저장하기
-            </button>
+            <div class="black-btns">
+              <div class="make-plan">
+                <button
+                  type="button"
+                  id="save-btn"
+                  class="btn btn-dark"
+                  style="
+                    --bs-btn-padding-y: 1rem;
+                    --bs-btn-padding-x: 0.25rem;
+                    --bs-btn-font-size: 1.1rem;
+                  "
+                  @click="homeRoute"
+                >
+                  홈으로
+                </button>
+              </div>
+              <div class="make-plan">
+                <button
+                  type="button"
+                  id="save-btn"
+                  class="btn btn-dark"
+                  style="
+                    --bs-btn-padding-y: 1rem;
+                    --bs-btn-padding-x: 0.25rem;
+                    --bs-btn-font-size: 1.1rem;
+                  "
+                  @click="showPlanDetailModalToggle"
+                >
+                  저장하기
+                </button>
+              </div>
+            </div>
           </div>
         </header>
 
@@ -612,9 +665,6 @@ const OpenMyPlanListModal = () => {
     ></KakaoMap>
 
     <div class="plan-buttons">
-      <button type="button" @click.prevent="OpenMyPlanListModal">
-        내 계획
-      </button>
       <button type="button">댓글</button>
       <button type="button">공유</button>
     </div>
@@ -669,6 +719,8 @@ const OpenMyPlanListModal = () => {
 
 .logo-nav-plan {
   width: 120px;
+  height: 98%;
+  /* margin-bottom: 10px; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -855,7 +907,7 @@ const OpenMyPlanListModal = () => {
   justify-content: space-between;
   top: 5px;
   right: 5px;
-  width: 180px;
+  width: 100px;
   height: 35px;
   z-index: 30;
 }
