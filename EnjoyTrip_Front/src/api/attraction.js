@@ -28,10 +28,20 @@ function getListContentType(success, fail) {
   local.get(`/attraction/contenttype`).then(success).catch(fail);
 }
 
+function getDetailAttractionInfo(contentId, success, fail) {
+  local.get(`/attraction/attraction/${contentId}`).then(success).catch(fail);
+}
+
+function getAttractionLikeCnt(contentId, success, fail) {
+  local.get(`/attraction/like/${contentId}`).then(success).catch(fail);
+}
+
 export {
   getListAttraction,
   getListAccomodation,
   getListSido,
   getListGugun,
   getListContentType,
+  getDetailAttractionInfo,
+  getAttractionLikeCnt,
 };

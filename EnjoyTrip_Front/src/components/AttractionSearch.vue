@@ -222,8 +222,8 @@ async function loadMoreAttractions() {
 
 <style scoped>
 .left-content {
-  width: 100%;
   padding: 20px;
+  width: 100%;
   background-color: #e0e7e9;
   border-right: 1px solid #adb5bd;
   overflow-y: auto;

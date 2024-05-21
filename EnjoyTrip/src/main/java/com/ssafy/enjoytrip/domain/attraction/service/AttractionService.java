@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.domain.attraction.service;
 
 import java.util.List;
 
+import com.ssafy.enjoytrip.domain.attraction.AttractionInfo;
 import com.ssafy.enjoytrip.domain.attraction.ContentType;
 import com.ssafy.enjoytrip.domain.attraction.Gugun;
 import com.ssafy.enjoytrip.domain.attraction.Sido;
@@ -14,6 +15,10 @@ import com.ssafy.enjoytrip.domain.attraction.dto.response.AttractionInfoLike;
 public interface AttractionService {
     List<AttractionInfoLike> getListAttractionInfoLikesByCond(AttractionRequestDto AttractionRequestDto);
     List<AttractionInfoLike> getListAccomInfoLikesByCond(AccomodationRequestDto AccomodationRequestDto);
+
+    AttractionInfo getDetailAttractionInfo(int contentId);
+
+    int getAttractionLikeCnt(int contentId);
 
     AttractionDetail getAttractionDetailByContentId(int contentId);
     List<AttractionInfoLike> getListAttractionInfoLikesByMemberId(int memberId);

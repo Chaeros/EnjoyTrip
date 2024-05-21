@@ -1,14 +1,17 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits, onMounted } from 'vue';
 const { selectedAttractionsByDate, date } = defineProps({
   selectedAttractionsByDate: Array,
   date: Number,
 });
+
+console.log(selectedAttractionsByDate);
+
 const emit = defineEmits([
   'removeAttraction',
   'dateContainerDragged',
   'onDateDrop',
-  'onBetweenDrop',
+  'onSpaceDrop',
   'detailPlanModalOpen',
 ]);
 const removeAttraction = (date, index) => {
@@ -27,16 +30,21 @@ const onDateDrop = (event, date, index) => {
   emit('onDateDrop', event, date, index);
 };
 
-const onBetweenDrop = (event, date, index) => {
-  emit('onBetweenDrop', event, date, index);
+const onSpaceDrop = (event, date) => {
+  emit('onSpaceDrop', event, date);
 };
 
 const detailPlanModalOpen = (date, index) => {
   emit('detailPlanModalOpen', date, index);
 };
+
+onMounted(() => {
+  console.dir('DateContainer');
+  console.dir(selectedAttractionsByDate.value);
+});
 </script>
 
-<template>
+<template v-if="selectedAttractionsByDate">
   <div class="container">
     <div class="date-title">{{ date }}일차</div>
     <div
@@ -55,12 +63,14 @@ const detailPlanModalOpen = (date, index) => {
           <div class="attraction-element-title">
             {{ attraction.attractionInfo.title }}
           </div>
-          <button
-            class="remove-btn"
-            @click.prevent="removeAttraction(date - 1, index)"
-          >
-            -
-          </button>
+          <div class="remove-btn-container">
+            <button
+              class="remove-btn"
+              @click.prevent="removeAttraction(date - 1, index)"
+            >
+              -
+            </button>
+          </div>
         </div>
         <div class="attraction-element-detail">
           <button @click.prevent="detailPlanModalOpen(date, index)">
@@ -68,11 +78,11 @@ const detailPlanModalOpen = (date, index) => {
           </button>
         </div>
       </div>
-      <div
-        class="attraction-between"
-        @drop="onBetweenDrop($event, date, index)"
-      ></div>
     </div>
+    <div
+      class="attraction-space"
+      @drop="onSpaceDrop($event, date, index)"
+    ></div>
   </div>
 </template>
 
@@ -81,12 +91,39 @@ const detailPlanModalOpen = (date, index) => {
   min-width: 170px;
   max-width: 170px;
   height: 100vh;
+  max-height: 100vh;
   overflow-y: auto;
   padding: 0;
   border: 1px solid black;
 }
 
+/* Custom Scrollbar for WebKit (Chrome, Safari) */
+.container::-webkit-scrollbar {
+  width: 7px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background-color: #e0e7e9;
+  border-radius: 10px;
+  border: 2px solid #f8f9fa;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+  background-color: #6c7a89;
+}
+
+.attraction-container {
+  background-color: #fff;
+  z-index: 0;
+}
+
 .attraction-element {
+  z-index: 10;
   /* display: flex; */
   font-size: 13px;
   justify-content: space-between;
@@ -155,9 +192,24 @@ const detailPlanModalOpen = (date, index) => {
 }
 
 .attraction-element-title {
-  font-size: 11px;
+  font-size: 10.5px;
   line-height: 25px;
-  min-width: 120px;
-  max-width: 120px;
+  min-width: 110px;
+  max-width: 110px;
+}
+
+.attraction-space {
+  height: 92%;
+  background-color: #fff;
+}
+
+.remove-btn-container {
+  display: flex;
+  align-items: center;
+}
+
+.remove-btn {
+  min-height: 22px;
+  max-height: 22px;
 }
 </style>

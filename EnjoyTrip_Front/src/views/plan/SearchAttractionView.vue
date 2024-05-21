@@ -1,6 +1,8 @@
 <script setup>
 import { getLocalStorage } from '@/util/localstorage/localstorage';
 const userId = getLocalStorage('userId');
+console.dir('유저아이디');
+console.dir(userId);
 
 import { ref, watch } from 'vue';
 import AttractionSearchBar from '@/components/AttractionSearchBar.vue';
@@ -18,7 +20,17 @@ import fillDetailPlanModal from '@/components/FillDetailPlanModal.vue';
 import MyPlanListModal from '@/components/MyPlanListModal.vue';
 
 import { useRouter } from 'vue-router';
-import { registTripPlan, editTripPlan } from '@/api/plan/plan';
+import {
+  registTripPlan,
+  editTripPlan,
+  getListMyTripPlan,
+  getDetailTripPlan,
+} from '@/api/plan/plan';
+
+import {
+  getDetailAttractionInfo,
+  getAttractionLikeCnt,
+} from '@/api/attraction';
 
 const router = useRouter();
 const currentView = ref('search');
@@ -31,6 +43,8 @@ const selectedAccomodations = ref([]);
 const selectedAttractionsByDate = ref([]);
 const selectedAccomodationsByDate = ref([]);
 const selectedAttractionDetailsByDate = ref([]);
+const title = ref('');
+const content = ref('');
 
 const showModal = ref(false);
 
@@ -91,12 +105,7 @@ const clickAccomodationAdd = (accomodation) => {
   }
 };
 
-const date = ref('');
-
-function handleDateUpdate(updatedDate) {
-  date.value = updatedDate;
-}
-
+// const date = ref('');
 const tripPlanId = ref('');
 const tripPlanRequest = ref({
   tripPlan: {
@@ -205,7 +214,7 @@ const dateContainerDragged = (date, index) => {
   console.dir('dateContainer 드래그 처리');
 };
 
-const onDrop = (event, date) => {
+const onSpaceDrop = (event, date) => {
   try {
     const attraction = JSON.parse(event.dataTransfer.getData('attraction'));
     console.dir('어트랙션 아이디');
@@ -233,27 +242,32 @@ const onDrop = (event, date) => {
 const onDateDrop = (event, date, index) => {
   const fromDate = event.dataTransfer.getData('date');
   const fromIndex = event.dataTransfer.getData('index');
+
   const temp = selectedAttractionsByDate.value[date - 1][index];
   selectedAttractionsByDate.value[date - 1][index] =
     selectedAttractionsByDate.value[fromDate - 1][fromIndex];
   selectedAttractionsByDate.value[fromDate - 1][fromIndex] = temp;
 
+  const tripDateTemp =
+    selectedAttractionDetailsByDate.value[date - 1][index].tripDate;
+  const sequenceTemp =
+    selectedAttractionDetailsByDate.value[date - 1][index].sequence;
+
+  selectedAttractionDetailsByDate.value[date - 1][index].tripDate =
+    selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex].tripDate;
+  selectedAttractionDetailsByDate.value[date - 1][index].sequence =
+    selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex].sequence;
+
+  selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex].tripDate =
+    tripDateTemp;
+  selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex].sequence =
+    sequenceTemp;
+
   const detailTemp = selectedAttractionDetailsByDate.value[date - 1][index];
   selectedAttractionDetailsByDate.value[date - 1][index] =
     selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex];
   selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex] = detailTemp;
-};
-
-const onBetweenDrop = (event, date, index) => {
-  try {
-    const attraction = JSON.parse(attractionData);
-    // 유효한 JSON 문자열인 경우 처리
-    console.log('Valid JSON:', attraction);
-  } catch (error) {
-    // 유효하지 않은 JSON 문자열인 경우 처리
-    console.error('Invalid JSON:', error);
-    // 특정 로직 작성
-  }
+  console.dir(selectedAttractionDetailsByDate.value);
 };
 
 const attractionAddModalOpen = ref(false);
@@ -268,6 +282,8 @@ const accomodationAddModalToggle = () => {
 
 const showPlanDetailModalOpen = ref(false);
 const showPlanDetailModalToggle = () => {
+  console.dir(title.value);
+  console.dir(content.value);
   showPlanDetailModalOpen.value = !showPlanDetailModalOpen.value;
 };
 
@@ -396,6 +412,255 @@ const MyPlanListModalClose = () => {
 const OpenMyPlanListModal = () => {
   myPlanListModalOpen.value = true;
 };
+
+const searchAttractionRoute = () => {
+  router.push({ name: 'searchattraction' });
+};
+
+const goHomePage = () => {
+  router.push({ name: 'home' });
+};
+
+const goSearchPage = () => {
+  departureDate.value = '';
+  arrivalDate.value = '';
+  totalTripDates.value = 0;
+  selectedAttractions.value.length = 0;
+  selectedAccomodations.value.length = 0;
+  selectedAttractionsByDate.value.length = 0;
+  title.value = '';
+  content.value = '';
+
+  activeTab.value = 'attraction';
+  activeDate.value = 0;
+  isExistSelectView.value = false;
+  tripPlanId.value = '';
+  tripPlanRequest.value = {
+    tripPlan: {
+      title: '',
+      content: '',
+      departureDate: '',
+      arrivalDate: '',
+      image: '',
+      memberId: userId,
+    },
+    makeTripPlans: [],
+  };
+
+  currentView.value = 'search';
+};
+
+function getTotalTripDates(startDate, endDate) {
+  // Date 객체로 변환
+  const firstDate = new Date(startDate);
+  const secondDate = new Date(endDate);
+  console.log(firstDate);
+  console.log(secondDate);
+
+  // 두 날짜의 차이를 밀리초 단위로 계산
+  const timeDifference = secondDate - firstDate;
+  console.log(timeDifference);
+
+  // 밀리초를 일자로 변환
+  // 하루는 24시간, 시간은 60분, 분은 60초, 초는 1000밀리초
+  const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+
+  // 소수점 아래는 버리고 정수 부분만 반환
+  totalTripDates.value = Math.abs(Math.floor(daysDifference)) + 1;
+}
+
+const indexes = new Map();
+
+// async function detailAttractionInfo(contentId, i, j) {
+//   await getDetailAttractionInfo(
+//     contentId,
+//     ({ data }) => {
+//       console.dir('어트랙션인포');
+//       console.dir(data);
+//       selectedAttractionsByDate.value[i][j] = { attractionInfo: data };
+//     },
+//     ({ error }) => {
+//       console.log(error);
+//     }
+//   );
+// }
+
+// async function test(planId) {
+//   getDetailTripPlan(
+//     planId,
+//     ({ data }) => {
+//       getTotalTripDates(data.tripPlan.departureDate, data.tripPlan.arrivalDate);
+//       console.dir('데이타');
+//       console.dir(data);
+//       for (let i = 0; i < totalTripDates.value; i++) {
+//         selectedAttractionsByDate.value[i] = [];
+//         selectedAttractionDetailsByDate.value[i] = [];
+//       }
+
+//       for (let i = 0; i < data.makeTripPlans.length; i++) {
+//         const makeTripPlan = data.makeTripPlans[i];
+//         console.dir('메이크트립');
+//         console.dir(makeTripPlan);
+//         selectedAttractionsByDate.value[
+//           parseInt(makeTripPlan.tripDate) - 1
+//         ].push(makeTripPlan.attractionId);
+//         indexes.set(
+//           [parseInt(makeTripPlan.tripDate) - 1, makeTripPlan.sequence],
+//           makeTripPlan.attractionId
+//         );
+//       }
+
+//       console.dir(selectedAttractionsByDate.value);
+//     },
+//     ({ error }) => {
+//       console.log(error);
+//     }
+//   );
+// }
+
+// async function getMyTripPlans(planId) {
+//   await test(planId);
+//   console.dir('인덱시스');
+//   console.dir(indexes);
+
+//   for (const [key, value] of indexes) {
+//     console.dir('키');
+//     console.dir(key);
+//     console.dir(value);
+//     detailAttractionInfo(value, key[0], key[1]);
+//   }
+// }
+
+// const modifyPlanDetail = (tripPlanId) => {
+//   departureDate.value = '';
+//   arrivalDate.value = '';
+//   totalTripDates.value = 0;
+//   selectedAttractions.value = [];
+//   selectedAccomodations.value = [];
+//   selectedAttractionsByDate.value = [];
+
+//   getMyTripPlans(tripPlanId);
+//   currentView.value = 'plan';
+// };
+
+async function test(planId) {
+  return new Promise((resolve, reject) => {
+    getDetailTripPlan(
+      planId,
+      ({ data }) => {
+        getTotalTripDates(
+          data.tripPlan.departureDate,
+          data.tripPlan.arrivalDate
+        );
+        console.dir('데이타');
+        console.dir(data);
+        console.log('test1 start', totalTripDates.value);
+        for (let i = 0; i < totalTripDates.value; i++) {
+          selectedAttractionsByDate.value[i] = [];
+          selectedAttractionDetailsByDate.value[i] = [];
+          console.log('test1', i);
+        }
+
+        console.log('test2 start', totalTripDates.value);
+        for (let i = 0; i < data.makeTripPlans.length; i++) {
+          const makeTripPlan = data.makeTripPlans[i];
+          console.dir('메이크트립');
+          console.dir(makeTripPlan);
+          selectedAttractionsByDate.value[
+            parseInt(makeTripPlan.tripDate, 10) - 1
+          ].push(makeTripPlan.attractionId);
+          indexes.set(
+            [parseInt(makeTripPlan.tripDate, 10) - 1, makeTripPlan.sequence],
+            makeTripPlan.attractionId
+          );
+          console.log('test2', i);
+        }
+
+        console.dir('인덱시스');
+        console.dir(indexes);
+        resolve();
+        console.log('resolve 실행');
+      },
+      ({ error }) => {
+        console.log(error);
+        reject(error);
+      }
+    );
+  });
+}
+
+async function detailAttractionInfo(contentId, i, j) {
+  return new Promise((resolve, reject) => {
+    getDetailAttractionInfo(
+      contentId,
+      ({ data }) => {
+        console.dir('어트랙션인포');
+        console.dir(data);
+        selectedAttractionsByDate.value[i][j] = { attractionInfo: data };
+        resolve();
+      },
+      ({ error }) => {
+        console.log(error);
+        reject(error);
+      }
+    );
+  });
+}
+
+async function getMyTripPlans(planId) {
+  await test(planId);
+  console.dir('인덱시스');
+  console.dir(indexes);
+
+  // 모든 detailAttractionInfo 호출을 기다림
+  await Promise.all(
+    Array.from(indexes.entries()).map(([key, value]) =>
+      detailAttractionInfo(value, key[0], key[1])
+    )
+  );
+}
+
+const modifyPlanDetail = async (planId) => {
+  departureDate.value = '';
+  arrivalDate.value = '';
+  totalTripDates.value = 0;
+  selectedAttractions.value.length = 0;
+  selectedAccomodations.value.length = 0;
+  selectedAttractionsByDate.value.length = 0;
+  title.value = '';
+  content.value = '';
+
+  await getDetailTripPlan(
+    planId,
+    ({ data }) => {
+      console.dir('템프');
+      console.dir(data);
+      title.value = data.tripPlan.title;
+      content.value = data.tripPlan.content;
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+
+  tripPlanId.value = 0;
+  tripPlanRequest.value = {
+    tripPlan: {
+      title: '',
+      content: '',
+      departureDate: '',
+      arrivalDate: '',
+      image: '',
+      memberId: userId,
+    },
+    makeTripPlans: [],
+  };
+
+  await getMyTripPlans(planId);
+
+  myPlanListModalOpen.value = false;
+  currentView.value = 'plan';
+};
 </script>
 
 <template>
@@ -404,7 +669,11 @@ const OpenMyPlanListModal = () => {
       <div class="left-tab">
         <header class="search-header">
           <div class="logo-nav-search">
-            <img src="@/img/coldragon.png" class="coldragon-img-search" />
+            <img
+              @click="goHomePage"
+              src="@/img/coldragon.png"
+              class="coldragon-img-search"
+            />
             <nav>
               <div class="list-group">
                 <div class="select-group">
@@ -434,19 +703,36 @@ const OpenMyPlanListModal = () => {
               </div>
             </nav>
           </div>
-          <div class="make-plan">
-            <button
-              type="button"
-              class="btn btn-dark make-plan-btn"
-              style="
-                --bs-btn-padding-y: 1rem;
-                --bs-btn-padding-x: 0.25rem;
-                --bs-btn-font-size: 0.8rem;
-              "
-              @click="createPlan"
-            >
-              일정 생성
-            </button>
+          <div class="black-btns">
+            <div class="show-my-plans">
+              <button
+                id="my-plan-btn"
+                type="button"
+                class="btn btn-dark make-plan-btn show-my-plans-btn"
+                style="
+                  --bs-btn-padding-y: 1rem;
+                  --bs-btn-padding-x: 0.5rem;
+                  --bs-btn-font-size: 0.8rem;
+                "
+                @click="OpenMyPlanListModal"
+              >
+                내 계획
+              </button>
+            </div>
+            <div class="make-plan">
+              <button
+                type="button"
+                class="btn btn-dark make-plan-btn"
+                style="
+                  --bs-btn-padding-y: 1rem;
+                  --bs-btn-padding-x: 0.25rem;
+                  --bs-btn-font-size: 0.8rem;
+                "
+                @click="createPlan"
+              >
+                일정 생성
+              </button>
+            </div>
           </div>
         </header>
 
@@ -505,6 +791,8 @@ const OpenMyPlanListModal = () => {
       v-show="accomodationAddModalOpen"
     />
     <ShowPlanDetailModal
+      :title="title"
+      :content="content"
       @update-trip-plan="updateTripPlan"
       @show-plan-detail-modal-toggle="showPlanDetailModalToggle"
       v-show="showPlanDetailModalOpen"
@@ -529,6 +817,7 @@ const OpenMyPlanListModal = () => {
 
     <MyPlanListModal
       v-show="myPlanListModalOpen"
+      @modify-plan-detail="modifyPlanDetail"
       @my-plan-list-modal-close="MyPlanListModalClose"
       :user-id="userId"
     ></MyPlanListModal>
@@ -537,7 +826,11 @@ const OpenMyPlanListModal = () => {
       <div class="left-tab-plan">
         <header id="header" class="plan-header">
           <div class="logo-nav-plan">
-            <img src="@/img/coldragon.png" class="coldragon-img-plan" />
+            <img
+              @click="goHomePage"
+              src="@/img/coldragon.png"
+              class="coldragon-img-plan"
+            />
             <nav class="select-group-plan">
               <a
                 href="#"
@@ -555,21 +848,38 @@ const OpenMyPlanListModal = () => {
                 >{{ number }}일차</a
               >
             </nav>
-          </div>
-          <div class="make-plan">
-            <button
-              type="button"
-              id="save-btn"
-              class="btn btn-dark"
-              style="
-                --bs-btn-padding-y: 1rem;
-                --bs-btn-padding-x: 0.25rem;
-                --bs-btn-font-size: 1.1rem;
-              "
-              @click="showPlanDetailModalToggle"
-            >
-              저장하기
-            </button>
+            <div class="black-btns">
+              <div class="make-plan">
+                <button
+                  type="button"
+                  id="save-btn"
+                  class="btn btn-dark"
+                  style="
+                    --bs-btn-padding-y: 1rem;
+                    --bs-btn-padding-x: 0.25rem;
+                    --bs-btn-font-size: 1.1rem;
+                  "
+                  @click="goSearchPage"
+                >
+                  뒤로 가기
+                </button>
+              </div>
+              <div class="make-plan">
+                <button
+                  type="button"
+                  id="save-btn"
+                  class="btn btn-dark"
+                  style="
+                    --bs-btn-padding-y: 1rem;
+                    --bs-btn-padding-x: 0.25rem;
+                    --bs-btn-font-size: 1.1rem;
+                  "
+                  @click="showPlanDetailModalToggle"
+                >
+                  저장하기
+                </button>
+              </div>
+            </div>
           </div>
         </header>
 
@@ -594,13 +904,12 @@ const OpenMyPlanListModal = () => {
         v-show="activeDate === 0 || activeDate === number"
         :selected-attractions-by-date="selectedAttractionsByDate"
         :date="number"
-        @drop="onDrop($event, number)"
         @dragenter.prevent
         @dragover.prevent
         @date-container-dragged="dateContainerDragged"
         @remove-attraction="removeAttraction"
         @on-date-drop="onDateDrop"
-        @on-between-drop="onBetweenDrop"
+        @on-space-drop="onSpaceDrop"
         @detail-plan-modal-open="detailPlanModalOpen"
       ></DateContainer>
     </div>
@@ -611,13 +920,10 @@ const OpenMyPlanListModal = () => {
       :selectedAccomodations="selectedAccomodations"
     ></KakaoMap>
 
-    <div class="plan-buttons">
-      <button type="button" @click.prevent="OpenMyPlanListModal">
-        내 계획
-      </button>
+    <!-- <div class="plan-buttons">
       <button type="button">댓글</button>
       <button type="button">공유</button>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -669,6 +975,8 @@ const OpenMyPlanListModal = () => {
 
 .logo-nav-plan {
   width: 120px;
+  height: 98%;
+  /* margin-bottom: 10px; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -855,8 +1163,13 @@ const OpenMyPlanListModal = () => {
   justify-content: space-between;
   top: 5px;
   right: 5px;
-  width: 180px;
+  width: 100px;
   height: 35px;
   z-index: 30;
+}
+
+#my-plan-btn {
+  width: 100%;
+  height: 50px;
 }
 </style>

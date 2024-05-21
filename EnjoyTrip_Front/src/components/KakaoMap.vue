@@ -228,6 +228,7 @@ const toggleOverlays = () => {
 const selectedAttractionsWatch = watch(
   selectedAttractions,
   (newValue, oldValue) => {
+    console.dir('어트랙션 와치');
     updateMapLocation();
   },
   { deep: true }
@@ -236,6 +237,7 @@ const selectedAttractionsWatch = watch(
 const selectedAccomodationsWatch = watch(
   selectedAccomodations,
   (newValue, oldValue) => {
+    console.dir('어코모 와치');
     updateMapLocation();
   },
   { deep: true }
