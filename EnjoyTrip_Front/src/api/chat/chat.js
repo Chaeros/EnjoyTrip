@@ -21,7 +21,7 @@ function bringPrivateChatRoomList(memberId, success, fail) {
 function searchPrivateChatRoom(myId, opponentId, success, fail) {
   console.log(myId, opponentId);
   local
-    .get(`/privatechatroom`, { params: { myId, opponentId } })
+    .get(`/privatechatroom`, { params: { myId: myId, opponentId: opponentId } })
     .then(success)
     .catch(fail);
 }

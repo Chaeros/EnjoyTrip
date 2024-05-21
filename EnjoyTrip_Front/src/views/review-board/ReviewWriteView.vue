@@ -35,6 +35,9 @@
         <span>대표 이미지를 선택해주세요!(선택)</span>
         <input type="file" @change="handleFileUpload" />
         <span v-if="fileName">{{ fileName }}</span>
+        <sapn v-if="isModify" class="modify-notice"
+          >(수정시 이전에 등록한 이미지가 자동 업로드 되어있습니다)</sapn
+        >
       </div>
       <div
         id="editor"
@@ -515,6 +518,10 @@ img.resizable {
   display: flex;
   margin: 10px 0;
   width: 1200px;
+}
+
+.modify-notice {
+  color: green;
 }
 
 .board-write-editor {

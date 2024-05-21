@@ -9,7 +9,7 @@ const userInfo = ref({
   email: "",
   name: "",
   tel: "",
-  address: "",
+  city: "",
   confirmEmail: "",
 });
 
@@ -66,12 +66,12 @@ function moveMainPage() {
         />
       </div>
       <div class="mb-3">
-        <label for="exampleInputPassword1" class="form-label">주소</label>
+        <label for="exampleInputPassword1" class="form-label">도시</label>
         <input
           type="text"
           class="form-control"
-          id="address"
-          v-model="userInfo.address"
+          id="city"
+          v-model="userInfo.city"
         />
       </div>
       <button

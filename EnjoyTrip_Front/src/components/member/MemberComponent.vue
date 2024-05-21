@@ -19,7 +19,10 @@
             />
             <div class="profile-image-btn">
               <input type="file" id="profileImage" @change="onImageChange" />
-              <button class="default-profile-button" @click="removeImage">
+              <button
+                class="default-profile-button"
+                @click.prevent="removeImage"
+              >
                 기본프로필 변경
               </button>
             </div>
@@ -116,6 +119,7 @@ import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/store/member.js";
 import { updateMember } from "@/api/member/member.js";
 import axios from "axios";
+import Swal from "sweetalert2";
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
 const memberStore = useMemberStore();
 const { userInfo, isLogin } = storeToRefs(memberStore);
@@ -187,23 +191,47 @@ const onImageChange = async (event) => {
   }
 };
 
-// const removeImage = () => {
-//   //   profileImageUrl.value = "@/assets/profile-placeholder.png";
-//   memberInfo.value.image = null;
-//   updateMember(
-//     memberInfo.value,
-//     (response) => {
-//       console.log(response.data);
-//     },
-//     (error) => {
-//       console.log(error);
-//     }
-//   );
-// };
+const removeImage = () => {
+  //   profileImageUrl.value = "@/assets/profile-placeholder.png";
+  memberInfo.value.image = null;
+  updateMember(
+    memberInfo.value,
+    (response) => {
+      console.log(response.data);
+      userInfo.value.image = null;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+// id: userInfo.value.id,
+//   nickname: userInfo.value.nickname,
+//   image: userInfo.value.image,
+//   city: userInfo.value.city,
+//   email: userInfo.value.email,
+//   socialType: userInfo.value.socialType,
 
 const updateMemberInfo = () => {
   // 회원 정보 저장 로직 추가
-  console.log("회원 정보 저장:", memberInfo.value);
+  console.log("회원 정보 수정:", memberInfo.value);
+  updateMember(
+    memberInfo.value,
+    (response) => {
+      console.log(response.data);
+      userInfo.value.nickname = memberInfo.value.nickname;
+      userInfo.value.city = memberInfo.value.city;
+      mode.value = "Read";
+    },
+    (error) => {
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: "이미 존재하는 닉네임입니다!",
+      });
+    }
+  );
 };
 </script>
 

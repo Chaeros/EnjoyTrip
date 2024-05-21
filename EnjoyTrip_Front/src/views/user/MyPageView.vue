@@ -54,7 +54,7 @@
               <div class="right-current-my-friend-box">
                 <div class="myfriend-sub-title">현재 내 친구 목록</div>
                 <div calss="my-friend-list-box">
-                  <template v-for="friend in myFriends" :key="friend.id">
+                  <template v-for="friend in friends" :key="friend.id">
                     <FriendItem
                       :friend="friend"
                       @click-friend-remove-btn="clickFriendRemoveBtn"
@@ -129,12 +129,18 @@ import {
 } from "@/util/localstorage/localstorage.js";
 import { ref } from "vue";
 import MemberComponent from "@/components/member/MemberComponent.vue";
+import { storeToRefs } from "pinia";
+import { useFriendManagementStore } from "@/store/friend-management/friend-management.js";
+const friendManagementStore = useFriendManagementStore();
+const { friends } = storeToRefs(friendManagementStore);
+const { bringMyFriendsList } = friendManagementStore;
 const showModal = ref(false);
 const keyword = ref("");
 const members = ref();
 const myFriends = ref();
 const myPageMode = ref("Information");
 
+bringMyFriendsList();
 if (getLocalStorage("userId") === null) {
   alert("다시 로그인 해주세요!");
 }
@@ -154,15 +160,17 @@ const clickTripPlan = () => {
 };
 
 const clickFriendAddBtn = (friendDto) => {
-  console.log(friendDto);
+  // console.log(friendDto);
+  // friends.value.push(friendDto.friendId);
+
   bringFriendList(
     getLocalStorage("userId"),
     (response) => {
       console.log(response.data);
-      myFriends.value = response.data;
+      friends.value = response.data;
       members.value = members.value.filter(
         (member) => member.id !== friendDto.friendId
-      ); // 친구 제거
+      );
     },
     (error) => {
       console.log(error);
@@ -172,9 +180,7 @@ const clickFriendAddBtn = (friendDto) => {
 
 const clickFriendRemoveBtn = (friendDto) => {
   console.log(friendDto);
-  myFriends.value = myFriends.value.filter(
-    (friend) => friend.id !== friendDto.id
-  ); // 친구 제거
+  friends.value = friends.value.filter((friend) => friend.id !== friendDto.id); // 친구 제거
 };
 
 const openModal = () => {
@@ -205,7 +211,7 @@ const getFriendList = () => {
     getLocalStorage("userId"),
     (response) => {
       console.log(response.data);
-      myFriends.value = response.data;
+      friends.value = response.data;
     },
     (error) => {
       console.log(error);

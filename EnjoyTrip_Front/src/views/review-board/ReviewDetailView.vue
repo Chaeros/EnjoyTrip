@@ -123,6 +123,7 @@ import {
   getAttractionBoardLikeCount,
   isMyLikeReview,
 } from "@/api/attraction-board-like/attraction-board-like.js";
+import Swal from "sweetalert2";
 
 const imageServerURL = ref(import.meta.env.VITE_VUE_IMAGE_SERVER_URL);
 const route = useRoute();
@@ -150,17 +151,28 @@ const clickArticleModifyButton = () => {
 };
 
 const clickArticleRemoveButton = () => {
-  alert("정말 삭제할까요?");
-  removeAttractionBoard(
-    attractionBoardReviewId,
-    (response) => {
-      console.log("ok");
-      router.push({ name: "reviewBoardList" });
-    },
-    (error) => {
-      console.log(error);
+  Swal.fire({
+    title: "정말 삭제하시겠어요?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "삭제",
+    cancelButtonText: "취소",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      removeAttractionBoard(
+        attractionBoardReviewId,
+        (response) => {
+          console.log("ok");
+          router.push({ name: "reviewBoardList" });
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     }
-  );
+  });
 };
 
 const refreshLikeCount = () => {

@@ -66,10 +66,10 @@
         <div class="chat-sidebar">
           <div class="chat-list">
             <ChatMemberItem
-              v-for="friend in friendList"
+              v-for="friend in friends"
               :key="friend.id"
               :friend="friend"
-              @select-friend="selectFriend(friend.id)"
+              @select-friend="selectFriend"
             />
           </div>
         </div>
@@ -168,12 +168,18 @@ import {
   registChatMessage,
   searchChatMessageList,
   enterOrRegistPrivateChatRoom,
+  searchPrivateChatRoom,
 } from "@/api/chat/chat.js";
 import { countResetUnreadMessageCount } from "@/api/unreadmessagecount/unreadmessagecount.js";
 import { storeToRefs } from "pinia";
 import { useChatStore } from "@/store/chat/chat";
 import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
 import { useMemberStore } from "@/store/member";
+import { useFriendManagementStore } from "@/store/friend-management/friend-management.js";
+
+const friendManagementStore = useFriendManagementStore();
+const { friends } = storeToRefs(friendManagementStore);
+const { bringMyFriendsList } = friendManagementStore;
 
 // Pinia 스토어 사용
 const userId = getLocalStorage("userId");
@@ -313,11 +319,14 @@ const sendMessage = () => {
 };
 
 const selectFriend = (friendId) => {
+  console.log(friendId);
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
   enterChatRoom(friendId);
   enterOrRegistPrivateChatRoom(
     { myId: getLocalStorage("userId"), opponentId: receiverId.value },
     (response) => {
       currentSelectedRoomId.value = response.data;
+      console.log("ok roomId=", currentSelectedRoomId.value);
       sendEnterMsg();
       searchChatMessageList(
         (response) => {
@@ -333,7 +342,7 @@ const selectFriend = (friendId) => {
           activeChat.value.id = response.data.id;
           activeChat.value.name = response.data.nickname;
           activeChat.value.avatar = response.data.image;
-          resetCount(response.data);
+          // resetCount(response.data);
         },
         (error) => {
           console.log(error);
@@ -374,10 +383,12 @@ const clickCallMyFriendList = () => {
   bringFriendList(
     getLocalStorage("userId"),
     (response) => {
-      friendList.value = [];
-      response.data.forEach((friend) => {
-        bringFriendInfo(friend.friendId);
-      });
+      friends.value = [];
+      friends.value = response.data;
+      console.log(friends.value);
+      // response.data.forEach((friend) => {
+      //   bringFriendInfo(friend.friendId);
+      // });
     },
     (error) => {
       console.log(error);
@@ -385,26 +396,43 @@ const clickCallMyFriendList = () => {
   );
 };
 
-const bringFriendInfo = (friendId) => {
-  getUserInfomationById(
-    friendId,
-    (response) => {
-      friendList.value.push(response.data);
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-};
+// const bringFriendInfo = (friendId) => {
+//   getUserInfomationById(
+//     friendId,
+//     (response) => {
+//       friends.value.push(response.data);
+//     },
+//     (error) => {
+//       console.log(error);
+//     }
+//   );
+// };
 
 const clickCallMyChatRoomList = () => {
   currentMode.value = "CHATTING";
   getChattingMemberId(
     getLocalStorage("userId"),
     (response) => {
-      friendList.value = [];
-      response.data.forEach((chatMemberId) => {
-        bringFriendInfo(chatMemberId);
+      friends.value = [];
+      console.log(response.data);
+      response.data.forEach((receiverId) => {
+        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        searchPrivateChatRoom(
+          getLocalStorage("userId"),
+          receiverId,
+          (roomId) => {
+            friends.value.push({
+              id: roomId.data,
+              myId: getLocalStorage("userId"),
+              opponentId: receiverId,
+            });
+            console.log(friends.value);
+          },
+          (error2) => {
+            console.log(error2);
+          }
+        );
+        // bringFriendInfo(chatMemberId);
       });
     },
     (error) => {

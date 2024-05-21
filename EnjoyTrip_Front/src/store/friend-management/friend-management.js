@@ -14,6 +14,7 @@ export const useFriendManagementStore = defineStore(
   () => {
     const friends = ref(null);
     // bringMyFriendsList();
+
     const bringMyFriendsList = () => {
       bringFriendList(
         userId,

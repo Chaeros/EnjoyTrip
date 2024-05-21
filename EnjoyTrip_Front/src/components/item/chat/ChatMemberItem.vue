@@ -1,17 +1,17 @@
 <template>
-  <div class="chat-item" @click="selectFriend">
+  <div class="chat-item" @click="selectFriend" v-if="memberInfo">
     <div class="chat-item-left">
       <div class="chat-avatar">
         <!-- <img :src="friend.avatar" alt="Avatar" /> -->
-        <template v-if="friend.image == null">
+        <template v-if="memberInfo.image == null">
           <img src="@/img/member/default_img.jpg" />
         </template>
         <template v-else>
-          <img :src="friend.image" alt="Profile" />
+          <img :src="memberInfo.image" alt="Profile" />
         </template>
       </div>
       <div class="chat-details">
-        <div class="chat-name">{{ friend.nickname }}</div>
+        <div class="chat-name">{{ memberInfo.nickname }}</div>
         <!-- <div class="chat-last-message">{{ friend.lastMessage }}</div> -->
       </div>
     </div>
@@ -29,11 +29,12 @@ import {
   enterOrRegistPrivateChatRoom,
   searchPrivateChatRoom,
 } from "@/api/chat/chat.js";
+import { getUserInfomationById } from "@/api/member/member.js";
 import {
   countResetUnreadMessageCount,
   searchUnreadMessageCount,
 } from "@/api/unreadmessagecount/unreadmessagecount.js";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { getLocalStorage } from "@/util/localstorage/localstorage";
 
 const props = defineProps({
@@ -43,37 +44,54 @@ const props = defineProps({
   },
 });
 
+const memberInfo = ref();
+
+console.log(props.friend);
+
 const unreadMessageCount = ref(0);
 
 const emit = defineEmits(["select-friend"]);
 
 const selectFriend = () => {
-  emit("select-friend", props.friend);
+  console.log(props.friend.friendId);
+  emit("select-friend", props.friend.friendId);
 };
 
-console.log(props.friend.id);
-console.log(getLocalStorage("userId"));
-searchPrivateChatRoom(
-  getLocalStorage("userId"),
-  props.friend.id,
-  (response) => {
-    console.log("result=" + response.data);
-    searchUnreadMessageCount(
-      response.data,
-      getLocalStorage("userId"),
-      (response) => {
-        console.log(response.data);
-        unreadMessageCount.value = response.data;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  },
-  (error) => {
-    console.log(error);
-  }
-);
+onMounted(() => {
+  getUserInfomationById(
+    props.friend.friendId,
+    (response) => {
+      console.log(response.data);
+      memberInfo.value = response.data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+  console.log(props.friend.id);
+  console.log(getLocalStorage("userId"));
+  searchPrivateChatRoom(
+    getLocalStorage("userId"),
+    props.friend.friendId,
+    (response) => {
+      console.log("result=" + response.data);
+      searchUnreadMessageCount(
+        response.data,
+        getLocalStorage("userId"),
+        (response) => {
+          console.log(response.data);
+          unreadMessageCount.value = response.data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+});
 
 // const { friend } = defineProps({
 //   friend: Object,
