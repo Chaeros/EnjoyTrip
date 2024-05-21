@@ -74,7 +74,16 @@ public class PlanController {
     }
 
     @GetMapping("/maketripplan")
-    public ResponseEntity<?> getDetailMakeTripPlan(@RequestBody MakeTripPlanRequestDto makeTripPlanRequestDto) {
+    public ResponseEntity<?> getDetailMakeTripPlan(
+            @RequestParam int tripPlanId,
+            @RequestParam int tripDate,
+            @RequestParam int sequence) {
+
+        MakeTripPlanRequestDto makeTripPlanRequestDto = new MakeTripPlanRequestDto();
+        makeTripPlanRequestDto.setTripPlanId(tripPlanId);
+        makeTripPlanRequestDto.setTripDate(tripDate);
+        makeTripPlanRequestDto.setSequence(sequence);
+
         MakeTripPlan makeTripPlan = planService.getDetailMakeTripPlan(makeTripPlanRequestDto);
         if (makeTripPlan != null) {
             return new ResponseEntity<MakeTripPlan>(makeTripPlan, HttpStatus.OK);

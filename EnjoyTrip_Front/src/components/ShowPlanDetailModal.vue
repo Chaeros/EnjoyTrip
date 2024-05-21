@@ -1,7 +1,8 @@
 <script setup>
 import { ref, defineEmits, defineProps, watchEffect } from 'vue';
-
-const props = defineProps({ title: String, content: String });
+import axios from 'axios';
+const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
+const props = defineProps({ title: String, content: String, image: String });
 const emit = defineEmits(['showPlanDetailModalToggle', 'updateTripPlan']);
 const showPlanDetailModalToggle = () => {
   emit('showPlanDetailModalToggle');
@@ -9,6 +10,8 @@ const showPlanDetailModalToggle = () => {
 
 const localTitle = ref(props.title);
 const localContent = ref(props.content);
+const fileName = ref('');
+const localImage = ref(props.image);
 
 // watchEffect를 사용하여 props 변경 감지
 watchEffect(() => {
@@ -30,15 +33,56 @@ const updateTripPlan = () => {
     return;
   }
 
-  emit('updateTripPlan', localTitle.value, localContent.value);
+  emit(
+    'updateTripPlan',
+    localTitle.value,
+    localContent.value,
+    localImage.value
+  );
   window.alert('일정이 업데이트 되었습니다.');
   emit('showPlanDetailModalToggle');
+};
+
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    fileName.value = file.name;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post(
+        VITE_VUE_IMAGE_SERVER_URL + '/image/upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      console.log('File uploaded successfully:', response.data);
+      localImage.value = response.data.url;
+      console.log(localImage.value);
+      console.log(response.data.url);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  }
 };
 </script>
 
 <template>
   <div class="show-plan-detail-modal-wrap">
     <div class="show-plan-detail-modal-container">
+      <div class="attach-represant-img-box">
+        <span>대표 이미지를 선택해주세요!(선택)</span>
+        <input type="file" @change="handleFileUpload" />
+        <span v-if="fileName">{{ fileName }}</span>
+        <img
+          :src="VITE_VUE_IMAGE_SERVER_URL + localImage"
+          class="local-image"
+        />
+      </div>
       <div class="plan-title">
         <label for="title">여행 이름</label>
         <input type="text" name="title" v-model="localTitle" />
@@ -79,7 +123,7 @@ const updateTripPlan = () => {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 550px;
-  height: 45%;
+  height: 70%;
   overflow-y: auto;
   background: #fff; /* F1F5F6 */
   border-radius: 10px;
@@ -158,5 +202,9 @@ const updateTripPlan = () => {
 
 .plan-btns button:active {
   background-color: #88a0a7; /* 88A0A7 */
+}
+
+.local-image {
+  width: 150px;
 }
 </style>

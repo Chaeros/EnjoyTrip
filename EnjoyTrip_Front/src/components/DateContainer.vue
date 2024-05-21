@@ -192,8 +192,8 @@ onMounted(() => {
 }
 
 .attraction-element-title {
-  font-size: 10.5px;
-  line-height: 25px;
+  font-size: 12px;
+  line-height: 18px;
   min-width: 110px;
   max-width: 110px;
 }

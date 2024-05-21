@@ -2,16 +2,25 @@
 import { defineProps, defineEmits } from 'vue';
 
 const { attraction } = defineProps({ attraction: Object });
-const emit = defineEmits(['clickAttractionAdd']);
+const emit = defineEmits(['clickAttractionAdd', 'openAttractionDetailModal']);
 
 const clickAttractionAdd = () => {
   emit('clickAttractionAdd', attraction);
+};
+
+const openAttractionDetailModal = (contentId) => {
+  emit('openAttractionDetailModal', contentId);
 };
 </script>
 
 <template>
   <div class="attraction-card">
-    <div class="attraction-flex">
+    <div
+      class="attraction-flex"
+      @click.prevent="
+        openAttractionDetailModal(attraction.attractionInfo.contentId)
+      "
+    >
       <img class="attraction-img" :src="attraction.attractionInfo.firstImage" />
       <div class="attraction-content">
         <div class="attraction-title">
@@ -57,6 +66,7 @@ const clickAttractionAdd = () => {
   display: flex;
   align-items: center;
   gap: 16px;
+  cursor: pointer;
 }
 
 .attraction-content {

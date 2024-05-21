@@ -36,6 +36,10 @@ function getAttractionLikeCnt(contentId, success, fail) {
   local.get(`/attraction/like/${contentId}`).then(success).catch(fail);
 }
 
+function getAttractionDetailByContentId(contentId, success, fail) {
+  local.get(`/attraction/${contentId}`).then(success).catch(fail);
+}
+
 export {
   getListAttraction,
   getListAccomodation,
@@ -44,4 +48,5 @@ export {
   getListContentType,
   getDetailAttractionInfo,
   getAttractionLikeCnt,
+  getAttractionDetailByContentId,
 };

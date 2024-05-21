@@ -18,6 +18,7 @@ import AccomodationAddModal from '@/components/AccomodationAddModal.vue';
 import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
 import fillDetailPlanModal from '@/components/FillDetailPlanModal.vue';
 import MyPlanListModal from '@/components/MyPlanListModal.vue';
+import AttractionDetailModal from '@/components/AttractionDetailModal.vue';
 
 import { useRouter } from 'vue-router';
 import {
@@ -45,6 +46,7 @@ const selectedAccomodationsByDate = ref([]);
 const selectedAttractionDetailsByDate = ref([]);
 const title = ref('');
 const content = ref('');
+const image = ref('');
 
 const showModal = ref(false);
 
@@ -267,6 +269,9 @@ const onDateDrop = (event, date, index) => {
   selectedAttractionDetailsByDate.value[date - 1][index] =
     selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex];
   selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex] = detailTemp;
+
+  console.dir('데이트 드롭');
+  console.dir(selectedAttractionsByDate.value);
   console.dir(selectedAttractionDetailsByDate.value);
 };
 
@@ -285,56 +290,6 @@ const showPlanDetailModalToggle = () => {
   showPlanDetailModalOpen.value = !showPlanDetailModalOpen.value;
 };
 
-// function editMyTripPlan(param) {
-//   editTripPlan(
-//     param,
-//     (result) => {
-//       console.dir(result.data);
-//     },
-//     (error) => {
-//       console.log(error);
-//     }
-//   );
-// }
-
-// async function updateTripPlan(title, content) {
-//   console.dir('title');
-//   console.dir(title);
-//   console.dir('content');
-//   console.dir(content);
-//   // dto 초기화
-//   const tripPlanRequest = ref({
-//     tripPlan: {
-//       id: tripPlanId.value,
-//       title: '',
-//       content: '',
-//       departureDate: '',
-//       arrivalDate: '',
-//       image: '',
-//       memberId: userId,
-//     },
-//     makeTripPlans: [],
-//   });
-
-//   tripPlanRequest.value.tripPlan.departureDate = departureDate.value;
-//   tripPlanRequest.value.tripPlan.arrivalDate = arrivalDate.value;
-//   tripPlanRequest.value.tripPlan.title = title;
-//   tripPlanRequest.value.tripPlan.content = content;
-
-//   for (let i = 0; i < selectedAttractionsByDate.value.length; i++) {
-//     for (let j = 0; j < selectedAttractionsByDate.value[i].length; j++) {
-//       const attraction = selectedAttractionsByDate.value[i][j];
-//       const attractionDetailInfo = selectedAttractionDetailsByDate.value[i][j];
-//       tripPlanRequest.value.makeTripPlans.push(attractionDetailInfo);
-//     }
-//   }
-
-//   console.dir('tripPlanRequest는');
-//   console.dir(tripPlanRequest.value);
-//   await editMyTripPlan(tripPlanRequest.value);
-//   console.dir('업데이트 완료');
-// }
-
 function editMyTripPlan(param) {
   return new Promise((resolve, reject) => {
     editTripPlan(
@@ -351,12 +306,7 @@ function editMyTripPlan(param) {
   });
 }
 
-async function updateTripPlan(title, content) {
-  console.dir('title');
-  console.dir(title);
-  console.dir('content');
-  console.dir(content);
-
+async function updateTripPlan(title, content, imageUrl) {
   // dto 초기화
   const tripPlanRequest = {
     tripPlan: {
@@ -375,6 +325,8 @@ async function updateTripPlan(title, content) {
   tripPlanRequest.tripPlan.arrivalDate = arrivalDate.value;
   tripPlanRequest.tripPlan.title = title;
   tripPlanRequest.tripPlan.content = content;
+  tripPlanRequest.tripPlan.image = imageUrl;
+  console.dir(imageUrl);
 
   for (let i = 0; i < selectedAttractionsByDate.value.length; i++) {
     for (let j = 0; j < selectedAttractionsByDate.value[i].length; j++) {
@@ -438,6 +390,7 @@ const detailPlanModalOpen = (date, index) => {
 
 const fillDetailPlanModalOpen = ref(false);
 const planDetailToggle = () => {
+  console.dir(fillDetailPlanModalOpen.value);
   fillDetailPlanModalOpen.value = false;
 };
 
@@ -499,6 +452,7 @@ const goSearchPage = () => {
   selectedAttractionsByDate.value.length = 0;
   title.value = '';
   content.value = '';
+  image.value = '';
 
   activeTab.value = 'attraction';
   activeDate.value = 0;
@@ -540,78 +494,6 @@ function getTotalTripDates(startDate, endDate) {
 
 const indexes = new Map();
 
-// async function detailAttractionInfo(contentId, i, j) {
-//   await getDetailAttractionInfo(
-//     contentId,
-//     ({ data }) => {
-//       console.dir('어트랙션인포');
-//       console.dir(data);
-//       selectedAttractionsByDate.value[i][j] = { attractionInfo: data };
-//     },
-//     ({ error }) => {
-//       console.log(error);
-//     }
-//   );
-// }
-
-// async function test(planId) {
-//   getDetailTripPlan(
-//     planId,
-//     ({ data }) => {
-//       getTotalTripDates(data.tripPlan.departureDate, data.tripPlan.arrivalDate);
-//       console.dir('데이타');
-//       console.dir(data);
-//       for (let i = 0; i < totalTripDates.value; i++) {
-//         selectedAttractionsByDate.value[i] = [];
-//         selectedAttractionDetailsByDate.value[i] = [];
-//       }
-
-//       for (let i = 0; i < data.makeTripPlans.length; i++) {
-//         const makeTripPlan = data.makeTripPlans[i];
-//         console.dir('메이크트립');
-//         console.dir(makeTripPlan);
-//         selectedAttractionsByDate.value[
-//           parseInt(makeTripPlan.tripDate) - 1
-//         ].push(makeTripPlan.attractionId);
-//         indexes.set(
-//           [parseInt(makeTripPlan.tripDate) - 1, makeTripPlan.sequence],
-//           makeTripPlan.attractionId
-//         );
-//       }
-
-//       console.dir(selectedAttractionsByDate.value);
-//     },
-//     ({ error }) => {
-//       console.log(error);
-//     }
-//   );
-// }
-
-// async function getMyTripPlans(planId) {
-//   await test(planId);
-//   console.dir('인덱시스');
-//   console.dir(indexes);
-
-//   for (const [key, value] of indexes) {
-//     console.dir('키');
-//     console.dir(key);
-//     console.dir(value);
-//     detailAttractionInfo(value, key[0], key[1]);
-//   }
-// }
-
-// const modifyPlanDetail = (tripPlanId) => {
-//   departureDate.value = '';
-//   arrivalDate.value = '';
-//   totalTripDates.value = 0;
-//   selectedAttractions.value = [];
-//   selectedAccomodations.value = [];
-//   selectedAttractionsByDate.value = [];
-
-//   getMyTripPlans(tripPlanId);
-//   currentView.value = 'plan';
-// };
-
 async function test(planId) {
   return new Promise((resolve, reject) => {
     getDetailTripPlan(
@@ -627,10 +509,8 @@ async function test(planId) {
         for (let i = 0; i < totalTripDates.value; i++) {
           selectedAttractionsByDate.value[i] = [];
           selectedAttractionDetailsByDate.value[i] = [];
-          console.log('test1', i);
         }
 
-        console.log('test2 start', totalTripDates.value);
         for (let i = 0; i < data.makeTripPlans.length; i++) {
           const makeTripPlan = data.makeTripPlans[i];
           console.dir('메이크트립');
@@ -655,9 +535,10 @@ async function test(planId) {
             [parseInt(makeTripPlan.tripDate, 10) - 1, makeTripPlan.sequence],
             makeTripPlan.attractionId
           );
-          console.log('test2', i);
         }
 
+        console.dir('selectedAttractionDetailsByDAte');
+        console.dir(selectedAttractionDetailsByDate);
         console.dir('인덱시스');
         console.dir(indexes);
         resolve();
@@ -691,8 +572,6 @@ async function detailAttractionInfo(contentId, i, j) {
 
 async function getMyTripPlans(planId) {
   await test(planId);
-  console.dir('인덱시스');
-  console.dir(indexes);
 
   // 모든 detailAttractionInfo 호출을 기다림
   await Promise.all(
@@ -719,6 +598,7 @@ const modifyPlanDetail = async (planId) => {
       console.dir(data);
       title.value = data.tripPlan.title;
       content.value = data.tripPlan.content;
+      image.value = data.tripPlan.image;
       departureDate.value = data.tripPlan.departureDate;
       arrivalDate.value = data.tripPlan.arrivalDate;
     },
@@ -744,6 +624,18 @@ const modifyPlanDetail = async (planId) => {
 
   myPlanListModalOpen.value = false;
   currentView.value = 'plan';
+};
+
+const contentId = ref(0);
+const attractionDetailModalOpen = ref(false);
+const attractionDetailModalClose = () => {
+  attractionDetailModalOpen.value = false;
+};
+const openAttractionDetailModal = (id) => {
+  attractionDetailModalOpen.value = true;
+  contentId.value = id;
+  console.dir(id);
+  console.dir(contentId.value);
 };
 </script>
 
@@ -827,11 +719,13 @@ const modifyPlanDetail = async (planId) => {
         />
         <AttractionSearch
           v-if="activeTab === 'attraction'"
+          @open-attraction-detail-modal="openAttractionDetailModal"
           @click-attraction-add="clickAttractionAdd"
           @toggle-select-content="toggleSelectContent"
         />
         <AccomodationSearch
           v-if="activeTab === 'accomodation'"
+          @open-attraction-detail-modal="openAttractionDetailModal"
           @click-accomodation-add="clickAccomodationAdd"
           @toggle-select-content="toggleSelectContent"
         />
@@ -877,27 +771,21 @@ const modifyPlanDetail = async (planId) => {
     <ShowPlanDetailModal
       :title="title"
       :content="content"
+      :image="image"
       @update-trip-plan="updateTripPlan"
       @show-plan-detail-modal-toggle="showPlanDetailModalToggle"
       v-show="showPlanDetailModalOpen"
     />
-    <template v-for="(date, dateIndex) in selectedAttractionsByDate">
-      <fillDetailPlanModal
-        v-for="(attraction, attractionIndex) in selectedAttractionsByDate[
-          dateIndex
-        ]"
-        v-show="
-          fillDetailPlanModalOpen &&
-          modalDate - 1 === dateIndex &&
-          modalIndex === attractionIndex
-        "
-        @submit-plan-detail="submitPlanDetail"
-        @plan-detail-toggle="planDetailToggle"
-        :modal-date="dateIndex"
-        :modal-index="attractionIndex - 1"
-      >
-      </fillDetailPlanModal>
-    </template>
+
+    <fillDetailPlanModal
+      v-show="fillDetailPlanModalOpen"
+      :modal-date="modalDate"
+      :modal-index="modalIndex"
+      :trip-plan-id="parseInt(tripPlanId)"
+      :selected-attraction-details-by-date="selectedAttractionDetailsByDate"
+      @submit-plan-detail="submitPlanDetail"
+      @plan-detail-toggle="planDetailToggle"
+    ></fillDetailPlanModal>
 
     <MyPlanListModal
       v-show="myPlanListModalOpen"
@@ -905,6 +793,12 @@ const modifyPlanDetail = async (planId) => {
       @my-plan-list-modal-close="MyPlanListModalClose"
       :user-id="userId"
     ></MyPlanListModal>
+
+    <AttractionDetailModal
+      v-show="attractionDetailModalOpen"
+      :content-id="contentId"
+      @attraction-detail-modal-close="attractionDetailModalClose"
+    ></AttractionDetailModal>
 
     <div class="all-content-plan" v-show="currentView === 'plan'">
       <div class="left-tab-plan">

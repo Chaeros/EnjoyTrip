@@ -22,4 +22,16 @@ function getDetailTripPlan(planId, success, fail) {
   local.get(`/plan/planid/${planId}`).then(success).catch(fail);
 }
 
-export { registTripPlan, editTripPlan, getListMyTripPlan, getDetailTripPlan };
+function getDetailMakeTripPlan(param, success, fail) {
+  console.dir('dto파람');
+  console.dir(param);
+  local.get(`/plan/maketripplan`, { params: param }).then(success).catch(fail);
+}
+
+export {
+  registTripPlan,
+  editTripPlan,
+  getListMyTripPlan,
+  getDetailTripPlan,
+  getDetailMakeTripPlan,
+};

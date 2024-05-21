@@ -1,27 +1,76 @@
 <script setup>
-import { ref, defineEmits, defineProps } from 'vue';
+import { ref, watch, defineEmits, defineProps } from 'vue';
+import { getDetailMakeTripPlan } from '@/api/plan/plan';
 
 const departureTime = ref('');
 const arrivalTime = ref('');
 const memo = ref('');
 const moveTime = ref('');
 
-const { modalDate, modalIndex } = defineProps({
+const props = defineProps({
   modalDate: Number,
   modalIndex: Number,
+  tripPlanId: Number,
+  selectedAttractionDetailsByDate: Array,
 });
 
 const emit = defineEmits(['submitPlanDetail', 'planDetailToggle']);
 
+const makeTripPlanRequestDto = ref({
+  tripPlanId: 0,
+  tripDate: 0,
+  sequence: 0,
+});
+const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
+  try {
+    const param = {
+      tripPlanId,
+      tripDate,
+      sequence,
+    };
+
+    const response = await getDetailMakeTripPlan(
+      param,
+      ({ data }) => {
+        departureTime.value = data.departureTime;
+        arrivalTime.value = data.arrivalTime;
+        memo.value = data.memo;
+        moveTime.value = data.moveTime;
+        // props.selectedAttractionDetailsByDate.value[data.tripDate - 1][
+        //   data.sequence
+        // ] = {
+        //   departureTime: data.departureTime,
+        //   arrivalTime: data.arrivalTime,
+        //   memo: data.memo,
+        //   moveTime: data.moveTime,
+        // };
+      },
+      ({ error }) => {
+        console.log(error);
+      }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+watch(
+  () => [props.modalDate, props.modalIndex],
+  async ([newModalDate, newModalIndex]) => {
+    await fetchMakeTripPlanDetails(
+      props.tripPlanId,
+      newModalDate,
+      newModalIndex
+    );
+  },
+  { immediate: true }
+);
+
 const submitPlanDetail = () => {
-  console.dir('모달데이트');
-  console.dir(modalDate);
-  console.dir('모달인덱스');
-  console.dir(modalIndex + 1);
   emit(
     'submitPlanDetail',
-    modalDate,
-    modalIndex + 1,
+    props.modalDate - 1,
+    props.modalIndex,
     departureTime.value,
     arrivalTime.value,
     memo.value,
@@ -29,6 +78,7 @@ const submitPlanDetail = () => {
   );
   window.alert('적용되었습니다.');
 };
+
 const planDetailToggle = () => {
   emit('planDetailToggle');
 };
