@@ -1,8 +1,12 @@
 <template>
-  <div class="chat-item" @click="selectFriend" v-if="memberInfo">
+  <div
+    class="chat-item"
+    :class="{ selected: selectedFriend == friend.friendId }"
+    @click="selectFriend"
+    v-if="memberInfo"
+  >
     <div class="chat-item-left">
       <div class="chat-avatar">
-        <!-- <img :src="friend.avatar" alt="Avatar" /> -->
         <template v-if="memberInfo.image == null">
           <img src="@/img/member/default_img.jpg" />
         </template>
@@ -12,7 +16,6 @@
       </div>
       <div class="chat-details">
         <div class="chat-name">{{ memberInfo.nickname }}</div>
-        <!-- <div class="chat-last-message">{{ friend.lastMessage }}</div> -->
       </div>
     </div>
     <template v-if="unreadMessageCount !== 0">
@@ -20,9 +23,9 @@
     </template>
   </div>
 </template>
-
 <script setup>
 import { defineProps, defineEmits } from "vue";
+import { ref, onMounted } from "vue";
 import {
   registChatMessage,
   searchChatMessageList,
@@ -34,26 +37,49 @@ import {
   countResetUnreadMessageCount,
   searchUnreadMessageCount,
 } from "@/api/unreadmessagecount/unreadmessagecount.js";
-import { ref, onMounted } from "vue";
 import { getLocalStorage } from "@/util/localstorage/localstorage";
+import { storeToRefs } from "pinia";
+import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
+
+const webSocketChat = useWebSocketChatStore();
+const { socket } = storeToRefs(webSocketChat);
 
 const props = defineProps({
   friend: {
     type: Object,
     required: true,
   },
+  unreadMessageCountList: {
+    type: Array,
+  },
+  selectedFriend: {
+    type: Number,
+  },
 });
 
+console.log("1111", props.friend);
+console.log("&&&&&&&&&&&&&&&&&&");
+console.log(props.unreadMessageCountList);
+
 const memberInfo = ref();
-
-console.log(props.friend);
-
 const unreadMessageCount = ref(0);
-
 const emit = defineEmits(["select-friend"]);
 
 const selectFriend = () => {
   console.log(props.friend.friendId);
+  console.log(props.friend);
+  countResetUnreadMessageCount(
+    props.friend.id,
+    getLocalStorage("userId"),
+    (response) => {
+      console.log(response.data);
+      unreadMessageCount.value = 0;
+      props.friend.count = 0;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
   emit("select-friend", props.friend.friendId);
 };
 
@@ -75,29 +101,18 @@ onMounted(() => {
     props.friend.friendId,
     (response) => {
       console.log("result=" + response.data);
-      searchUnreadMessageCount(
-        response.data,
-        getLocalStorage("userId"),
-        (response) => {
-          console.log(response.data);
+      props.unreadMessageCountList.forEach((unreadMessageCount) => {
+        if (unreadMessageCount.roomId == response.data) {
           unreadMessageCount.value = response.data;
-        },
-        (error) => {
-          console.log(error);
         }
-      );
+      });
     },
     (error) => {
       console.log(error);
     }
   );
 });
-
-// const { friend } = defineProps({
-//   friend: Object,
-// });
 </script>
-
 <style scoped>
 .chat-item {
   display: flex;
@@ -137,5 +152,8 @@ onMounted(() => {
 .chat-last-message {
   font-size: 0.9em;
   color: #777;
+}
+.selected {
+  background-color: #e9e9e9;
 }
 </style>

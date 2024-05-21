@@ -23,7 +23,11 @@
               <img src="@/img/member/default_img.jpg" />
             </template>
             <template v-else>
-              <img :src="userInfo.image" alt="Profile" />
+              <img
+                :src="userInfo.image"
+                alt="Profile"
+                class="chat-top-bar-right-img"
+              />
             </template>
             <span>{{ userInfo.nickname }}</span>
           </div>
@@ -40,6 +44,13 @@
         <div class="chat-selectbar">
           <div class="chat-selectbar-wrap" @click="clickCallMyFriendList">
             <img
+              v-show="currentMode == `FRIEND`"
+              src="@/img/chat/friend-select.png"
+              alt="내친구"
+              class="chat-selectbar-img"
+            />
+            <img
+              v-show="currentMode != `FRIEND`"
               src="@/img/chat/friend.png"
               alt="내친구"
               class="chat-selectbar-img"
@@ -48,14 +59,28 @@
           </div>
           <div class="chat-selectbar-wrap" @click="clickCallMyChatRoomList">
             <img
+              v-show="currentMode == `CHATTING`"
+              src="@/img/chat/talkballoon-select.png"
+              alt="내채팅방"
+              class="chat-selectbar-img"
+            />
+            <img
+              v-show="currentMode != `CHATTING`"
               src="@/img/chat/talkballoon.png"
               alt="내채팅방"
               class="chat-selectbar-img"
             />
             <p class="chat-selectbar-title">채팅</p>
           </div>
-          <div class="chat-selectbar-wrap" @click="clickCallMyChatRoomList">
+          <div class="chat-selectbar-wrap" @click="clickCallGroupChatRoomList">
             <img
+              v-show="currentMode == `GROUP`"
+              src="@/img/chat/grouptalk-select.png"
+              alt="그룹채팅"
+              class="chat-selectbar-img"
+            />
+            <img
+              v-show="currentMode != `GROUP`"
               src="@/img/chat/grouptalk.png"
               alt="그룹채팅"
               class="chat-selectbar-img"
@@ -65,12 +90,26 @@
         </div>
         <div class="chat-sidebar">
           <div class="chat-list">
-            <ChatMemberItem
-              v-for="friend in friends"
-              :key="friend.id"
-              :friend="friend"
-              @select-friend="selectFriend"
-            />
+            <template v-if="currentMode == `FRIEND`">
+              <ChatMemberItem
+                v-for="friend in friends"
+                :key="friend.id"
+                :friend="friend"
+                :unreadMessageCountList="unreadMessageCountList"
+                :selectedFriend="selectedFriend"
+                @select-friend="selectFriend"
+              />
+            </template>
+            <template v-if="currentMode == `CHATTING`">
+              <ChatMemberItem
+                v-for="friend in chattingMembers"
+                :key="friend.id"
+                :friend="friend"
+                :unreadMessageCountList="unreadMessageCountList"
+                :selectedFriend="selectedFriend"
+                @select-friend="selectFriend"
+              />
+            </template>
           </div>
         </div>
         <div class="chat-main">
@@ -82,7 +121,7 @@
                 </div>
               </template>
               <template v-else>
-                <template v-if="activeChat.image == null">
+                <template v-if="activeChat.avatar == null">
                   <img
                     src="@/img/member/default_img.jpg"
                     alt="ProfileImage"
@@ -91,7 +130,7 @@
                 </template>
                 <template v-else>
                   <img
-                    :src="activeChat.image"
+                    :src="activeChat.avatar"
                     alt="ProfileImage"
                     class="chat-header-avatar"
                   />
@@ -133,7 +172,7 @@
                 type="text"
                 v-model="newMessage"
                 @keydown.enter="sendMessage"
-                placeholder="메시지를 입력하세요..."
+                placeholder="메시지를 입력하세요."
               />
             </template>
           </div>
@@ -163,14 +202,20 @@ import {
   getUserInfomationById,
   getChattingMemberId,
 } from "@/api/member/member.js";
-import { bringFriendList } from "@/api/friend/friend.js";
+import {
+  bringFriendList,
+  searchFriendInfoByRoomIdAndMyId,
+} from "@/api/friend/friend.js";
 import {
   registChatMessage,
   searchChatMessageList,
   enterOrRegistPrivateChatRoom,
   searchPrivateChatRoom,
 } from "@/api/chat/chat.js";
-import { countResetUnreadMessageCount } from "@/api/unreadmessagecount/unreadmessagecount.js";
+import {
+  countResetUnreadMessageCount,
+  searchUnreadMessageCountListById,
+} from "@/api/unreadmessagecount/unreadmessagecount.js";
 import { storeToRefs } from "pinia";
 import { useChatStore } from "@/store/chat/chat";
 import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
@@ -211,6 +256,10 @@ const activeChat = ref({
 const newMessage = ref("");
 const currentMode = ref("FRIEND");
 
+const chattingMembers = ref([]);
+const unreadMessageCountList = ref([]);
+const selectedFriend = ref();
+
 // DOM 참조
 const chatContainer = ref(null);
 const minimizedButton = ref(null);
@@ -223,12 +272,29 @@ watch(
     if (newMessages.length > 0) {
       nextTick(() => {
         const chatBodyElement = chatBody.value;
+        console.log("############################");
         chatBodyElement.scrollTop = chatBodyElement.scrollHeight;
       });
     }
   },
   { deep: true }
 );
+
+const callUnreadMessageCountList = () => {
+  searchUnreadMessageCountListById(
+    getLocalStorage("userId"),
+    (response) => {
+      console.log(response.data);
+      unreadMessageCountList.value = response.data;
+      console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+      console.log(unreadMessageCountList.value);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+callUnreadMessageCountList();
 
 socket.value.onmessage = function (e) {
   const parsedData = JSON.parse(e.data);
@@ -238,22 +304,50 @@ socket.value.onmessage = function (e) {
     message: parsedData.message,
   };
 
-  if (parsedData.chatRoomId == currentSelectedRoomId.value) {
-    resetCount(parsedData.chatRoomId);
-  }
+  console.log(tempData);
+  console.log(
+    "userId=",
+    getLocalStorage("userId"),
+    "currentRoomId=",
+    currentSelectedRoomId.value
+  );
 
-  // 내가 보낸 메시지가 아니면서
-  if (parsedData.senderId != getLocalStorage("userId")) {
+  // 내가 보낸 메시지가 아니면서 현재 입장해있는 방이 아니라면
+  if (
+    parsedData.senderId != getLocalStorage("userId") &&
+    parsedData.chatRoomId != currentSelectedRoomId.value
+  ) {
+    console.log("여긴 들어오냐?");
     if (currentMode.value === "FRIEND") {
-      console.log("친구 갱신");
-      clickCallMyFriendList();
+      console.log(unreadMessageCountList.value);
+      unreadMessageCountList.value.forEach((unreadMessageCount, index) => {
+        if (unreadMessageCount.roomId == parsedData.chatRoomId) {
+          console.log(unreadMessageCountList.value[index]);
+          unreadMessageCountList.value[index].count =
+            unreadMessageCountList.value[index].count + 1;
+          console.log("index", index);
+        }
+      });
+      console.log(unreadMessageCountList.value);
+      // friends.value.forEach((friend) => {
+      //   if (friend.id == parsedData.chatRoomId) {
+      //     friends.value.count = friends.value.count + 1;
+      //   }
+      // });
+
+      // clickCallMyFriendList();
     } else if (currentMode.value === "CHATTING") {
-      console.log("채팅 갱신");
-      clickCallMyChatRoomList();
+      // clickCallMyChatRoomList();
+      // chattingMembers.value.forEach((friend) => {
+      //   if (friend.id == parsedData.chatRoomId) {
+      //     chattingMembers.value.count = chattingMembers.value.count + 1;
+      //   }
+      // });
     }
   }
-
-  activeChat.value.messages.push(tempData);
+  if (parsedData.chatRoomId == currentSelectedRoomId.value) {
+    activeChat.value.messages.push(tempData);
+  }
 };
 
 onMounted(() => {
@@ -319,14 +413,12 @@ const sendMessage = () => {
 };
 
 const selectFriend = (friendId) => {
-  console.log(friendId);
-  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+  selectedFriend.value = friendId;
   enterChatRoom(friendId);
   enterOrRegistPrivateChatRoom(
     { myId: getLocalStorage("userId"), opponentId: receiverId.value },
     (response) => {
       currentSelectedRoomId.value = response.data;
-      console.log("ok roomId=", currentSelectedRoomId.value);
       sendEnterMsg();
       searchChatMessageList(
         (response) => {
@@ -339,6 +431,8 @@ const selectFriend = (friendId) => {
       getUserInfomationById(
         friendId,
         (response) => {
+          console.log(response.data);
+
           activeChat.value.id = response.data.id;
           activeChat.value.name = response.data.nickname;
           activeChat.value.avatar = response.data.image;
@@ -348,7 +442,6 @@ const selectFriend = (friendId) => {
           console.log(error);
         }
       );
-      console.log(friendList.value);
     },
     (error) => {
       console.log(error);
@@ -357,20 +450,15 @@ const selectFriend = (friendId) => {
 };
 
 const resetCount = (roomId) => {
-  console.log(friendList.value);
   countResetUnreadMessageCount(
     roomId,
     getLocalStorage("userId"),
     (response) => {
-      console.log(friendList.value);
       if (currentMode.value === "FRIEND") {
-        console.log("친구 갱신");
         clickCallMyFriendList();
       } else if (currentMode.value === "CHATTING") {
-        console.log("채팅 갱신");
-        clickCallMyChatRoomList();
+        // clickCallMyChatRoomList();
       }
-      console.log(friendList.value);
     },
     (error) => {
       console.log(error);
@@ -385,10 +473,21 @@ const clickCallMyFriendList = () => {
     (response) => {
       friends.value = [];
       friends.value = response.data;
-      console.log(friends.value);
-      // response.data.forEach((friend) => {
-      //   bringFriendInfo(friend.friendId);
-      // });
+      response.data.forEach((friend) => {
+        searchPrivateChatRoom(
+          getLocalStorage("userId"),
+          friend.friendId,
+          (roomId) => {
+            enterOrRegistPrivateChatRoom(roomId);
+            console.log("enter room ", roomId);
+          },
+          (error2) => {
+            console.log(error2);
+          }
+        );
+        // bringFriendInfo(friend.friendId);
+      });
+      console.log(response.data);
     },
     (error) => {
       console.log(error);
@@ -408,25 +507,32 @@ const clickCallMyFriendList = () => {
 //   );
 // };
 
+const clickCallGroupChatRoomList = () => {
+  currentMode.value = "GROUP";
+};
+
 const clickCallMyChatRoomList = () => {
   currentMode.value = "CHATTING";
   getChattingMemberId(
     getLocalStorage("userId"),
     (response) => {
-      friends.value = [];
-      console.log(response.data);
-      response.data.forEach((receiverId) => {
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        searchPrivateChatRoom(
+      chattingMembers.value = [];
+      const tempArray = [];
+      response.data.forEach(async (receiverId) => {
+        await searchPrivateChatRoom(
           getLocalStorage("userId"),
           receiverId,
           (roomId) => {
-            friends.value.push({
+            // tempArray.push({
+            //   id: roomId.data,
+            //   myId: getLocalStorage("userId"),
+            //   opponentId: receiverId,
+            // });
+            chattingMembers.value.push({
               id: roomId.data,
               myId: getLocalStorage("userId"),
-              opponentId: receiverId,
+              friendId: receiverId,
             });
-            console.log(friends.value);
           },
           (error2) => {
             console.log(error2);
@@ -434,6 +540,9 @@ const clickCallMyChatRoomList = () => {
         );
         // bringFriendInfo(chatMemberId);
       });
+      console.log(chattingMembers.value);
+      // friends.value = tempArray;
+      // console.log(friends);
     },
     (error) => {
       console.log(error);
@@ -467,6 +576,10 @@ const enterChatRoom = (friendId) => {
 }
 .chat-top-bar-right {
   display: flex;
+}
+.chat-top-bar-right-img {
+  width: 30px;
+  height: 30px;
 }
 .logo {
   display: flex;

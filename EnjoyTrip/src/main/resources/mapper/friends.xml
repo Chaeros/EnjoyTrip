@@ -35,4 +35,13 @@
         where my_id = #{myId} and friend_id = #{friendId}
     </select>
 
+    <select id="findFriendInfoByRoomIdAndMyId" parameterType="Friend" resultType="Friend">
+        select pcr.room_id, pcr.my_id, pcr.opponent_id, umc.count
+        from private_chat_room pcr
+        join unread_message_count umc
+          on (pcr.opponent_id = umc.receiver_id and pcr.room_id = umc.room_id)
+          or (pcr.opponent_id = umc.receiver_id and pcr.room_id = umc.room_id)
+        where my_id = #{myId} or opponent_id = #{myId};
+    </select>
+
 </mapper>

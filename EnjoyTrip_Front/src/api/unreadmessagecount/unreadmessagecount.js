@@ -35,9 +35,17 @@ function searchUnreadMessageCount(roomId, receiverId, success, fail) {
     .catch(fail);
 }
 
+function searchUnreadMessageCountListById(id, success, fail) {
+  local
+    .get(`/unreadmessagecount/` + id)
+    .then(success)
+    .catch(fail);
+}
+
 export {
   registUnreadMessageCount,
   countAddUnreadMessageCount,
   countResetUnreadMessageCount,
   searchUnreadMessageCount,
+  searchUnreadMessageCountListById,
 };

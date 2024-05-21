@@ -53,4 +53,11 @@ public class FriendController {
         }
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/countinfo")
+    public ResponseEntity<List<Friend>> searchFriendInfoByRoomIdAndMyId(@RequestParam("myId") long myId){
+        return ResponseEntity.ok(friendService.searchFriendInfoByRoomIdAndMyId(
+                Friend.builder().myId(myId).build()
+        ));
+    }
 }

@@ -37,10 +37,21 @@ function isMyFriend(myId, friendId, success, fail) {
     .catch(fail);
 }
 
+function searchFriendInfoByRoomIdAndMyId(myId, roomId, success, fail) {
+  console.log(myId, roomId);
+  const payload = {
+    myId: myId,
+    id: roomId,
+  };
+
+  local.get(`/friend/countinfo`, { params: payload }).then(success).catch(fail);
+}
+
 export {
   addFriend,
   removeFriend,
   removeFriendByDto,
   bringFriendList,
   isMyFriend,
+  searchFriendInfoByRoomIdAndMyId,
 };

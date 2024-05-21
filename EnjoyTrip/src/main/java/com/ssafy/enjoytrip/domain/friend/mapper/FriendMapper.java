@@ -12,4 +12,5 @@ public interface FriendMapper {
     List<Friend> findFriendList(long myId);
     int findIsExistRelationship(Friend friend);
     int deleteFriendByDto(Friend friend);
+    List<Friend> findFriendInfoByRoomIdAndMyId(Friend friend);
 }

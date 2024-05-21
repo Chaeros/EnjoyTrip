@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -52,5 +54,11 @@ public class UnreadMessageCountController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<UnreadMessageCount>> searchUnreadMessageCountListById(@PathVariable("id") long myId){
+        log.info("[searchUnreadMessageCountListById] id : {}",myId);
+        return ResponseEntity.ok(unreadMessageCountService.searchUnreadMessageCountListById(myId));
     }
 }

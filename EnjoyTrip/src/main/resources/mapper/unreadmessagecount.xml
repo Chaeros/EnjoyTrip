@@ -27,4 +27,10 @@
          where room_id = #{roomId} and receiver_id = #{receiverId}
     </select>
 
+    <select id="findUnreadMessageCountListById" parameterType="long" resultType="UnreadMessageCount">
+        select room_id, receiver_id, count
+        from unread_message_count
+        where receiver_id = #{myId}
+    </select>
+
 </mapper>

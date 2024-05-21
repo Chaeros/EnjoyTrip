@@ -37,4 +37,9 @@ public class FriendServiceImpl implements FriendService{
     public int searchDuplicateRelationship(Friend friend) {
         return friendMapper.findIsExistRelationship(friend);
     }
+
+    @Override
+    public List<Friend> searchFriendInfoByRoomIdAndMyId(Friend friend) {
+        return friendMapper.findFriendInfoByRoomIdAndMyId(friend);
+    }
 }

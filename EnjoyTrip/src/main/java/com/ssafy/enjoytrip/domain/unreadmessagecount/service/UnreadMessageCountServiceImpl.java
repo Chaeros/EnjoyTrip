@@ -5,6 +5,8 @@ import com.ssafy.enjoytrip.domain.unreadmessagecount.mapper.UnreadMessageCountMa
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UnreadMessageCountServiceImpl implements UnreadMessageCountService{
@@ -28,5 +30,10 @@ public class UnreadMessageCountServiceImpl implements UnreadMessageCountService{
     @Override
     public Integer searchUnreadMessageCount(UnreadMessageCount unreadMessageCount) {
         return unreadMessageCountMapper.findUnreadMessageCount(unreadMessageCount);
+    }
+
+    @Override
+    public List<UnreadMessageCount> searchUnreadMessageCountListById(long myId) {
+        return unreadMessageCountMapper.findUnreadMessageCountListById(myId);
     }
 }

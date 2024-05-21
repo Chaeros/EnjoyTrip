@@ -1,13 +1,15 @@
 package com.ssafy.enjoytrip.domain.unreadmessagecount;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
+@AllArgsConstructor
+@ToString
 public class UnreadMessageCount {
     int roomId;
     long receiverId;
     int count;
-    String lastEnterDate;
 }

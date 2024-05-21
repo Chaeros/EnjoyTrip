@@ -10,4 +10,5 @@ public interface FriendService {
     int removeFriendByDto(Friend friend);
     List<Friend> searchFriendList(long myId);
     int searchDuplicateRelationship(Friend friend);
+    List<Friend> searchFriendInfoByRoomIdAndMyId(Friend friend);
 }

@@ -10,6 +10,7 @@ export const useChatStore = defineStore("chatStore", () => {
   const userId = getLocalStorage("userId");
   const myChatRoom = ref(null);
   const currentSelectedRoomId = ref(null);
+  const unreadMessageCountList = ref([]);
   // bringMyFriendsList();
 
   const enterOrRegistChatRoom = (roomInfoDto) => {
@@ -46,5 +47,6 @@ export const useChatStore = defineStore("chatStore", () => {
     currentSelectedRoomId,
     enterOrRegistChatRoom,
     bringMyChatRoomList,
+    unreadMessageCountList,
   };
 });

@@ -6,7 +6,6 @@ import com.ssafy.enjoytrip.domain.unreadmessagecount.UnreadMessageCount;
 import com.ssafy.enjoytrip.domain.unreadmessagecount.service.UnreadMessageCountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
