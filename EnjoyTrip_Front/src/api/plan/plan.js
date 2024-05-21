@@ -9,7 +9,7 @@ function registTripPlan(param, success, fail) {
 }
 
 function editTripPlan(param, success, fail) {
-  console.log('파람');
+  console.log('업데이트파람');
   console.dir(param);
   local.put(`/plan`, param).then(success).catch(fail);
 }

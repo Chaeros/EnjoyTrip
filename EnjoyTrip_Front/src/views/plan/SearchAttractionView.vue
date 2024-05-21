@@ -1,6 +1,6 @@
 <script setup>
 import { getLocalStorage } from '@/util/localstorage/localstorage';
-const userId = getLocalStorage('userId');
+const userId = parseInt(getLocalStorage('userId'));
 console.dir('유저아이디');
 console.dir(userId);
 
@@ -282,18 +282,83 @@ const accomodationAddModalToggle = () => {
 
 const showPlanDetailModalOpen = ref(false);
 const showPlanDetailModalToggle = () => {
-  console.dir(title.value);
-  console.dir(content.value);
   showPlanDetailModalOpen.value = !showPlanDetailModalOpen.value;
 };
 
-const updateTripPlan = (title, content) => {
+// function editMyTripPlan(param) {
+//   editTripPlan(
+//     param,
+//     (result) => {
+//       console.dir(result.data);
+//     },
+//     (error) => {
+//       console.log(error);
+//     }
+//   );
+// }
+
+// async function updateTripPlan(title, content) {
+//   console.dir('title');
+//   console.dir(title);
+//   console.dir('content');
+//   console.dir(content);
+//   // dto 초기화
+//   const tripPlanRequest = ref({
+//     tripPlan: {
+//       id: tripPlanId.value,
+//       title: '',
+//       content: '',
+//       departureDate: '',
+//       arrivalDate: '',
+//       image: '',
+//       memberId: userId,
+//     },
+//     makeTripPlans: [],
+//   });
+
+//   tripPlanRequest.value.tripPlan.departureDate = departureDate.value;
+//   tripPlanRequest.value.tripPlan.arrivalDate = arrivalDate.value;
+//   tripPlanRequest.value.tripPlan.title = title;
+//   tripPlanRequest.value.tripPlan.content = content;
+
+//   for (let i = 0; i < selectedAttractionsByDate.value.length; i++) {
+//     for (let j = 0; j < selectedAttractionsByDate.value[i].length; j++) {
+//       const attraction = selectedAttractionsByDate.value[i][j];
+//       const attractionDetailInfo = selectedAttractionDetailsByDate.value[i][j];
+//       tripPlanRequest.value.makeTripPlans.push(attractionDetailInfo);
+//     }
+//   }
+
+//   console.dir('tripPlanRequest는');
+//   console.dir(tripPlanRequest.value);
+//   await editMyTripPlan(tripPlanRequest.value);
+//   console.dir('업데이트 완료');
+// }
+
+function editMyTripPlan(param) {
+  return new Promise((resolve, reject) => {
+    editTripPlan(
+      param,
+      (result) => {
+        console.dir(result.data);
+        resolve(result);
+      },
+      (error) => {
+        console.log(error);
+        reject(error);
+      }
+    );
+  });
+}
+
+async function updateTripPlan(title, content) {
   console.dir('title');
   console.dir(title);
   console.dir('content');
   console.dir(content);
+
   // dto 초기화
-  const tripPlanRequest = ref({
+  const tripPlanRequest = {
     tripPlan: {
       id: tripPlanId.value,
       title: '',
@@ -304,38 +369,31 @@ const updateTripPlan = (title, content) => {
       memberId: userId,
     },
     makeTripPlans: [],
-  });
+  };
 
-  tripPlanRequest.value.tripPlan.departureDate = departureDate.value;
-  tripPlanRequest.value.tripPlan.arrivalDate = arrivalDate.value;
-  tripPlanRequest.value.tripPlan.title = title;
-  tripPlanRequest.value.tripPlan.content = content;
-
-  async function updateTripPlan(param) {
-    editTripPlan(
-      param,
-      (result) => {
-        console.dir(result.data);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
+  tripPlanRequest.tripPlan.departureDate = departureDate.value;
+  tripPlanRequest.tripPlan.arrivalDate = arrivalDate.value;
+  tripPlanRequest.tripPlan.title = title;
+  tripPlanRequest.tripPlan.content = content;
 
   for (let i = 0; i < selectedAttractionsByDate.value.length; i++) {
     for (let j = 0; j < selectedAttractionsByDate.value[i].length; j++) {
       const attraction = selectedAttractionsByDate.value[i][j];
       const attractionDetailInfo = selectedAttractionDetailsByDate.value[i][j];
-      tripPlanRequest.value.makeTripPlans.push(attractionDetailInfo);
+      tripPlanRequest.makeTripPlans.push(attractionDetailInfo);
     }
   }
 
   console.dir('tripPlanRequest는');
-  console.dir(tripPlanRequest.value);
-  updateTripPlan(tripPlanRequest.value);
-  console.dir('업데이트 완료');
-};
+  console.dir(tripPlanRequest);
+
+  try {
+    await editMyTripPlan(tripPlanRequest);
+    console.dir('업데이트 완료');
+  } catch (error) {
+    console.log('업데이트 실패:', error);
+  }
+}
 
 const removeAttraction = (date, index) => {
   selectedAttractionsByDate.value[date].splice(index, 1);
@@ -412,7 +470,8 @@ const submitPlanDetail = (
   selectedAttractionDetailsByDate.value[modalDate][modalIndex].memo = memo;
   selectedAttractionDetailsByDate.value[modalDate][modalIndex].moveTime =
     moveTime;
-  console.dir(selectedAttractionDetailsByDate);
+  console.dir('상세설명');
+  console.dir(selectedAttractionDetailsByDate.value);
 };
 
 const myPlanListModalOpen = ref(false);
@@ -444,7 +503,7 @@ const goSearchPage = () => {
   activeTab.value = 'attraction';
   activeDate.value = 0;
   isExistSelectView.value = false;
-  tripPlanId.value = '';
+  tripPlanId.value = 0;
   tripPlanRequest.value = {
     tripPlan: {
       title: '',
@@ -577,8 +636,21 @@ async function test(planId) {
           console.dir('메이크트립');
           console.dir(makeTripPlan);
           selectedAttractionsByDate.value[
-            parseInt(makeTripPlan.tripDate, 10) - 1
+            parseInt(makeTripPlan.tripDate) - 1
           ].push(makeTripPlan.attractionId);
+          selectedAttractionDetailsByDate.value[
+            parseInt(makeTripPlan.tripDate) - 1
+          ].push({
+            sequence: data.makeTripPlans[i].sequence,
+            departureTime: data.makeTripPlans[i].departureTime,
+            arrivalTime: data.makeTripPlans[i].arrivalTime,
+            memo: data.makeTripPlans[i].memo,
+            moveTime: data.makeTripPlans[i].moveTime,
+            tripDate: data.makeTripPlans[i].tripDate,
+            memberId: userId,
+            tripPlanId: tripPlanId.value,
+            attractionId: data.makeTripPlans[i].attractionId,
+          });
           indexes.set(
             [parseInt(makeTripPlan.tripDate, 10) - 1, makeTripPlan.sequence],
             makeTripPlan.attractionId
@@ -647,19 +719,21 @@ const modifyPlanDetail = async (planId) => {
       console.dir(data);
       title.value = data.tripPlan.title;
       content.value = data.tripPlan.content;
+      departureDate.value = data.tripPlan.departureDate;
+      arrivalDate.value = data.tripPlan.arrivalDate;
     },
     ({ error }) => {
       console.log(error);
     }
   );
 
-  tripPlanId.value = 0;
+  tripPlanId.value = planId;
   tripPlanRequest.value = {
     tripPlan: {
       title: '',
       content: '',
-      departureDate: '',
-      arrivalDate: '',
+      departureDate: departureDate.value,
+      arrivalDate: arrivalDate.value,
       image: '',
       memberId: userId,
     },
@@ -693,7 +767,7 @@ const modifyPlanDetail = async (planId) => {
                     :class="{ active: activeTab === 'dateCheck' }"
                     @click.prevent="setActiveTab('dateCheck')"
                   >
-                    날짜 확인
+                    여행 일자
                   </a>
                   <a
                     href="#"
@@ -862,7 +936,7 @@ const modifyPlanDetail = async (planId) => {
               <div class="make-plan">
                 <button
                   type="button"
-                  id="save-btn"
+                  id="back-btn"
                   class="btn btn-dark"
                   style="
                     --bs-btn-padding-y: 1rem;
@@ -871,7 +945,7 @@ const modifyPlanDetail = async (planId) => {
                   "
                   @click="goSearchPage"
                 >
-                  뒤로 가기
+                  뒤로
                 </button>
               </div>
               <div class="make-plan">
@@ -1153,10 +1227,18 @@ const modifyPlanDetail = async (planId) => {
   width: 90px;
 }
 
+.coldragon-img-search:hover {
+  cursor: pointer;
+}
+
 .coldragon-img-plan {
   width: 100px;
   padding: 0 10px;
   padding-top: 5px;
+}
+
+.coldragon-img-plan:hover {
+  cursor: pointer;
 }
 
 .place-save {
@@ -1165,6 +1247,13 @@ const modifyPlanDetail = async (planId) => {
 
 #save-btn {
   margin-top: 5px;
+}
+
+#back-btn {
+  width: 100%;
+  margin: 0;
+  height: 100%;
+  line-height: 100%;
 }
 
 .plan-buttons {
