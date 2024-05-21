@@ -77,6 +77,7 @@ import { useMemberStore } from "@/store/member";
 import { useFriendManagementStore } from "@/store/friend-management/friend-management.js";
 import { storeToRefs } from "pinia";
 import { setLocalStorage } from "@/util/localstorage/localstorage.js";
+import Swal from "sweetalert2";
 
 const router = useRouter();
 const isIdChecked = ref(false);
@@ -143,6 +144,10 @@ const clickNormalLogin = () => {
       // navigate('/');
     },
     (error) => {
+      Swal.fire({
+        icon: "error",
+        title: "아이디 또는 패스워드가 잘못되었습니다!",
+      });
       console.log(error);
     }
   );

@@ -211,6 +211,7 @@ import {
   searchChatMessageList,
   enterOrRegistPrivateChatRoom,
   searchPrivateChatRoom,
+  bringPrivateChatRoomList,
 } from "@/api/chat/chat.js";
 import {
   countResetUnreadMessageCount,
@@ -233,7 +234,8 @@ const webSocketChat = useWebSocketChatStore();
 const { chatRoom, currentSelectedRoomId } = storeToRefs(chatStore);
 const { enterOrRegistChatRoom, bringMyChatRoomList } = chatStore;
 const { socket } = storeToRefs(webSocketChat);
-const { sendMsg, sendEnterMsg, sendEscapeMsg } = webSocketChat;
+const { sendMsg, sendEnterMsg, sendEscapeMsg, sendEnterToRoomMsg } =
+  webSocketChat;
 const memberStore = useMemberStore();
 const { userInfo, isLogin } = storeToRefs(memberStore);
 
@@ -259,11 +261,25 @@ const currentMode = ref("FRIEND");
 const chattingMembers = ref([]);
 const unreadMessageCountList = ref([]);
 const selectedFriend = ref();
+const myRooms = ref([]);
 
 // DOM 참조
 const chatContainer = ref(null);
 const minimizedButton = ref(null);
 const chatBody = ref(null); // 추가: chat-body 참조
+
+bringPrivateChatRoomList(
+  getLocalStorage("userId"),
+  (response) => {
+    response.data.forEach((data) => {
+      myRooms.value.push(data.roomId);
+    });
+    console.log(myRooms.value);
+  },
+  (error) => {
+    console.log(error);
+  }
+);
 
 // 메시지가 업데이트될 때마다 스크롤 조정
 watch(
@@ -312,12 +328,27 @@ socket.value.onmessage = function (e) {
     currentSelectedRoomId.value
   );
 
+  const isMyRoom = false;
+  myRooms.value.forEach((roomId) => {
+    if (roomId == parsedData.chatRoomId) {
+      isMyRoom = true;
+      myRooms.value.add(roomId);
+    }
+  });
+
+  if (parsedData.senderId == getLocalStorage("user")) {
+    isMyRoom = true;
+  }
+
+  if (isMyRoom == false) {
+    sendEnterToRoomMsg(parsedData.chatRoomId);
+  }
+
   // 내가 보낸 메시지가 아니면서 현재 입장해있는 방이 아니라면
   if (
     parsedData.senderId != getLocalStorage("userId") &&
     parsedData.chatRoomId != currentSelectedRoomId.value
   ) {
-    console.log("여긴 들어오냐?");
     if (currentMode.value === "FRIEND") {
       console.log(unreadMessageCountList.value);
       unreadMessageCountList.value.forEach((unreadMessageCount, index) => {

@@ -7,6 +7,7 @@ import com.ssafy.enjoytrip.domain.member.Role;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberSignUpDto;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.enjoytrip.domain.member.dto.response.MemberResponseDto;
+import com.ssafy.enjoytrip.domain.member.exception.MemberException;
 import com.ssafy.enjoytrip.domain.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,15 +29,15 @@ public class MemberServiceImpl implements MemberService{
     public void signUp(MemberSignUpDto memberSignUpDto) throws Exception {
 
         if (memberSignUpDto.getEmail().equals("") || memberSignUpDto.getPassword().equals("")){
-            throw new Exception("ID/PW는 필수로 입력해주세요!");
+            throw new MemberException("ID/PW는 필수로 입력해주세요!");
         }
 
         if (memberMapper.findMemberByEmail(memberSignUpDto.getEmail())!=null){
-            throw new Exception("이미 존재하는 이메일입니다.");
+            throw new MemberException("이미 존재하는 이메일입니다.");
         }
 
         if (memberMapper.findMemberByNickname(memberSignUpDto.getNickname())!=null){
-            throw new Exception("이미 존재하는 닉네임입니다.");
+            throw new MemberException("이미 존재하는 닉네임입니다.");
         }
 
         Member member = Member.builder()

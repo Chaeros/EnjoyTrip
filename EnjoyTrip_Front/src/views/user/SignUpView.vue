@@ -35,33 +35,31 @@
         <!-- 글자 수에 따라 메시지 표시 -->
         <div class="password-length-message">
           <p
-            class="password-iscorrect"
+            class="password-notcorrect"
             v-if="isPasswordLengthCorrect(signUpInfo.password) === false"
           >
-            X
+            X 8자 이상 32자 이하 입력 (공백 제외)
           </p>
           <p
             class="password-iscorrect"
             v-if="isPasswordLengthCorrect(signUpInfo.password)"
           >
-            V
+            V 8자 이상 32자 이하 입력 (공백 제외)
           </p>
-          8자 이상 32자 이하 입력 (공백 제외)
         </div>
         <div class="password-strength-message">
           <p
-            class="password-strength-iscorrect"
+            class="password-strength-notcorrect"
             v-if="isPasswordStrengthStrong(signUpInfo.password) === false"
           >
-            X
+            X 영문/특수문자 각각 1개 이상 포함
           </p>
           <p
             class="password-strength-iscorrect"
             v-if="isPasswordStrengthStrong(signUpInfo.password)"
           >
-            V
+            V 영문/특수문자 각각 1개 이상 포함
           </p>
-          영문/특수문자 각각 1개 이상 포함
         </div>
 
         <div class="mb-3" style="position: relative">
@@ -82,11 +80,17 @@
             @mouseup="showConfirmPassword(false)"
           />
         </div>
-        <div class="password-confirm-issame">
-          <p v-if="signUpInfo.password !== signUpInfo.passwordConfirm">
+        <div>
+          <p
+            v-if="signUpInfo.password !== signUpInfo.passwordConfirm"
+            class="password-confirm-notsame"
+          >
             비밀번호가 일치하지 않습니다
           </p>
-          <p v-if="signUpInfo.password === signUpInfo.passwordConfirm">
+          <p
+            v-if="signUpInfo.password === signUpInfo.passwordConfirm"
+            class="password-confirm-issame"
+          >
             비밀번호가 일치합니다!
           </p>
         </div>
@@ -130,6 +134,7 @@ import {
 } from "@/util/password-validator";
 import { normalSignUp } from "@/api/member/member.js";
 import { useRoute, useRouter } from "vue-router";
+import Swal from "sweetalert2";
 const router = useRouter();
 const signUpInfo = ref({
   email: "",
@@ -143,21 +148,46 @@ const isPasswordStrengthCorrectValue = ref(false);
 
 const clickNormalSignUp = () => {
   if (isPasswordLengthCorrectValue.value === false) {
-    alert("비밀번호 길이가 짧아요!!");
+    Swal.fire({
+      icon: "error",
+      title: "비밀번호 길이가 짧아요!!",
+    });
     return;
   }
   if (isPasswordStrengthCorrectValue.value === false) {
-    alert("비밀번호 강도가 약해요!!");
+    Swal.fire({
+      icon: "error",
+      title: "비밀번호 강도가 약해요!!",
+    });
+    return;
+  }
+  if (signUpInfo.value.password != signUpInfo.value.passwordConfirm) {
+    Swal.fire({
+      icon: "error",
+      title: "서로 다른 비밀번호를 입력했어요!!",
+    });
     return;
   }
   normalSignUp(
     signUpInfo.value,
     (response) => {
-      alert("회원가입 성공");
+      Swal.fire({
+        title: "반가워요!!",
+        text: "찬곤이가 당신과 함께하는 여행을 기다리고 있어요!!",
+        imageUrl:
+          "https://github.com/Chaeros/Problem_Solved/assets/91451735/7fe87e5b-e33a-4111-bfec-1d7831f16604",
+        // imageWidth: 400,
+        // imageHeight: 200,
+        imageAlt: "Custom image",
+      });
       router.push({ name: "login" });
     },
     (error) => {
-      alert("회원가입 실패");
+      console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: error.response.data,
+      });
     }
   );
 };
@@ -300,14 +330,17 @@ const checkPasswordStrength = () => {
   color: red;
 }
 
+.password-confirm-notsame,
+.password-notcorrect,
+.password-strength-notcorrect {
+  color: red;
+}
+
+.password-confirm-issame,
 .password-iscorrect,
 .password-strength-iscorrect {
   padding: 0 10px;
-}
-
-.password-confirm-issame {
-  color: red;
-  margin-bottom: 15px;
+  color: green;
 }
 
 .password-confirm-issame p:last-child {

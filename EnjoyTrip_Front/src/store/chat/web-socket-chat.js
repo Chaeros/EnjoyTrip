@@ -62,6 +62,21 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
     }
   };
 
+  const sendEnterToRoomMsg = (roomId) => {
+    if (socket.value) {
+      let payload = {
+        messageType: "ENTER",
+        senderId: userId,
+        message: userId + "님이 입장하셨습니다.",
+        chatRoomId: roomId,
+      };
+      console.log(payload);
+      socket.value.send(JSON.stringify(payload));
+    } else {
+      console.log("WebSocket 연결이 열리지 않았습니다.");
+    }
+  };
+
   const sendEscapeMsg = () => {
     if (socket.value) {
       let payload = {
@@ -84,5 +99,6 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
     sendMsg,
     sendEnterMsg,
     sendEscapeMsg,
+    sendEnterToRoomMsg,
   };
 });

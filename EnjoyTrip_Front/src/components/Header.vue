@@ -122,7 +122,7 @@ const displayMember = ref({
   margin: 0 auto;
   width: 90%;
   max-width: 1200px;
-  padding: 0 20px;
+  /* padding: 0 20px; */
 }
 
 .header-logo {

@@ -25,6 +25,10 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
     // 현재 연결된 세션들
     private final Set<WebSocketSession> sessions = new HashSet<>();
+    private final List<WebSocketSession> allSessions = new ArrayList<>();
+
+    // 현재 연결된 세션들의 ID와 session map
+    private final Map<Long,WebSocketSession> sessionMap = new TreeMap<>();
 
     // chatRoomId: {session1, session2}
     private final Map<Long,Set<WebSocketSession>> chatRoomSessionMap = new TreeMap<>();
@@ -34,6 +38,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         log.info("{} 연결됨", session.getId());
         sessions.add(session);
+        allSessions.add(session);
     }
 
     // 소켓 통신 시 메세지의 전송을 다루는 부분
@@ -57,6 +62,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         // 메시지 타입에 따라 처리
         if (chatMessageDto.getMessageType().equals(ChatMessageDto.MessageType.ENTER)) {
             chatRoomSession.add(session);
+            sessionMap.put(chatMessageDto.getSenderId(),session);
         }
         else if (chatMessageDto.getMessageType().equals(ChatMessageDto.MessageType.LEAVE)) {
             handleLeaveMessage(session);
@@ -73,7 +79,10 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         if (chatRoomSession.size() >= 3) {
             removeClosedSession(chatRoomSession);
         }
-        sendMessageToChatRoom(chatMessageDto, chatRoomSession);
+//        sendMessageToChatRoom(chatMessageDto, chatRoomSession);
+        for ( WebSocketSession webSocketSession : allSessions ){
+            sendMessage(webSocketSession, chatMessageDto);
+        }
     }
 
     // 소켓 종료 확인
