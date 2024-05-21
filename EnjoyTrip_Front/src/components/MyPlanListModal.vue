@@ -3,7 +3,9 @@ import { ref, defineEmits, defineProps } from 'vue';
 
 import { getListMyTripPlan } from '@/api/plan/plan';
 
-const { userId } = defineProps({ userId: Number });
+const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
+
+const props = defineProps({ userId: Number });
 const emit = defineEmits(['MyPlanListModalClose', 'modifyPlanDetail']);
 const MyPlanListModalClose = () => {
   emit('MyPlanListModalClose');
@@ -26,7 +28,7 @@ async function getMyTripPlans(userId) {
     }
   );
 }
-getMyTripPlans(userId);
+getMyTripPlans(props.userId);
 </script>
 
 <template>
@@ -40,19 +42,34 @@ getMyTripPlans(userId);
         <div class="trip-plan-container">
           <div class="trip-plan-item">
             <div class="trip-plan-title">
-              여행 제목: {{ tripPlanRequest.tripPlan.title }}
+              제목: {{ tripPlanRequest.tripPlan.title }}
             </div>
             <div>내용: {{ tripPlanRequest.tripPlan.content }}</div>
             <div>출발일자: {{ tripPlanRequest.tripPlan.departureDate }}</div>
             <div>도착일자: {{ tripPlanRequest.tripPlan.arrivalDate }}</div>
-            <div>이미지: {{ tripPlanRequest.tripPlan.image }}</div>
-            <div>작성자ID: {{ tripPlanRequest.tripPlan.memberId }}</div>
           </div>
           <button
             @click.prevent="modifyPlanDetail(tripPlanRequest.tripPlan.id)"
           >
             상세보기 & 수정
           </button>
+        </div>
+        <div class="plan-image-container">
+          <div v-if="tripPlanRequest.tripPlan.image !== ''">
+            <img
+              class="plan-image"
+              :src="VITE_VUE_IMAGE_SERVER_URL + tripPlanRequest.tripPlan.image"
+            />
+          </div>
+          <div v-else>
+            <img
+              :src="
+                VITE_VUE_IMAGE_SERVER_URL +
+                '/image/uploads/1716297494437_colddragon.png'
+              "
+              class="plan-image"
+            />
+          </div>
         </div>
       </div>
       <button @click.prevent="MyPlanListModalClose" class="close-button">
@@ -90,10 +107,19 @@ getMyTripPlans(userId);
 }
 
 .request-container {
+  width: 100%;
   margin-bottom: 20px;
   padding: 10px;
   background-color: #e0e7e9; /* E0E7E9 */
   border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trip-plan-container {
+  max-width: 250px;
+  width: 100%;
 }
 
 .trip-plan-item {
@@ -101,8 +127,10 @@ getMyTripPlans(userId);
 }
 
 .trip-plan-title {
+  font-size: 22px;
   font-weight: bold;
-  color: #6c7a89; /* 6C7A89 */
+  color: #354649; /* 6C7A89 */
+  margin-bottom: 5px;
 }
 
 button {
@@ -128,5 +156,10 @@ button:hover {
 
 .close-button:hover {
   background-color: #354649; /* 닫기 버튼 호버 색상 */
+}
+
+.plan-image {
+  height: 180px;
+  margin: 10px 0;
 }
 </style>

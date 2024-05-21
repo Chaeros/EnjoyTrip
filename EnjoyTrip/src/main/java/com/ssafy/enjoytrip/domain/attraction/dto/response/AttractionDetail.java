@@ -10,6 +10,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class AttractionDetail {
-    private AttractionInfo AttractionInfo;
-    private AttractionDescription AttractionDescription;
+    private AttractionInfo attractionInfo;
+    private AttractionDescription attractionDescription;
 }

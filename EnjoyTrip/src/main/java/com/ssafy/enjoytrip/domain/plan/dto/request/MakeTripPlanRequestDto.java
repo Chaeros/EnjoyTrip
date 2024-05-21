@@ -9,6 +9,6 @@ import lombok.ToString;
 @ToString
 public class MakeTripPlanRequestDto {
     private int tripPlanId;
-    private String tripDate;
+    private int tripDate;
     private int sequence;
 }

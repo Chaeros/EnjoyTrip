@@ -6,6 +6,7 @@ const emit = defineEmits([
   'clickAttractionAdd',
   'modalAttractionAdd',
   'toggleSelectContent',
+  'openAttractionDetailModal',
 ]);
 
 import {
@@ -33,6 +34,10 @@ const clickAttractionAdd = (attraction) => {
 
 const toggleSelectContent = () => {
   emit('toggleSelectContent');
+};
+
+const openAttractionDetailModal = (contentId) => {
+  emit('openAttractionDetailModal', contentId);
 };
 
 async function callSidos(sido) {
@@ -214,6 +219,7 @@ async function loadMoreAttractions() {
         v-for="attraction in attractions"
         :attraction="attraction"
         @click-attraction-add="clickAttractionAdd"
+        @open-attraction-detail-modal="openAttractionDetailModal"
       />
       <div ref="bottomElement" class="bottom-element"></div>
     </div>

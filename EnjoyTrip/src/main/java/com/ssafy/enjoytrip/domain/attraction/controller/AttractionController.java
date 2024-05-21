@@ -77,7 +77,7 @@ public class AttractionController {
     }
 
     @GetMapping("/{contentId}")
-    public ResponseEntity<?> AttractionDetailByContentId(@PathVariable("contentId") int contentId) {
+    public ResponseEntity<?> getAttractionDetailByContentId(@PathVariable("contentId") int contentId) {
         AttractionDetail attractionDetail = attractionService.getAttractionDetailByContentId(contentId);
 
         if (attractionDetail != null) {
