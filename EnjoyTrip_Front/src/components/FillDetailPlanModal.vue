@@ -17,16 +17,17 @@ const submitPlanDetail = () => {
   console.dir('모달데이트');
   console.dir(modalDate);
   console.dir('모달인덱스');
-  console.dir(modalIndex);
+  console.dir(modalIndex + 1);
   emit(
     'submitPlanDetail',
     modalDate,
-    modalIndex,
+    modalIndex + 1,
     departureTime.value,
     arrivalTime.value,
     memo.value,
     moveTime.value
   );
+  window.alert('적용되었습니다.');
 };
 const planDetailToggle = () => {
   emit('planDetailToggle');

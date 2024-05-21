@@ -80,6 +80,11 @@ public class AttractionServiceImpl implements AttractionService {
     }
 
     @Override
+    public int getAttractionLikeCnt(int contentId) {
+        return attractionMapper.selectAttrLikeCntByContentId(contentId);
+    }
+
+    @Override
     public AttractionDetail getAttractionDetailByContentId(int contentId) {
         AttractionInfo AttractionInfo = attractionMapper.selectAttractionInfoByContentId(contentId);
         AttractionDescription AttractionDescription = attractionMapper.selectAttractionDescriptionByContentId(contentId);

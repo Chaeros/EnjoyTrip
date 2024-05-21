@@ -18,6 +18,8 @@ public interface AttractionService {
 
     AttractionInfo getDetailAttractionInfo(int contentId);
 
+    int getAttractionLikeCnt(int contentId);
+
     AttractionDetail getAttractionDetailByContentId(int contentId);
     List<AttractionInfoLike> getListAttractionInfoLikesByMemberId(int memberId);
 

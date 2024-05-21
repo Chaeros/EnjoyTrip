@@ -64,6 +64,17 @@ public class AttractionController {
         }
     }
 
+    @GetMapping("/attraction/like/{contentId}")
+    public ResponseEntity<?> getAttractionLikeCnt(@PathVariable("contentId") int contentId) {
+        int likeCnt = attractionService.getAttractionLikeCnt(contentId);
+
+        if (likeCnt >= 0) {
+            return new ResponseEntity<Integer>(likeCnt, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        }
+    }
+
     @GetMapping("/{contentId}")
     public ResponseEntity<?> AttractionDetailByContentId(@PathVariable("contentId") int contentId) {
         AttractionDetail attractionDetail = attractionService.getAttractionDetailByContentId(contentId);
