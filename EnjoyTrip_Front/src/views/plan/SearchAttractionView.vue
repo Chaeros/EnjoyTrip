@@ -68,7 +68,7 @@ function toggleModal() {
   showModal.value = !showModal.value;
 }
 
-const isExistSelectView = ref(false);
+const isExistSelectView = ref(true);
 const toggleSelectContent = () => {
   isExistSelectView.value = !isExistSelectView.value;
 };
@@ -865,6 +865,7 @@ const openAttractionDetailModal = (id) => {
           <TotalSelectedAttractions
             @attraction-add-modal-toggle="attractionAddModalToggle"
             @dragged="handleDragged"
+            @open-attraction-detail-modal="openAttractionDetailModal"
             :selected-attractions="selectedAttractions"
             :selected-accomodations="selectedAccomodations"
           />

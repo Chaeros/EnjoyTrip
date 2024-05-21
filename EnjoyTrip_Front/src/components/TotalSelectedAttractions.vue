@@ -1,14 +1,24 @@
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue';
 
+const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
+
 const { selectedAttractions, selectedAccomodations } = defineProps({
   selectedAttractions: Object,
   selectedAccomodations: Object,
 });
 
-const emit = defineEmits(['dragged', 'attractionAddModalToggle']);
+const emit = defineEmits([
+  'dragged',
+  'attractionAddModalToggle',
+  'openAttractionDetailModal',
+]);
 const attractionAddModalToggle = () => {
   emit('attractionAddModalToggle');
+};
+
+const openAttractionDetailModal = (contentId) => {
+  emit('openAttractionDetailModal', contentId);
 };
 
 const startDrag = (event, attraction) => {
@@ -40,11 +50,25 @@ const startDrag = (event, attraction) => {
         :key="index"
         draggable="true"
         @dragstart="startDrag($event, attraction)"
+        @click.prevent="
+          openAttractionDetailModal(attraction.attractionInfo.contentId)
+        "
       >
-        <img
-          class="attraction-img"
-          :src="attraction.attractionInfo.firstImage"
-        />
+        <div v-if="attraction.attractionInfo.firstImage !== ''">
+          <img
+            class="attraction-img"
+            :src="attraction.attractionInfo.firstImage"
+          />
+        </div>
+        <div v-else>
+          <img
+            class="attraction-img"
+            :src="
+              VITE_VUE_IMAGE_SERVER_URL +
+              '/image/uploads/1716297494437_colddragon.png'
+            "
+          />
+        </div>
         <div class="select-attraction-content">
           <h6 class="attraction-title">
             {{ attraction.attractionInfo.title }}
@@ -59,11 +83,25 @@ const startDrag = (event, attraction) => {
         :key="index"
         draggable="true"
         @dragstart="startDrag($event, accommodation)"
+        @click.prevent="
+          openAttractionDetailModal(accommodation.attractionInfo.contentId)
+        "
       >
-        <img
-          class="attraction-img"
-          :src="accommodation.attractionInfo.firstImage"
-        />
+        <div v-if="accommodation.attractionInfo.firstImage !== ''">
+          <img
+            class="attraction-img"
+            :src="accommodation.attractionInfo.firstImage"
+          />
+        </div>
+        <div v-else>
+          <img
+            class="attraction-img"
+            :src="
+              VITE_VUE_IMAGE_SERVER_URL +
+              '/image/uploads/1716297494437_colddragon.png'
+            "
+          />
+        </div>
         <div class="select-attraction-content">
           <h6 class="attraction-title">
             {{ accommodation.attractionInfo.title }}

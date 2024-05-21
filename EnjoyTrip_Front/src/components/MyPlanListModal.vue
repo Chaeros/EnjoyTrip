@@ -42,9 +42,9 @@ getMyTripPlans(props.userId);
         <div class="trip-plan-container">
           <div class="trip-plan-item">
             <div class="trip-plan-title">
-              제목: {{ tripPlanRequest.tripPlan.title }}
+              {{ tripPlanRequest.tripPlan.title }}
             </div>
-            <div>내용: {{ tripPlanRequest.tripPlan.content }}</div>
+            <div>메모: {{ tripPlanRequest.tripPlan.content }}</div>
             <div>출발일자: {{ tripPlanRequest.tripPlan.departureDate }}</div>
             <div>도착일자: {{ tripPlanRequest.tripPlan.arrivalDate }}</div>
           </div>
@@ -95,7 +95,7 @@ getMyTripPlans(props.userId);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 550px;
+  width: 580px;
   height: 80%;
   overflow-y: auto;
   background: #fff; /* F1F5F6 */
@@ -104,6 +104,26 @@ getMyTripPlans(props.userId);
   box-sizing: border-box;
   border: 2px solid #e0e7e9; /* E0E7E9 */
   color: #354649; /* 354649 */
+}
+
+/* Custom Scrollbar for WebKit (Chrome, Safari) */
+.container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background-color: #6c7a89;
+  border-radius: 10px;
+  border: 2px solid #f8f9fa;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+  background-color: #6c7a89;
 }
 
 .request-container {
