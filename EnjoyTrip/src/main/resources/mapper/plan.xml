@@ -59,5 +59,13 @@
         where trip_plan_id = #{tripPlanId}
     </select>
 
+    <select id="selectMakeTripPlanByIdDateSequence" parameterType="MakeTripPlanRequestDto" resultType="MakeTripPlan">
+        select *
+        from make_trip_plans
+        where trip_plan_id = #{tripPlanId}
+        and trip_date = #{tripDate}
+        and sequence = #{sequence}
+    </select>
+
 
 </mapper>

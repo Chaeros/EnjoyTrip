@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.domain.plan.service;
 
 import com.ssafy.enjoytrip.domain.plan.MakeTripPlan;
 import com.ssafy.enjoytrip.domain.plan.TripPlan;
+import com.ssafy.enjoytrip.domain.plan.dto.request.MakeTripPlanRequestDto;
 import com.ssafy.enjoytrip.domain.plan.dto.request.TripPlanRequest;
 import com.ssafy.enjoytrip.domain.plan.mapper.PlanMapper;
 import lombok.RequiredArgsConstructor;
@@ -72,5 +73,10 @@ public class PlanServiceImpl implements PlanService {
         tripPlanRequest.setMakeTripPlans(makeTripPlans);
 
         return tripPlanRequest;
+    }
+
+    @Override
+    public MakeTripPlan getDetailMakeTripPlan(MakeTripPlanRequestDto makeTripPlanRequestDto) {
+        return planMapper.selectMakeTripPlanByIdDateSequence(makeTripPlanRequestDto);
     }
 }

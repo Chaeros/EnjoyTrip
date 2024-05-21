@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.domain.plan.service;
 
+import com.ssafy.enjoytrip.domain.plan.MakeTripPlan;
+import com.ssafy.enjoytrip.domain.plan.dto.request.MakeTripPlanRequestDto;
 import com.ssafy.enjoytrip.domain.plan.dto.request.TripPlanRequest;
 
 import java.util.List;
@@ -13,5 +15,7 @@ public interface PlanService {
 
     List<TripPlanRequest> getListMyTripPlan(int memberId);
     TripPlanRequest getDetailTripPlan(int planId);
+
+    MakeTripPlan getDetailMakeTripPlan(MakeTripPlanRequestDto makeTripPlanRequestDto);
 }
 

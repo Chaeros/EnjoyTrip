@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.domain.plan.mapper;
 
 import com.ssafy.enjoytrip.domain.plan.MakeTripPlan;
 import com.ssafy.enjoytrip.domain.plan.TripPlan;
+import com.ssafy.enjoytrip.domain.plan.dto.request.MakeTripPlanRequestDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -18,5 +19,7 @@ public interface PlanMapper {
     List<Integer> selectMyTripPlanIds(int memberId);
     TripPlan selectTripPlanById(int id);
     List<MakeTripPlan> selectMakeTripPlansByTripPlanId(int tripPlanId);
+
+    MakeTripPlan selectMakeTripPlanByIdDateSequence(MakeTripPlanRequestDto makeTripPlanRequestDto);
 }
 
