@@ -83,6 +83,10 @@ function getChattingMemberId(memberId, success, fail) {
     .catch(fail);
 }
 
+function updateMember(memberDto, success, fail) {
+  local.patch(`/member`, memberDto).then(success).catch(fail);
+}
+
 export {
   addUserInformation,
   kakaoLogin,
@@ -94,4 +98,5 @@ export {
   getUserInfomationById,
   searchMemberByKeyNicknameKeword,
   getChattingMemberId,
+  updateMember,
 };

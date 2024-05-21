@@ -41,6 +41,7 @@
         class="board-write-editor"
         contenteditable="true"
         style="border: 1px solid black; padding: 10px"
+        v-html="article.content"
       ></div>
       <div class="board-write-buttons">
         <div>
@@ -53,13 +54,24 @@
           </button>
         </div>
         <div>
-          <button
-            type="button"
-            class="btn btn-outline-secondary user-button"
-            @click="clickPostArticle"
-          >
-            게시하기
-          </button>
+          <template v-if="isModify">
+            <button
+              type="button"
+              class="btn btn-outline-secondary user-button"
+              @click="clickModifyArticle"
+            >
+              수정하기
+            </button>
+          </template>
+          <template v-else>
+            <button
+              type="button"
+              class="btn btn-outline-secondary user-button"
+              @click="clickPostArticle"
+            >
+              게시하기
+            </button>
+          </template>
         </div>
       </div>
     </div>
@@ -149,22 +161,32 @@ import {
   getListGugun,
   getListContentType,
 } from "@/api/attraction";
-import { addAttractionReview } from "@/api/attraction-board/attraction-board.js";
+import { AttractionDetailByContentId } from "@/api/attraction/attraction.js";
+import {
+  addAttractionReview,
+  modifyAttractionBoard,
+} from "@/api/attraction-board/attraction-board.js";
 import { useMemberStore } from "@/store/member";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
+import { getAttractionReviewArticle } from "@/api/attraction-board/attraction-board.js";
 const router = useRouter();
 const memberStore = useMemberStore();
 const { userInfo } = storeToRefs(memberStore);
 const showModal = ref(false);
 const selectAttractionItem = ref();
 const selectAttractTitle = ref();
-const attractions = ref();
+const attractions = ref([]);
 const keyword = ref();
 const sidos = ref([]);
 const guguns = ref([]);
 const contentTypes = ref([]);
+const route = useRoute();
+const attractionBoardReviewId = ref(null);
+const isModify = ref(false);
+
 const article = ref({
+  id: "",
   title: "",
   content: "",
   memberId: userInfo._value.id,
@@ -198,6 +220,38 @@ const { VITE_VUE_API_URL } = import.meta.env;
 
 onMounted(() => {
   const editor = document.getElementById("editor");
+  attractionBoardReviewId.value = route.query.attractionBoardReviewId;
+  isModify.value = route.query.isModify;
+
+  if (isModify) {
+    getAttractionReviewArticle(
+      attractionBoardReviewId.value,
+      (response) => {
+        console.log(response.data);
+        article.value.id = attractionBoardReviewId.value;
+        article.value.title = response.data.title;
+        article.value.content = response.data.content;
+        article.value.memberId = response.data.memberId;
+        article.value.attractionId = response.data.attractionId;
+        article.value.imageUrl = response.data.imageUrl;
+        console.log(article.value);
+        AttractionDetailByContentId(
+          article.value.attractionId,
+          (response) => {
+            console.log(response.data);
+            selectAttractionItem.value = response.data.attractionInfo;
+            selectAttractTitle.value = response.data.attractionInfo.title;
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 
   if (editor) {
     editor.addEventListener("paste", async (event) => {
@@ -329,11 +383,19 @@ async function callContentTypes() {
 
 async function searchAttractions() {
   console.log("shoot api");
-  console.log(inputInformation.value);
+  console.log({ ...inputInformation.value });
   getListAttraction(
-    inputInformation.value,
+    {
+      ...inputInformation.value,
+      page: 1,
+      size: 100,
+    },
     ({ data }) => {
-      attractions.value = data;
+      console.log(data.attractionInfo);
+      console.log(data);
+      attractions.value.push(...data);
+      page.value++;
+      isLoading.value = false;
     },
     (error) => {
       console.log(error);
@@ -352,6 +414,21 @@ const clickPostArticle = () => {
   console.log(editor);
   article.value.content = editor.innerHTML;
   addAttractionReview(
+    article.value,
+    (response) => {
+      router.push({ name: "reviewBoardList" });
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const clickModifyArticle = () => {
+  console.log(article.value);
+  const editor = document.getElementById("editor");
+  article.value.content = editor.innerHTML;
+  modifyAttractionBoard(
     article.value,
     (response) => {
       router.push({ name: "reviewBoardList" });

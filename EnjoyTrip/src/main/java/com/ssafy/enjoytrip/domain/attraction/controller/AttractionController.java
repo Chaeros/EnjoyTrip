@@ -32,6 +32,7 @@ public class AttractionController {
 
     @GetMapping("/attraction")
     public ResponseEntity<?> getListAttractionInfoLikesByCond(AttractionRequestDto AttractionRequestDto) {
+        log.info("[getListAttractionInfoLikesByCond] AttractionRequestDto : {}",AttractionRequestDto);
         List<AttractionInfoLike> list = attractionService.getListAttractionInfoLikesByCond(AttractionRequestDto);
 
         if (list != null && !list.isEmpty()) {

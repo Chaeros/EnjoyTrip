@@ -2,7 +2,7 @@
   <div class="header-wrap">
     <div class="header">
       <div class="left-side-header">
-        <h3 class="header-logo" @click="clickTitle">ChanGon</h3>
+        <h3 class="header-logo" @click="clickTitle">CHANGON</h3>
         <a class="header-link" @click="clickAttraction">관광지찾기</a>
         <a class="header-link" @click="clickCummunity">커뮤니티</a>
         <a class="header-link">공지사항</a>

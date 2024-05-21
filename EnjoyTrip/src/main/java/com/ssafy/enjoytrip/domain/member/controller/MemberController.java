@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.domain.member.controller;
 
 import com.ssafy.enjoytrip.domain.friend.Friend;
 import com.ssafy.enjoytrip.domain.friend.service.FriendService;
+import com.ssafy.enjoytrip.domain.member.Member;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberSignUpDto;
 import com.ssafy.enjoytrip.domain.member.dto.request.MemberUpdateDto;
 import com.ssafy.enjoytrip.domain.member.dto.response.MemberResponseDto;
@@ -102,5 +103,14 @@ public class MemberController {
             }
         }
         return ResponseEntity.ok(opponentMembers);
+    }
+
+    @PatchMapping("/member")
+    public ResponseEntity<Void> updateMember(@RequestBody Member member){
+        log.info("[updateMember] member : {}",member);
+        if ( memberService.updateMemberInfo(member) == 0 ){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
     }
 }

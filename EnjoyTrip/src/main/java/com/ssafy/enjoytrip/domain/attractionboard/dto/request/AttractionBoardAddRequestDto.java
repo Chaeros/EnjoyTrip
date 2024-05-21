@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class AttractionBoardAddRequestDto {
+    private long id;
     private String title;
     private String content;
     private long memberId;
@@ -13,6 +14,7 @@ public class AttractionBoardAddRequestDto {
 
     public AttractionBoard transferToAttractionBoard() {
         return AttractionBoard.builder()
+                .id(id)
                 .title(this.title)
                 .content(this.content)
                 .memberId(this.memberId)

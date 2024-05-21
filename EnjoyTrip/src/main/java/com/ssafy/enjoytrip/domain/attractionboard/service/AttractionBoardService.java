@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface AttractionBoardService {
     int addAttractionBoard(AttractionBoardAddRequestDto attractionBoardAddRequestDto);
-    int modifyAttractionBoard(AttractionBoardModifyRequestDto attractionBoardModifyDto);
+    int modifyAttractionBoard(AttractionBoardAddRequestDto attractionBoardAddRequestDto);
     int removeAttractionBoard(int id);
     Optional<AttractionBoardResponseDto> searchAttractionBoard(int id);
     Optional<List<AttractionBoardResponseDto>> searchAttractionBoards();

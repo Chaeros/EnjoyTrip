@@ -42,4 +42,6 @@ public interface MemberMapper {
     void updateMember(MemberUpdateDto memberUpdateDto);
 
     List<Member> findMembersByNickNameKeyword(String keyword);
+
+    int updateMemberInfo(Member member);
 }

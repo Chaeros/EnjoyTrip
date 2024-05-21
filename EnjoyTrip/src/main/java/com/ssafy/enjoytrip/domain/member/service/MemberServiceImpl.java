@@ -75,4 +75,9 @@ public class MemberServiceImpl implements MemberService{
                 .collect(Collectors.toList());
         return Optional.ofNullable(responseDtos);
     }
+
+    @Override
+    public int updateMemberInfo(Member member) {
+        return memberMapper.updateMemberInfo(member);
+    }
 }

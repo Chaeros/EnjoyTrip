@@ -20,8 +20,31 @@ function getAttractionReviewArticle(id, success, fail) {
     .catch(fail);
 }
 
+function removeAttractionBoard(attractionBoardId, success, fail) {
+  local
+    .delete(`/attractionboard/` + attractionBoardId)
+    .then(success)
+    .catch(fail);
+}
+
+function modifyAttractionBoard(article, success, fail) {
+  const data = {
+    id: article.id,
+    attractionId: article.attractionId,
+    content: article.content,
+    imageUrl: article.imageUrl,
+    memberId: article.memberId,
+    title: article.title,
+  };
+  console.log(data);
+  console.log(article);
+  local.patch(`/attractionboard`, article, headers).then(success).catch(fail);
+}
+
 export {
   addAttractionReview,
   getAttractionReviewList,
   getAttractionReviewArticle,
+  removeAttractionBoard,
+  modifyAttractionBoard,
 };

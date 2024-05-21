@@ -9,7 +9,12 @@
           />
         </template>
         <div class="card-title">{{ attractionBoardReview.title }}</div>
-        <div class="card-content">{{ attractionBoardReview.content }}</div>
+        <div class="card-content">
+          <div
+            class="card-content-inner"
+            v-html="attractionBoardReview.content"
+          ></div>
+        </div>
       </div>
       <div class="attraction-board-regdate">
         {{ attractionBoardReview.regdate }}
@@ -139,8 +144,19 @@ onMounted(() => {
 }
 .card-content {
   flex-grow: 1; /* 컨테이너의 남은 공간을 모두 차지하도록 설정 */
-  overflow: auto; /* 내용이 넘칠 경우 스크롤바 표시 */
+  overflow: hidden; /* 내용이 넘칠 경우 숨기기 */
 }
+
+.card-content-inner {
+  display: -webkit-box;
+  -webkit-line-clamp: 3; /* 최대 라인 수 */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal; /* 여러 줄을 허용 */
+  height: 20px;
+}
+
 .card-content-wrap {
 }
 .article-title-image {

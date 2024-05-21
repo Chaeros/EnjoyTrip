@@ -1,112 +1,110 @@
 <template>
-  <div class="member-edit-page">
+  <div class="member-edit-page" v-if="userInfo">
     <div class="member-edit-box">
       <h1 class="member-edit-title"><b>기본정보</b></h1>
-      <form @submit.prevent="updateMemberInfo">
+      <form>
         <div class="form-group">
-          <label for="profileImage">사진</label>
+          <label class="label-text" for="profileImage">사진</label>
           <div class="profile-image-wrapper">
             <img
-              :src="profileImageUrl"
+              v-if="userInfo.image == null"
+              src="@/img/member/default_img.jpg"
+              class="profile-image"
+            />
+            <img
+              v-else
+              :src="memberInfo.image"
               alt="Profile Image"
               class="profile-image"
             />
-            <input type="file" id="profileImage" @change="onImageChange" />
-            <button class="delete-button" @click="removeImage">삭제</button>
+            <div class="profile-image-btn">
+              <input type="file" id="profileImage" @change="onImageChange" />
+              <button class="default-profile-button" @click="removeImage">
+                기본프로필 변경
+              </button>
+            </div>
           </div>
           <small>※ 사진은 자동으로 150x150 사이즈로 적용 됩니다.</small>
         </div>
         <div class="form-group">
-          <label for="name">이름</label>
+          <label class="label-text" for="name">닉네임</label>
           <input
             type="text"
             id="name"
-            v-model="memberInfo.name"
+            v-model="memberInfo.nickname"
             class="form-control"
+            v-if="mode === `Edit`"
           />
+          <div v-if="mode === `Read`">{{ memberInfo.nickname }}</div>
         </div>
         <div class="form-group">
-          <label for="password">비밀번호 변경</label>
-          <input
-            type="password"
-            id="password"
-            v-model="memberInfo.password"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label for="company">회사</label>
+          <label class="label-text" for="city">사는 도시</label>
           <input
             type="text"
-            id="company"
-            v-model="memberInfo.company"
+            id="city"
+            v-model="memberInfo.city"
             class="form-control"
+            v-if="mode === `Edit`"
           />
+          <div v-if="mode === `Read`">
+            <template v-if="memberInfo.city == `` || memberInfo.city == null">
+              미입력 상태입니다.
+            </template>
+            <template v-else>
+              {{ memberInfo.city }}
+            </template>
+          </div>
         </div>
         <div class="form-group">
-          <label for="department">부서</label>
-          <input
-            type="text"
-            id="department"
-            v-model="memberInfo.department"
-            class="form-control"
-          />
+          <label class="label-text" for="email">이메일</label>
+          <div>{{ memberInfo.email }}</div>
         </div>
-        <div class="form-group">
-          <label for="position">직무</label>
-          <input
-            type="text"
-            id="position"
-            v-model="memberInfo.position"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label for="rank">직위</label>
-          <input
-            type="text"
-            id="rank"
-            v-model="memberInfo.rank"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label for="email">이메일</label>
-          <input
-            type="email"
-            id="email"
-            v-model="memberInfo.email"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label for="externalEmail">외부 메일</label>
-          <input
-            type="email"
-            id="externalEmail"
-            v-model="memberInfo.externalEmail"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label for="cell">Cell.</label>
-          <input
-            type="tel"
-            id="cell"
-            v-model="memberInfo.cell"
-            class="form-control"
-          />
-        </div>
-        <div class="form-group">
-          <label for="dir">Dir.</label>
-          <input
-            type="tel"
-            id="dir"
-            v-model="memberInfo.dir"
-            class="form-control"
-          />
-        </div>
-        <button type="submit" class="btn btn-primary">저장</button>
+        <template
+          v-if="userInfo.socialType != null && userInfo.socialType != ``"
+        >
+          <div class="form-group">
+            <label class="label-text" for="social-type">소셜타입</label>
+            <input
+              type="text"
+              id="social-type"
+              v-model="memberInfo.socialType"
+              class="form-control"
+            />
+          </div>
+        </template>
+
+        <template v-if="mode == `Read`">
+          <button
+            type="button"
+            class="btn btn-dark submitBtn"
+            @click="setUpdateMode"
+          >
+            수정하기
+          </button></template
+        >
+        <template v-if="mode == `Edit`">
+          <button
+            type="button"
+            class="btn btn-dark submitBtn"
+            @click="setReadMode"
+          >
+            취소
+          </button>
+          <button
+            type="button"
+            class="btn btn-dark submitBtn"
+            @click="resetMemberInfo"
+          >
+            초기화
+          </button>
+          <button
+            type="button"
+            class="btn btn-dark submitBtn"
+            @click="updateMemberInfo"
+          >
+            수정
+          </button>
+        </template>
       </form>
     </div>
   </div>
@@ -114,37 +112,94 @@
 
 <script setup>
 import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/store/member.js";
+import { updateMember } from "@/api/member/member.js";
+import axios from "axios";
+const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
+const memberStore = useMemberStore();
+const { userInfo, isLogin } = storeToRefs(memberStore);
+
+const mode = ref("Read");
+
+console.log(userInfo.value);
 
 const memberInfo = ref({
-  profileImage: "",
-  name: "",
-  password: "",
-  company: "",
-  department: "",
-  position: "",
-  rank: "",
-  email: "",
-  externalEmail: "",
-  cell: "",
-  dir: "",
+  id: userInfo.value.id,
+  nickname: userInfo.value.nickname,
+  image: userInfo.value.image,
+  city: userInfo.value.city,
+  email: userInfo.value.email,
+  socialType: userInfo.value.socialType,
 });
 
-const profileImageUrl = ref("@/assets/profile-placeholder.png");
+console.log(memberInfo);
 
-const onImageChange = (event) => {
+const setUpdateMode = () => {
+  mode.value = "Edit";
+};
+
+const setReadMode = () => {
+  mode.value = "Read";
+  resetMemberInfo();
+};
+
+const resetMemberInfo = () => {
+  (memberInfo.value.nickname = userInfo.value.nickname),
+    (memberInfo.value.city = userInfo.value.city);
+};
+
+const profileImageUrl = ref("@/img/coldragon.png");
+
+const onImageChange = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      profileImageUrl.value = e.target.result;
-    };
-    reader.readAsDataURL(file);
+    // fileName.value = file.name;
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        VITE_VUE_IMAGE_SERVER_URL + "/image/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      console.log("File uploaded successfully:", response.data);
+      userInfo.value.image = VITE_VUE_IMAGE_SERVER_URL + response.data.url;
+      memberInfo.value.image = VITE_VUE_IMAGE_SERVER_URL + response.data.url;
+      console.log(VITE_VUE_IMAGE_SERVER_URL + response.data.url);
+      updateMember(
+        memberInfo.value,
+        (response) => {
+          console.log(response.data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
   }
 };
 
-const removeImage = () => {
-  profileImageUrl.value = "@/assets/profile-placeholder.png";
-};
+// const removeImage = () => {
+//   //   profileImageUrl.value = "@/assets/profile-placeholder.png";
+//   memberInfo.value.image = null;
+//   updateMember(
+//     memberInfo.value,
+//     (response) => {
+//       console.log(response.data);
+//     },
+//     (error) => {
+//       console.log(error);
+//     }
+//   );
+// };
 
 const updateMemberInfo = () => {
   // 회원 정보 저장 로직 추가
@@ -155,11 +210,14 @@ const updateMemberInfo = () => {
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
 
+.submitBtn {
+  margin-right: 10px;
+}
 .member-edit-page {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  /* height: 100vh; */
   background-color: #f8f9fa;
   font-family: "Noto Sans KR", sans-serif;
   overflow-y: auto;
@@ -172,6 +230,10 @@ const updateMemberInfo = () => {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   /* max-width: 500px; */
+}
+
+.label-text {
+  font-size: 20px;
 }
 
 .member-edit-title {
@@ -207,6 +269,7 @@ const updateMemberInfo = () => {
   display: flex;
   align-items: center;
   gap: 10px;
+  border-radius: 50%;
 }
 
 .profile-image {
@@ -215,14 +278,20 @@ const updateMemberInfo = () => {
   border-radius: 50%;
   object-fit: cover;
 }
+.profile-image-btn {
+  display: flex;
+  flex-direction: column;
+}
 
-.delete-button {
+.default-profile-button {
   background-color: #dc3545;
   color: white;
   border: none;
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;
+  width: 200px;
+  margin: 5px 0;
 }
 
 .delete-button:hover {

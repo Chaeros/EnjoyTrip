@@ -10,7 +10,9 @@ import lombok.ToString;
 public class MemberUpdateDto {
     String email;
     String name;
+    String nickname;
     String tel;
     String address;
     String confirmEmail;
+    String image;
 }

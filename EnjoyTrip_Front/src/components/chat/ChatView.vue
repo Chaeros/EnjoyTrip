@@ -187,7 +187,7 @@ const memberStore = useMemberStore();
 const { userInfo, isLogin } = storeToRefs(memberStore);
 
 // 반응형 변수
-const isMinimized = ref(false);
+const isMinimized = ref(true);
 const receiverId = ref(-1);
 const position = ref({
   x: window.innerWidth / 2 - 400,

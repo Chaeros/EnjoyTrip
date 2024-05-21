@@ -12,7 +12,7 @@
 	</insert>
 
 	<select id="findMemberByEmail" parameterType="string" resultType="com.ssafy.enjoytrip.domain.member.Member">
-		select id, email, password, nickname, role
+		select id, email, password, nickname, role, image
 		  from members
 		 where email = #{email}
 	</select>
@@ -56,6 +56,19 @@
 		   	   email = #{email}
 		 where email = #{confirmEmail}
 	</update>
+
+	<update id="updateMemberInfo" parameterType="com.ssafy.enjoytrip.domain.member.Member">
+		update members
+		<set>
+			nickname = #{nickname},
+			image = #{image},
+			<if test="city != null">
+				city = #{city},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
 
 	<insert id="save" parameterType="com.ssafy.enjoytrip.domain.member.Member">
 		insert into members (

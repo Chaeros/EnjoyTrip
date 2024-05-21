@@ -26,8 +26,8 @@ public class AttractionBoardServiceImpl implements AttractionBoardService{
     }
 
     @Override
-    public int modifyAttractionBoard(AttractionBoardModifyRequestDto attractionBoardModifyDto) {
-        return attractionBoardMapper.updateAttractionBoard(attractionBoardModifyDto.transferToAttractionBoard());
+    public int modifyAttractionBoard(AttractionBoardAddRequestDto attractionBoardAddRequestDto) {
+        return attractionBoardMapper.updateAttractionBoard(attractionBoardAddRequestDto.transferToAttractionBoard());
     }
 
     @Override

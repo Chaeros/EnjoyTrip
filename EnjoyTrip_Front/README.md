@@ -49,5 +49,5 @@ npm install pinia
 ### JWT 디코더
 
 ```sh
-npm install jwt-decode
+npm i vue-jwt-decode
 ```

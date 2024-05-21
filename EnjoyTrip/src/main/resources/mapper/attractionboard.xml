@@ -13,14 +13,16 @@
     <update id="updateAttractionBoard" parameterType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
         update attraction_board
         set title = #{title},
-            content = #{content}
+            content = #{content},
+            image_url = #{imageUrl},
+            attraction_id = #{attractionId}
         where id = #{id}
     </update>
 
-    <delete id="deleteMember" parameterType="int">
+    <delete id="deleteAttractionBoard" parameterType="int">
         delete
-        from attraction_board
-        where id = #{id}
+          from attraction_board
+         where id = #{id}
     </delete>
 
     <select id="findAttractionBoards" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">

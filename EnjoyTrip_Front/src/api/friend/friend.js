@@ -31,7 +31,10 @@ function bringFriendList(myId, success, fail) {
 }
 
 function isMyFriend(myId, friendId, success, fail) {
-  local.get(`friend`, { params: { myId, friendId } }).then(success).catch(fail);
+  local
+    .get(`/friend`, { params: { myId, friendId } })
+    .then(success)
+    .catch(fail);
 }
 
 export {

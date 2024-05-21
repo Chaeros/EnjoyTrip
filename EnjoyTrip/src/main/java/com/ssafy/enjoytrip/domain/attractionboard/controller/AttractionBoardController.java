@@ -29,8 +29,10 @@ public class AttractionBoardController {
     }
 
     @PatchMapping
-    public ResponseEntity<Void> modifyAttractionBoard(@RequestBody AttractionBoardModifyRequestDto attractionBoardModifyDto){
-        if ( attractionBoardService.modifyAttractionBoard(attractionBoardModifyDto) == 0 ){
+    public ResponseEntity<Void> modifyAttractionBoard(@RequestBody AttractionBoardAddRequestDto attractionBoardAddRequestDto){
+        log.info("[modifyAttractionBoard] attractionBoardAddRequestDto : {}",attractionBoardAddRequestDto);
+        if ( attractionBoardService.modifyAttractionBoard(attractionBoardAddRequestDto) == 0 ){
+            log.info("여기왓음");
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();

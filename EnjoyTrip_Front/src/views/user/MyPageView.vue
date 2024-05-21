@@ -25,39 +25,42 @@
         ></template>
 
         <template v-if="myPageMode == `Friend`">
-          <div class="modal-box">
-            <div class="left-search-friend-box">
-              <div class="search-box">
-                <input
-                  class="form-control me-2 search-text"
-                  type="search"
-                  placeholder="친구의 닉네임을 입력하세요!"
-                  aria-label="Search"
-                  v-model="keyword"
-                  @keyup.enter="callMemberByKeyword"
-                />
-                <img
-                  src="@/img/search_icon.png"
-                  class="search_icon"
-                  @click="callMemberByKeyword"
-                />
-              </div>
-              <template v-for="member in members" :key="member.id">
-                <MemberItem
-                  :member="member"
-                  @click-friend-addBtn="clickFriendAddBtn"
-                ></MemberItem>
-              </template>
-            </div>
-            <div class="right-current-my-friend-box">
-              <div class="myfriend-sub-title">현재 내 친구 목록</div>
-              <div calss="my-friend-list-box">
-                <template v-for="friend in myFriends" :key="friend.id">
-                  <FriendItem
-                    :friend="friend"
-                    @click-friend-remove-btn="clickFriendRemoveBtn"
-                  ></FriendItem>
+          <div class="friend-component">
+            <h1 class="member-edit-title"><b>친구정보</b></h1>
+            <div class="modal-box">
+              <div class="left-search-friend-box">
+                <div class="search-box">
+                  <input
+                    class="form-control me-2 search-text"
+                    type="search"
+                    placeholder="친구의 닉네임을 입력하세요!"
+                    aria-label="Search"
+                    v-model="keyword"
+                    @keyup.enter="callMemberByKeyword"
+                  />
+                  <img
+                    src="@/img/search_icon.png"
+                    class="search_icon"
+                    @click="callMemberByKeyword"
+                  />
+                </div>
+                <template v-for="member in members" :key="member.id">
+                  <MemberItem
+                    :member="member"
+                    @click-friend-addBtn="clickFriendAddBtn"
+                  ></MemberItem>
                 </template>
+              </div>
+              <div class="right-current-my-friend-box">
+                <div class="myfriend-sub-title">현재 내 친구 목록</div>
+                <div calss="my-friend-list-box">
+                  <template v-for="friend in myFriends" :key="friend.id">
+                    <FriendItem
+                      :friend="friend"
+                      @click-friend-remove-btn="clickFriendRemoveBtn"
+                    ></FriendItem>
+                  </template>
+                </div>
               </div>
             </div>
           </div>
@@ -215,13 +218,15 @@ getFriendList();
 
 <style scoped>
 .left-search-friend-box {
-  width: 380px;
-  height: 680px;
+  width: 50%;
+  /* height: 680px; */
   margin-right: 5px;
   overflow-y: scroll; /* 상하 스크롤을 항상 표시 */
 }
 .modal-box {
   display: flex;
+  width: 100%;
+  height: 550px;
 }
 .search-box {
   position: relative;
@@ -235,8 +240,8 @@ getFriendList();
   cursor: pointer;
 }
 .right-current-my-friend-box {
-  width: 380px;
-  height: 680px;
+  width: 50%;
+  height: 100%;
   margin-left: 5px;
   overflow-y: scroll; /* 상하 스크롤을 항상 표시 */
 }
@@ -246,7 +251,7 @@ getFriendList();
   width: 1200px;
   margin: 0 auto;
   display: flex;
-  height: 100vh;
+  /* height: 100vh; */
   font-family: "Noto Sans KR", sans-serif;
 }
 
@@ -255,6 +260,11 @@ getFriendList();
   background-color: #f8f9fa;
   padding: 20px;
   border-right: 1px solid #e9ecef;
+}
+
+.friend-component {
+  padding: 40px;
+  height: 650px;
 }
 
 .profile {
@@ -266,6 +276,12 @@ getFriendList();
 
 .profile-info {
   text-align: center;
+}
+
+.member-edit-title {
+  margin-bottom: 30px;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 700;
 }
 
 .profile-image {
