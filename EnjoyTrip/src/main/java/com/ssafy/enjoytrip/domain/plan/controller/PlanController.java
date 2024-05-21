@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.domain.plan.controller;
 
+import com.ssafy.enjoytrip.domain.plan.MakeTripPlan;
+import com.ssafy.enjoytrip.domain.plan.dto.request.MakeTripPlanRequestDto;
 import com.ssafy.enjoytrip.domain.plan.dto.request.TripPlanRequest;
 import com.ssafy.enjoytrip.domain.plan.service.PlanService;
 import lombok.RequiredArgsConstructor;
@@ -66,6 +68,16 @@ public class PlanController {
         TripPlanRequest tripPlanRequest = planService.getDetailTripPlan(planId);
         if (tripPlanRequest != null) {
             return new ResponseEntity<TripPlanRequest>(tripPlanRequest, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @GetMapping("/maketripplan")
+    public ResponseEntity<?> getDetailMakeTripPlan(@RequestBody MakeTripPlanRequestDto makeTripPlanRequestDto) {
+        MakeTripPlan makeTripPlan = planService.getDetailMakeTripPlan(makeTripPlanRequestDto);
+        if (makeTripPlan != null) {
+            return new ResponseEntity<MakeTripPlan>(makeTripPlan, HttpStatus.OK);
         } else {
             return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
         }
