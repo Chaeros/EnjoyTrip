@@ -395,6 +395,16 @@ const submitPlanDetail = (
   console.dir(modalDate);
   console.dir(modalIndex);
 
+  // 유효한 인덱스인지 확인
+  if (!selectedAttractionDetailsByDate.value[modalDate]) {
+    console.log('Invalid modalDate:', modalDate);
+    return;
+  }
+  if (!selectedAttractionDetailsByDate.value[modalDate][modalIndex]) {
+    console.log('Invalid modalIndex:', modalIndex);
+    return;
+  }
+
   selectedAttractionDetailsByDate.value[modalDate][modalIndex].departureTime =
     departureTime;
   selectedAttractionDetailsByDate.value[modalDate][modalIndex].arrivalTime =
