@@ -51,8 +51,6 @@ function getTotalTripDates() {
 }
 
 const emit = defineEmits(['toggleModal', 'updateDates']);
-// const departureDate = ref('');
-// const arrivalDate = ref('');
 
 const toggleModal = () => {
   emit('toggleModal');
@@ -82,7 +80,7 @@ const updateDates = () => {
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
-            여행 일자를 선택하세요!(7일 이내로만 선택가능)
+            여행 일자를 선택하세요! (7일 이내로만 선택가능)
           </h5>
           <button type="button" class="btn-close" @click="toggleModal"></button>
         </div>
@@ -128,9 +126,80 @@ const updateDates = () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgba(0, 0, 0, 0.4); /* 354649 with opacity */
 }
 
 .modal-dialog {
-  top: 20%;
+  top: 15%;
+}
+
+.modal-content {
+  width: 110%;
+  background-color: #fff; /* F1F5F6 */
+  /* border: 2px solid #e0e7e9; E0E7E9 */
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #354649; /* 354649 */
+}
+
+.modal-header {
+  background-color: #fff; /* 96B3B6 */
+  color: #7c8a99;
+  border-bottom: 2px solid #e0e7e9; /* E0E7E9 */
+  border-radius: 10px 10px 0 0;
+}
+
+.modal-title {
+  font-size: 19px;
+  font-weight: bold;
+}
+
+.modal-footer {
+  background-color: #fff; /* 96B3B6 */
+  border-top: 2px solid #e0e7e9; /* E0E7E9 */
+  border-radius: 0 0 10px 10px;
+}
+
+.btn-close {
+  background-color: #96b3b6; /* 354649 */
+  color: #f1f5f6; /* F1F5F6 */
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.btn-close:hover {
+  background-color: #6c7a89; /* 6C7A89 */
+}
+
+.btn-secondary {
+  background-color: #a3c6c4; /* 88A0A7 */
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+}
+
+.btn-secondary:hover {
+  background-color: #6c7a89; /* 6C7A89 */
+}
+
+.form-label {
+  font-weight: bold;
+  color: #96b3b6; /* 354649 */
+}
+
+.form-control {
+  background-color: #e0e7e9; /* E0E7E9 */
+  border: 1px solid #a3c6c4; /* A3C6C4 */
+  border-radius: 5px;
+  padding: 10px;
+  color: #354649; /* 354649 */
+}
+
+.form-control:focus {
+  border-color: #96b3b6; /* 96B3B6 */
+  box-shadow: none;
 }
 </style>

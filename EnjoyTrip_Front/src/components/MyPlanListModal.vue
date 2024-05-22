@@ -51,14 +51,19 @@ const deletePlanDetail = (tripPlanId) => {
               {{ tripPlanRequest.tripPlan.title }}
             </div>
             <div>메모: {{ tripPlanRequest.tripPlan.content }}</div>
-            <div>출발일자: {{ tripPlanRequest.tripPlan.departureDate }}</div>
-            <div>도착일자: {{ tripPlanRequest.tripPlan.arrivalDate }}</div>
+            <div>출발: {{ tripPlanRequest.tripPlan.departureDate }}</div>
+            <div>도착: {{ tripPlanRequest.tripPlan.arrivalDate }}</div>
           </div>
           <div class="plan-btns">
             <button
               @click.prevent="modifyPlanDetail(tripPlanRequest.tripPlan.id)"
             >
-              상세보기 & 수정
+              조회
+            </button>
+            <button
+              @click.prevent="modifyPlanDetail(tripPlanRequest.tripPlan.id)"
+            >
+              수정
             </button>
             <button
               @click.prevent="deletePlanDetail(tripPlanRequest.tripPlan.id)"
@@ -152,6 +157,7 @@ const deletePlanDetail = (tripPlanId) => {
 .trip-plan-container {
   max-width: 250px;
   width: 100%;
+  margin-left: 8px;
 }
 
 .trip-plan-item {
@@ -193,5 +199,12 @@ button:hover {
 .plan-image {
   height: 180px;
   margin: 10px 0;
+  margin-right: 13px;
+  border-radius: 10px;
+}
+
+.plan-btns {
+  display: flex;
+  justify-content: space-around;
 }
 </style>

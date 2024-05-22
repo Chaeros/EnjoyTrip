@@ -624,6 +624,7 @@ const modifyPlanDetail = async (planId) => {
   selectedAttractionsByDate.value.length = 0;
   title.value = '';
   content.value = '';
+  tripPlanId.value = planId;
 
   await getDetailTripPlan(
     planId,

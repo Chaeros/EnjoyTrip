@@ -21,51 +21,61 @@ const makeTripPlanRequestDto = ref({
   tripDate: 0,
   sequence: 0,
 });
-const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
-  try {
-    const param = {
-      tripPlanId,
-      tripDate,
-      sequence,
-    };
 
-    const response = await getDetailMakeTripPlan(
-      param,
-      ({ data }) => {
-        console.dir('axios 데이타');
-        console.dir(typeof data);
-        if (
-          data.departureTime !== '' ||
-          data.arrivalTime !== '' ||
-          data.memo !== '' ||
-          data.moveTime !== ''
-        ) {
-          departureTime.value = data.departureTime;
-          arrivalTime.value = data.arrivalTime;
-          memo.value = data.memo;
-          moveTime.value = data.moveTime;
-        } else {
-          departureTime.value = '';
-          arrivalTime.value = '';
-          memo.value = '';
-          moveTime.value = '';
-        }
-        // props.selectedAttractionDetailsByDate.value[data.tripDate - 1][
-        //   data.sequence
-        // ] = {
-        //   departureTime: data.departureTime,
-        //   arrivalTime: data.arrivalTime,
-        //   memo: data.memo,
-        //   moveTime: data.moveTime,
-        // };
-      },
-      ({ error }) => {
-        console.log(error);
+const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
+  const param = {
+    tripPlanId,
+    tripDate,
+    sequence,
+  };
+
+  await getDetailMakeTripPlan(
+    param,
+    ({ data }) => {
+      console.dir('axios 데이타');
+      console.dir(data);
+      if (data && typeof data === 'object') {
+        departureTime.value = data.departureTime;
+        arrivalTime.value = data.arrivalTime;
+        memo.value = data.memo;
+        moveTime.value = data.moveTime;
+        console.dir('엥');
+      } else {
+        departureTime.value = '';
+        arrivalTime.value = '';
+        memo.value = '';
+        moveTime.value = '';
+        console.dir('셀렉트 디테일');
+        console.dir(tripDate);
+        console.dir(props.selectedAttractionDetailsByDate);
+        departureTime.value =
+          props.selectedAttractionDetailsByDate[tripDate - 1][
+            sequence
+          ].departureTime;
+        arrivalTime.value =
+          props.selectedAttractionDetailsByDate[tripDate - 1][
+            sequence
+          ].arrivalTime;
+        memo.value =
+          props.selectedAttractionDetailsByDate[tripDate - 1][sequence].memo;
+        moveTime.value =
+          props.selectedAttractionDetailsByDate[tripDate - 1][
+            sequence
+          ].moveTime;
       }
-    );
-  } catch (error) {
-    console.log(error);
-  }
+      // props.selectedAttractionDetailsByDate.value[data.tripDate - 1][
+      //   data.sequence
+      // ] = {
+      //   departureTime: data.departureTime,
+      //   arrivalTime: data.arrivalTime,
+      //   memo: data.memo,
+      //   moveTime: data.moveTime,
+      // };
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
 };
 
 watch(
