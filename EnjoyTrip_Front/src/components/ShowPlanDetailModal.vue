@@ -69,7 +69,6 @@ const updateTripPlan = (event) => {
     localImage.value
   );
   window.alert('일정이 업데이트 되었습니다.');
-  event.target.files.length = 0;
   emit('showPlanDetailModalToggle');
 };
 
