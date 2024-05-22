@@ -26,6 +26,7 @@ import {
   editTripPlan,
   getListMyTripPlan,
   getDetailTripPlan,
+  removeTripPlan,
 } from '@/api/plan/plan';
 
 import {
@@ -47,6 +48,7 @@ const selectedAttractionDetailsByDate = ref([]);
 const title = ref('');
 const content = ref('');
 const image = ref('');
+const fileName = ref('');
 
 const showModal = ref(false);
 
@@ -68,7 +70,7 @@ function toggleModal() {
   showModal.value = !showModal.value;
 }
 
-const isExistSelectView = ref(true);
+const isExistSelectView = ref(false);
 const toggleSelectContent = () => {
   isExistSelectView.value = !isExistSelectView.value;
 };
@@ -155,37 +157,37 @@ const createPlan = () => {
   tripPlanRequest.value.tripPlan.departureDate = departureDate.value;
   tripPlanRequest.value.tripPlan.arrivalDate = arrivalDate.value;
 
-  for (let i = 0; i < selectedAttractions.value.length; i++) {
-    const attraction = selectedAttractions.value[i];
-    const makeTripPlan = {
-      sequence: 0,
-      departureTime: null,
-      arrivalTime: null,
-      memo: '',
-      moveTime: null,
-      tripDate: 0,
-      memberId: userId,
-      tripPlanId: 0,
-      attractionId: attraction.attractionInfo.contentId,
-    };
-    tripPlanRequest.value.makeTripPlans.push(makeTripPlan);
-  }
+  // for (let i = 0; i < selectedAttractions.value.length; i++) {
+  //   const attraction = selectedAttractions.value[i];
+  //   const makeTripPlan = {
+  //     sequence: 0,
+  //     departureTime: null,
+  //     arrivalTime: null,
+  //     memo: '',
+  //     moveTime: null,
+  //     tripDate: 0,
+  //     memberId: userId,
+  //     tripPlanId: 0,
+  //     attractionId: attraction.attractionInfo.contentId,
+  //   };
+  //   tripPlanRequest.value.makeTripPlans.push(makeTripPlan);
+  // }
 
-  for (let i = 0; i < selectedAccomodations.value.length; i++) {
-    const attraction = selectedAccomodations.value[i];
-    const makeTripPlan = {
-      sequence: 0,
-      departureTime: null,
-      arrivalTime: null,
-      memo: '',
-      moveTime: null,
-      tripDate: 0,
-      memberId: userId,
-      tripPlanId: 0,
-      attractionId: attraction.attractionInfo.contentId,
-    };
-    tripPlanRequest.value.makeTripPlans.push(makeTripPlan);
-  }
+  // for (let i = 0; i < selectedAccomodations.value.length; i++) {
+  //   const attraction = selectedAccomodations.value[i];
+  //   const makeTripPlan = {
+  //     sequence: 0,
+  //     departureTime: null,
+  //     arrivalTime: null,
+  //     memo: '',
+  //     moveTime: null,
+  //     tripDate: 0,
+  //     memberId: userId,
+  //     tripPlanId: 0,
+  //     attractionId: attraction.attractionInfo.contentId,
+  //   };
+  //   tripPlanRequest.value.makeTripPlans.push(makeTripPlan);
+  // }
 
   registerTripPlan(tripPlanRequest.value);
 
@@ -193,6 +195,11 @@ const createPlan = () => {
     selectedAttractionsByDate.value[i] = [];
     selectedAttractionDetailsByDate.value[i] = [];
   }
+
+  title.value = '';
+  content.value = '';
+  image.value = '';
+  fileName.value = '';
 
   currentView.value = 'plan';
 };
@@ -285,10 +292,31 @@ const accomodationAddModalToggle = () => {
   accomodationAddModalOpen.value = !accomodationAddModalOpen.value;
 };
 
+async function updateTripPlanImageTitleContent(planId) {
+  await getDetailTripPlan(
+    planId,
+    ({ data }) => {
+      console.dir('타입');
+      console.dir(typeof data);
+      console.dir(data);
+      title.value = data.tripPlan.title;
+      content.value = data.tripPlan.content;
+      image.value = data.tripPlan.image;
+      fileName.value = '';
+    },
+    ({ error }) => {
+      console.dir(error);
+    }
+  );
+}
+
 const showPlanDetailModalOpen = ref(false);
-const showPlanDetailModalToggle = () => {
+async function showPlanDetailModalToggle() {
+  await updateTripPlanImageTitleContent(tripPlanId.value);
+  console.dir('트립플랜아이디');
+  console.dir(tripPlanId.value);
   showPlanDetailModalOpen.value = !showPlanDetailModalOpen.value;
-};
+}
 
 function editMyTripPlan(param) {
   return new Promise((resolve, reject) => {
@@ -432,6 +460,7 @@ const MyPlanListModalClose = () => {
   myPlanListModalOpen.value = false;
 };
 const OpenMyPlanListModal = () => {
+  updateMyTripPlanList();
   myPlanListModalOpen.value = true;
 };
 
@@ -453,6 +482,7 @@ const goSearchPage = () => {
   title.value = '';
   content.value = '';
   image.value = '';
+  fileName.value = '';
 
   activeTab.value = 'attraction';
   activeDate.value = 0;
@@ -470,6 +500,10 @@ const goSearchPage = () => {
     makeTripPlans: [],
   };
 
+  console.dir(image.value);
+  console.dir(title.value);
+  console.dir(content.value);
+  console.dir(fileName.value);
   currentView.value = 'search';
 };
 
@@ -637,6 +671,39 @@ const openAttractionDetailModal = (id) => {
   console.dir(id);
   console.dir(contentId.value);
 };
+
+async function deletePlanDetail(planId) {
+  await removeTripPlan(
+    planId,
+    ({ data }) => {
+      console.dir('삭제 data');
+      console.dir(data);
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+  updateMyTripPlanList();
+}
+
+const tripPlanRequests = ref([]);
+async function getMyTripPlanList(userId) {
+  await getListMyTripPlan(
+    userId,
+    ({ data }) => {
+      console.dir('data');
+      console.dir(data);
+      tripPlanRequests.value = data;
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+}
+
+const updateMyTripPlanList = () => {
+  getMyTripPlanList(userId);
+};
 </script>
 
 <template>
@@ -714,6 +781,8 @@ const openAttractionDetailModal = (id) => {
 
         <DateCheck
           :show-modal="showModal"
+          :departure-date="departureDate"
+          :arrival-date="arrivalDate"
           @toggle-modal="toggleModal"
           @update-dates="updateDates"
         />
@@ -772,6 +841,7 @@ const openAttractionDetailModal = (id) => {
       :title="title"
       :content="content"
       :image="image"
+      :file-name="fileName"
       @update-trip-plan="updateTripPlan"
       @show-plan-detail-modal-toggle="showPlanDetailModalToggle"
       v-show="showPlanDetailModalOpen"
@@ -790,7 +860,9 @@ const openAttractionDetailModal = (id) => {
     <MyPlanListModal
       v-show="myPlanListModalOpen"
       @modify-plan-detail="modifyPlanDetail"
+      @delete-plan-detail="deletePlanDetail"
       @my-plan-list-modal-close="MyPlanListModalClose"
+      :trip-plan-requests="tripPlanRequests"
       :user-id="userId"
     ></MyPlanListModal>
 

@@ -125,7 +125,7 @@ watch(
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 10px;
-  color: #6c7a89; /* 6C7A89 */
+  color: #354649; /* 6C7A89 */
 }
 
 .address,
@@ -133,13 +133,13 @@ watch(
 .tel {
   font-size: 18px;
   margin-bottom: 10px;
-  color: #354649; /* 354649 */
+  color: #6c7a89; /* 354649 */
 }
 
 .overview {
   font-size: 14px;
   margin-bottom: 10px;
-  color: #354649;
+  color: #6c7a89;
 }
 
 button {

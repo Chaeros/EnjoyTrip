@@ -28,10 +28,17 @@ function getDetailMakeTripPlan(param, success, fail) {
   local.get(`/plan/maketripplan`, { params: param }).then(success).catch(fail);
 }
 
+async function removeTripPlan(planId, success, fail) {
+  console.dir('planId');
+  console.dir(planId);
+  await local.delete(`/plan/${planId}`).then(success).catch(fail);
+}
+
 export {
   registTripPlan,
   editTripPlan,
   getListMyTripPlan,
   getDetailTripPlan,
   getDetailMakeTripPlan,
+  removeTripPlan,
 };

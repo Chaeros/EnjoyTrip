@@ -32,7 +32,7 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public int editTripPlan(TripPlanRequest tripPlanRequest) {
-        if (planMapper.deleteMakeTripPlan(tripPlanRequest.getTripPlan().getId()) == 0) return 0;
+        planMapper.deleteMakeTripPlan(tripPlanRequest.getTripPlan().getId());
         for (MakeTripPlan makeTripPlan : tripPlanRequest.getMakeTripPlans()) {
             if (planMapper.insertMakeTripPlan(makeTripPlan) == 0) return 0;
         }

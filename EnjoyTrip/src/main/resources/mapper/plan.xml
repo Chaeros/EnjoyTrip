@@ -5,8 +5,8 @@
 <mapper namespace="com.ssafy.enjoytrip.domain.plan.mapper.PlanMapper">
 
     <insert id="insertTripPlan" parameterType="TripPlan">
-        insert into trip_plans (title,content,departure_date,arrival_date,image,member_id)
-        values (#{title}, #{content}, #{departureDate}, #{arrivalDate}, #{image}, #{memberId})
+        insert into trip_plans (departure_date,arrival_date,image,member_id)
+        values (#{departureDate}, #{arrivalDate}, #{image}, #{memberId})
     </insert>
 
     <insert id="insertMakeTripPlan" parameterType="MakeTripPlan">

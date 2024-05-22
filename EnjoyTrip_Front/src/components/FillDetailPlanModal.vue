@@ -32,10 +32,24 @@ const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
     const response = await getDetailMakeTripPlan(
       param,
       ({ data }) => {
-        departureTime.value = data.departureTime;
-        arrivalTime.value = data.arrivalTime;
-        memo.value = data.memo;
-        moveTime.value = data.moveTime;
+        console.dir('axios 데이타');
+        console.dir(typeof data);
+        if (
+          data.departureTime !== '' ||
+          data.arrivalTime !== '' ||
+          data.memo !== '' ||
+          data.moveTime !== ''
+        ) {
+          departureTime.value = data.departureTime;
+          arrivalTime.value = data.arrivalTime;
+          memo.value = data.memo;
+          moveTime.value = data.moveTime;
+        } else {
+          departureTime.value = '';
+          arrivalTime.value = '';
+          memo.value = '';
+          moveTime.value = '';
+        }
         // props.selectedAttractionDetailsByDate.value[data.tripDate - 1][
         //   data.sequence
         // ] = {

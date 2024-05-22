@@ -1,16 +1,34 @@
 <script setup>
 import { ref, defineProps, defineEmits, watch } from 'vue';
-import { get } from 'vue-cookie';
 
 const props = defineProps({
   showModal: Boolean,
+  departureDate: String,
+  arrivalDate: String,
 });
 
+const localDepartureDate = ref(props.departureDate);
+const localArrivalDate = ref(props.arrivalDate);
 const totalTripDates = ref(0);
+
+watch(
+  () => props.departureDate,
+  (newVal) => {
+    localDepartureDate.value = newVal;
+  }
+);
+
+watch(
+  () => props.arrivalDate,
+  (newVal) => {
+    localArrivalDate.value = newVal;
+  }
+);
+
 function getTotalTripDates() {
   // Date 객체로 변환
-  const firstDate = new Date(startDate.value);
-  const secondDate = new Date(endDate.value);
+  const firstDate = new Date(localDepartureDate.value);
+  const secondDate = new Date(localArrivalDate.value);
   console.log(firstDate);
   console.log(secondDate);
 
@@ -24,35 +42,33 @@ function getTotalTripDates() {
 
   // 소수점 아래는 버리고 정수 부분만 반환
   totalTripDates.value = Math.abs(Math.floor(daysDifference)) + 1;
+
+  if (Math.abs(daysDifference) >= 7 || daysDifference < 0) {
+    alert('여행 기간을 확인해주세요.');
+    localDepartureDate.value = '';
+    localArrivalDate.value = '';
+  }
 }
 
 const emit = defineEmits(['toggleModal', 'updateDates']);
-const startDate = ref('');
-const endDate = ref('');
+// const departureDate = ref('');
+// const arrivalDate = ref('');
 
 const toggleModal = () => {
   emit('toggleModal');
 };
 
 const updateDates = () => {
-  if (startDate.value == '' || endDate.value == '') return;
+  if (localDepartureDate.value == '' || localArrivalDate.value == '') return;
+
   getTotalTripDates();
-  emit('updateDates', startDate.value, endDate.value, totalTripDates.value);
+  emit(
+    'updateDates',
+    localDepartureDate.value,
+    localArrivalDate.value,
+    totalTripDates.value
+  );
 };
-
-watch([startDate, endDate], ([newStartDate, newEndDate]) => {
-  if (newStartDate && newEndDate) {
-    const firstDate = new Date(newStartDate);
-    const secondDate = new Date(newEndDate);
-    const timeDifference = secondDate - firstDate;
-    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-
-    if (Math.abs(daysDifference) >= 7) {
-      alert('여행 기간은 7일 이내로 선택해야 합니다.');
-      endDate.value = '';
-    }
-  }
-});
 </script>
 
 <template>
@@ -72,22 +88,22 @@ watch([startDate, endDate], ([newStartDate, newEndDate]) => {
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="startDate" class="form-label">Start Date</label>
+            <label for="departureDate" class="form-label">Start Date</label>
             <input
-              id="startDate"
+              id="departureDate"
               type="date"
               class="form-control"
-              v-model="startDate"
+              v-model="localDepartureDate"
               @change="updateDates"
             />
           </div>
           <div class="mb-3">
-            <label for="endDate" class="form-label">End Date</label>
+            <label for="arrivalDate" class="form-label">End Date</label>
             <input
-              id="endDate"
+              id="arrivalDate"
               type="date"
               class="form-control"
-              v-model="endDate"
+              v-model="localArrivalDate"
               @change="updateDates"
             />
           </div>
