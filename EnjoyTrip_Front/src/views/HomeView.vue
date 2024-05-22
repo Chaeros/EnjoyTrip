@@ -121,13 +121,14 @@ onMounted(() => {
   overflow: hidden;
   border-bottom: 1px solid dimgrey;
 }
-#slide1 > ul {
-  font-size: 0;
-}
 #slide1 > ul > li {
   display: inline-block;
   font-size: 0;
 } */
+#slide1 > ul {
+  font-size: 0;
+  list-style: none; /* 점을 제거합니다 */
+}
 .main-slide-image {
   width: 1200px;
   height: 500px;

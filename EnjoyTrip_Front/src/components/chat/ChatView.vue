@@ -162,7 +162,6 @@
               <input
                 type="text"
                 v-model="newMessage"
-                @keydown.enter="sendMessage"
                 placeholder="대화할 상대를 선택하세요!"
                 readonly
               />
@@ -268,13 +267,12 @@ const chatContainer = ref(null);
 const minimizedButton = ref(null);
 const chatBody = ref(null); // 추가: chat-body 참조
 
-bringPrivateChatRoomList(
+searchUnreadMessageCountListById(
   getLocalStorage("userId"),
   (response) => {
-    response.data.forEach((data) => {
-      myRooms.value.push(data.roomId);
-    });
-    console.log(myRooms.value);
+    unreadMessageCountList.value = response.data;
+    console.log("@@@@@@@@@@@@@");
+    console.log(unreadMessageCountList.value);
   },
   (error) => {
     console.log(error);
@@ -319,66 +317,106 @@ socket.value.onmessage = function (e) {
     memberId: parsedData.senderId,
     message: parsedData.message,
   };
+  console.log(parsedData);
 
-  console.log(tempData);
-  console.log(
-    "userId=",
-    getLocalStorage("userId"),
-    "currentRoomId=",
-    currentSelectedRoomId.value
-  );
-
-  const isMyRoom = false;
-  myRooms.value.forEach((roomId) => {
-    if (roomId == parsedData.chatRoomId) {
-      isMyRoom = true;
-      myRooms.value.add(roomId);
-    }
-  });
-
-  if (parsedData.senderId == getLocalStorage("user")) {
-    isMyRoom = true;
-  }
-
-  if (isMyRoom == false) {
-    sendEnterToRoomMsg(parsedData.chatRoomId);
-  }
-
-  // 내가 보낸 메시지가 아니면서 현재 입장해있는 방이 아니라면
-  if (
-    parsedData.senderId != getLocalStorage("userId") &&
-    parsedData.chatRoomId != currentSelectedRoomId.value
-  ) {
-    if (currentMode.value === "FRIEND") {
-      console.log(unreadMessageCountList.value);
-      unreadMessageCountList.value.forEach((unreadMessageCount, index) => {
-        if (unreadMessageCount.roomId == parsedData.chatRoomId) {
-          console.log(unreadMessageCountList.value[index]);
-          unreadMessageCountList.value[index].count =
-            unreadMessageCountList.value[index].count + 1;
-          console.log("index", index);
-        }
-      });
-      console.log(unreadMessageCountList.value);
-      // friends.value.forEach((friend) => {
-      //   if (friend.id == parsedData.chatRoomId) {
-      //     friends.value.count = friends.value.count + 1;
-      //   }
-      // });
-
-      // clickCallMyFriendList();
-    } else if (currentMode.value === "CHATTING") {
-      // clickCallMyChatRoomList();
-      // chattingMembers.value.forEach((friend) => {
-      //   if (friend.id == parsedData.chatRoomId) {
-      //     chattingMembers.value.count = chattingMembers.value.count + 1;
-      //   }
-      // });
-    }
-  }
   if (parsedData.chatRoomId == currentSelectedRoomId.value) {
     activeChat.value.messages.push(tempData);
+  } else {
+    // 수신받은 메시지의 출처가 , 현재 내가 머문 방과 다른 경우
+    // 1. 내가 지닌 방들 중 하나인 경우 - count를 1 증가시킨다.
+    console.log(unreadMessageCountList.value);
+    let isMyRoom = false;
+    unreadMessageCountList.value.forEach((unreadMessageCount, index) => {
+      if (unreadMessageCount.roomId == parsedData.chatRoomId) {
+        console.log(unreadMessageCount.roomId, "1증가");
+        unreadMessageCountList.value[index].count =
+          unreadMessageCountList.value[index].count + 1;
+        isMyRoom = true;
+      }
+    });
+    console.log(unreadMessageCountList.value);
+
+    // 2. 내가 지니지 않은 방들 중 하나인 경우 - db를 검색하여 나와 해당 방의 연결관계를 파악한다.
+    // 만약 나와의 연결관계가 존재한다면, unreadMessageCountList에 추가하여 상태를 관리한다.
+    if (isMyRoom == false) {
+      searchUnreadMessageCountListById(
+        getLocalStorage("userId"),
+        (response) => {
+          unreadMessageCountList.value = response.data;
+          console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@2!#");
+          console.log(unreadMessageCountList.value);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    }
   }
+
+  // bringPrivateChatRoomList;
+
+  // console.log(tempData);
+  // console.log(
+  //   "userId=",
+  //   getLocalStorage("userId"),
+  //   "currentRoomId=",
+  //   currentSelectedRoomId.value
+  // );
+
+  // let isMyRoom = false;
+  // myRooms.value.forEach((roomId) => {
+  //   if (roomId == parsedData.chatRoomId) {
+  //     isMyRoom = true;
+  //   }
+  // });
+
+  // if (parsedData.chatRoomId == currentSelectedRoomId.value) {
+  //   activeChat.value.messages.push(tempData);
+  // }
+
+  // if (parsedData.senderId == getLocalStorage("userId")) {
+  //   isMyRoom = true;
+  //   console.log(isMyRoom);
+  //   return;
+  // }
+  // console.log(isMyRoom);
+
+  // if (isMyRoom == false) {
+  //   sendEnterToRoomMsg(parsedData.chatRoomId);
+  // }
+
+  // // 내가 보낸 메시지가 아니면서 현재 입장해있는 방이 아니라면
+  // if (
+  //   parsedData.senderId != getLocalStorage("userId") &&
+  //   parsedData.chatRoomId != currentSelectedRoomId.value
+  // ) {
+  // if (currentMode.value === "FRIEND") {
+  //   console.log(unreadMessageCountList.value);
+  //   unreadMessageCountList.value.forEach((unreadMessageCount, index) => {
+  //     if (unreadMessageCount.roomId == parsedData.chatRoomId) {
+  //       console.log(unreadMessageCountList.value[index]);
+  //       unreadMessageCountList.value[index].count =
+  //         unreadMessageCountList.value[index].count + 1;
+  //       console.log("index", index);
+  //     }
+  //   });
+  //     console.log(unreadMessageCountList.value);
+  //     // friends.value.forEach((friend) => {
+  //     //   if (friend.id == parsedData.chatRoomId) {
+  //     //     friends.value.count = friends.value.count + 1;
+  //     //   }
+  //     // });
+
+  //     // clickCallMyFriendList();
+  //   } else if (currentMode.value === "CHATTING") {
+  //     // clickCallMyChatRoomList();
+  //     // chattingMembers.value.forEach((friend) => {
+  //     //   if (friend.id == parsedData.chatRoomId) {
+  //     //     chattingMembers.value.count = chattingMembers.value.count + 1;
+  //     //   }
+  //     // });
+  //   }
+  // }
 };
 
 onMounted(() => {
@@ -478,6 +516,7 @@ const selectFriend = (friendId) => {
       console.log(error);
     }
   );
+  callUnreadMessageCountList;
 };
 
 const resetCount = (roomId) => {
@@ -524,6 +563,18 @@ const clickCallMyFriendList = () => {
       console.log(error);
     }
   );
+  callUnreadMessageCountList();
+  // searchUnreadMessageCountListById(
+  //   getLocalStorage("userId"),
+  //   (response) => {
+  //     unreadMessageCountList.value = response.data;
+  //     console.log("@@@@@@@@@@@@@");
+  //     console.log(unreadMessageCountList.value);
+  //   },
+  //   (error) => {
+  //     console.log(error);
+  //   }
+  // );
 };
 
 // const bringFriendInfo = (friendId) => {
@@ -579,6 +630,7 @@ const clickCallMyChatRoomList = () => {
       console.log(error);
     }
   );
+  callUnreadMessageCountList();
 };
 
 const enterChatRoom = (friendId) => {

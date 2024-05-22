@@ -23,9 +23,10 @@
     </template>
   </div>
 </template>
+
 <script setup>
 import { defineProps, defineEmits } from "vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import {
   registChatMessage,
   searchChatMessageList,
@@ -57,62 +58,79 @@ const props = defineProps({
   },
 });
 
-console.log("1111", props.friend);
-console.log("&&&&&&&&&&&&&&&&&&");
-console.log(props.unreadMessageCountList);
-
 const memberInfo = ref();
 const unreadMessageCount = ref(0);
 const emit = defineEmits(["select-friend"]);
+const tempRoomId = ref(0);
 
 const selectFriend = () => {
-  console.log(props.friend.friendId);
-  console.log(props.friend);
-  countResetUnreadMessageCount(
-    props.friend.id,
+  console.log("###################################################");
+  console.log(props);
+  console.log(props.friend.friendId, getLocalStorage("userId"));
+
+  searchPrivateChatRoom(
     getLocalStorage("userId"),
+    props.friend.friendId,
     (response) => {
-      console.log(response.data);
-      unreadMessageCount.value = 0;
-      props.friend.count = 0;
+      countResetUnreadMessageCount(
+        response.data,
+        getLocalStorage("userId"),
+        (response2) => {
+          unreadMessageCount.value = 0;
+        },
+        (error2) => {
+          console.log(error2);
+        }
+      );
+      emit("select-friend", props.friend.friendId);
     },
     (error) => {
       console.log(error);
     }
   );
-  emit("select-friend", props.friend.friendId);
 };
+
+const updateUnreadMessageCount = () => {
+  searchPrivateChatRoom(
+    getLocalStorage("userId"),
+    props.friend.friendId,
+    (response) => {
+      const roomId = response.data;
+      const unreadMessage = props.unreadMessageCountList.find(
+        (message) => message.roomId == roomId
+      );
+      if (unreadMessage) {
+        unreadMessageCount.value = unreadMessage.count;
+      }
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+watch(
+  () => props.unreadMessageCountList,
+  (newValue, oldValue) => {
+    updateUnreadMessageCount();
+    console.log(newValue, oldValue);
+  }
+);
 
 onMounted(() => {
   getUserInfomationById(
     props.friend.friendId,
     (response) => {
-      console.log(response.data);
       memberInfo.value = response.data;
     },
     (error) => {
       console.log(error);
     }
   );
-  console.log(props.friend.id);
-  console.log(getLocalStorage("userId"));
-  searchPrivateChatRoom(
-    getLocalStorage("userId"),
-    props.friend.friendId,
-    (response) => {
-      console.log("result=" + response.data);
-      props.unreadMessageCountList.forEach((unreadMessageCount) => {
-        if (unreadMessageCount.roomId == response.data) {
-          unreadMessageCount.value = response.data;
-        }
-      });
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
+  updateUnreadMessageCount();
 });
 </script>
+
 <style scoped>
 .chat-item {
   display: flex;

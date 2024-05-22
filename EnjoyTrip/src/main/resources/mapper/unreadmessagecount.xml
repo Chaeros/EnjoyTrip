@@ -28,7 +28,7 @@
     </select>
 
     <select id="findUnreadMessageCountListById" parameterType="long" resultType="UnreadMessageCount">
-        select room_id, receiver_id, count
+        select room_id, count
         from unread_message_count
         where receiver_id = #{myId}
     </select>
