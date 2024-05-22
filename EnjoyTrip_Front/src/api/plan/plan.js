@@ -2,30 +2,33 @@ import { localAxios } from '@/util/http-commons';
 
 const local = localAxios();
 
-function registTripPlan(param, success, fail) {
+async function registTripPlan(param, success, fail) {
   console.log('파람');
   console.dir(param);
-  local.post(`/plan`, param).then(success).catch(fail);
+  await local.post(`/plan`, param).then(success).catch(fail);
 }
 
-function editTripPlan(param, success, fail) {
+async function editTripPlan(param, success, fail) {
   console.log('업데이트파람');
   console.dir(param);
-  local.put(`/plan`, param).then(success).catch(fail);
+  await local.put(`/plan`, param).then(success).catch(fail);
 }
 
-function getListMyTripPlan(memberId, success, fail) {
-  local.get(`/plan/myplan/${memberId}`).then(success).catch(fail);
+async function getListMyTripPlan(memberId, success, fail) {
+  await local.get(`/plan/myplan/${memberId}`).then(success).catch(fail);
 }
 
-function getDetailTripPlan(planId, success, fail) {
-  local.get(`/plan/planid/${planId}`).then(success).catch(fail);
+async function getDetailTripPlan(planId, success, fail) {
+  await local.get(`/plan/planid/${planId}`).then(success).catch(fail);
 }
 
-function getDetailMakeTripPlan(param, success, fail) {
+async function getDetailMakeTripPlan(param, success, fail) {
   console.dir('dto파람');
   console.dir(param);
-  local.get(`/plan/maketripplan`, { params: param }).then(success).catch(fail);
+  await local
+    .get(`/plan/maketripplan`, { params: param })
+    .then(success)
+    .catch(fail);
 }
 
 async function removeTripPlan(planId, success, fail) {

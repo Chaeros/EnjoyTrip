@@ -94,6 +94,7 @@ const handleFileUpload = async (event) => {
       localImage.value = response.data.url;
       console.log(localImage.value);
       console.log(response.data.url);
+      event.target.value = '';
     } catch (error) {
       console.error('Error uploading file:', error);
     }
@@ -105,8 +106,8 @@ const handleFileUpload = async (event) => {
   <div class="show-plan-detail-modal-wrap">
     <div class="show-plan-detail-modal-container">
       <div class="attach-represant-img-box">
-        <div class="attraction-represant">
-          <span>대표 이미지를 선택해주세요!</span>
+        <div class="attraction-represent">
+          <div>대표 이미지를 선택해주세요!</div>
           <input type="file" @change="handleFileUpload" />
           <!-- <span v-if="localFileName">{{ localFileName }}</span> -->
         </div>
@@ -242,8 +243,9 @@ const handleFileUpload = async (event) => {
   width: 150px;
 } */
 
-.attraction-represant {
+.attraction-represent {
   margin-left: 30px;
+  margin-bottom: 30px;
 }
 
 .attach-represant-img-box {
