@@ -102,11 +102,11 @@
         v-if="isOpenMyPlanComponent"
         class="my-plan-list-modal-home-view-container"
       >
-        <MyPlanListModalHomeView
+        <!-- class="my-plan-list-modal-home-view" -->
+        <PlanCard
           v-for="tripPlanRequest in tripPlanRequests"
           :trip-plan-request="tripPlanRequest"
-          class="my-plan-list-modal-home-view"
-        ></MyPlanListModalHomeView>
+        ></PlanCard>
       </div>
       <div class="y-diff"></div>
 
@@ -158,7 +158,7 @@ import { getAttractionReviewList } from '@/api/attraction-board/attraction-board
 import AttractionBoardComponent from '@/components/board/AttractionBoardComponent.vue';
 
 import { getListMyTripPlan } from '@/api/plan/plan';
-import MyPlanListModalHomeView from '@/components/MyPlanListModalHomeView.vue';
+import PlanCard from '@/components/item/card/PlanCard.vue';
 const userId = parseInt(getLocalStorage('userId'));
 const tripPlanRequests = ref([]);
 
