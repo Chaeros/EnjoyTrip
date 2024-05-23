@@ -187,32 +187,37 @@ onMounted(() => {
   height: 200px;
 }
 .contour {
-  margin: 1px;
+  margin: 0px;
 }
 .writer-info-box {
   display: flex;
   height: 60px;
-  margin: 3px;
   align-items: center;
+  margin-left: 10px;
 }
 .writer-info-box-left {
   display: flex;
 }
 .writer-profile-img {
   border-radius: 100%;
-  width: 50px;
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+  margin-top: 0;
 }
 .writer-nickname-font {
   font-size: 18px;
   font-weight: bold;
+  line-height: 35px;
 }
 .writer-info-box {
   display: flex;
   justify-content: space-between;
 }
 .writer-info-box-right {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   display: flex;
+  margin-right: 10px;
 }
 .writer-info-box-right-comment-img {
   width: 18px;
