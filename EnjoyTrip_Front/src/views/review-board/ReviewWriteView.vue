@@ -1,3 +1,355 @@
+<script setup>
+import { onMounted, ref, watch } from 'vue';
+import axios from 'axios';
+import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
+import Modal from '@/modal/SearchAttractionModal.vue';
+import AttractionItem from '@/components/item/AttractionItem.vue';
+import {
+  getListAttraction,
+  getListSido,
+  getListGugun,
+  getListContentType,
+} from '@/api/attraction';
+import { AttractionDetailByContentId } from '@/api/attraction/attraction.js';
+import {
+  addAttractionReview,
+  modifyAttractionBoard,
+} from '@/api/attraction-board/attraction-board.js';
+import { useMemberStore } from '@/store/member';
+import { storeToRefs } from 'pinia';
+import { useRoute, useRouter } from 'vue-router';
+import { getAttractionReviewArticle } from '@/api/attraction-board/attraction-board.js';
+
+const router = useRouter();
+const memberStore = useMemberStore();
+const { userInfo } = storeToRefs(memberStore);
+const showModal = ref(false);
+const selectAttractionItem = ref();
+const selectAttractTitle = ref();
+const attractions = ref([]);
+const keyword = ref('');
+const sidos = ref([]);
+const guguns = ref([]);
+const contentTypes = ref([]);
+const route = useRoute();
+const attractionBoardReviewId = ref(null);
+const isModify = ref(false);
+
+const article = ref({
+  id: '',
+  title: '',
+  content: '',
+  memberId: userInfo.value?.id || '',
+  attractionId: '',
+  imageUrl: '',
+});
+const inputInformation = ref({
+  sidoCode: 0,
+  gugunCode: 0,
+  contentTypeId: 0,
+  keyword: '',
+});
+const fileName = ref('');
+
+watch(userInfo, (newValue) => {
+  if (newValue) {
+    article.value.memberId = newValue.id;
+  }
+});
+
+const openModal = () => {
+  showModal.value = true;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+};
+
+const selectAttraction = (attractionItem) => {
+  selectAttractionItem.value = attractionItem;
+  article.value.attractionId = attractionItem.attractionInfo.contentId;
+  selectAttractTitle.value = attractionItem.attractionInfo.title;
+  closeModal();
+};
+
+const { VITE_VUE_API_URL } = import.meta.env;
+
+onMounted(() => {
+  const editor = document.getElementById('editor');
+  attractionBoardReviewId.value = route.query.attractionBoardReviewId;
+  isModify.value = route.query.isModify;
+
+  if (isModify.value) {
+    getAttractionReviewArticle(
+      attractionBoardReviewId.value,
+      (response) => {
+        const data = response.data;
+        article.value.id = attractionBoardReviewId.value;
+        article.value.title = data.title;
+        article.value.content = data.content;
+        article.value.memberId = data.memberId;
+        article.value.attractionId = data.attractionId;
+        article.value.imageUrl = data.imageUrl;
+        AttractionDetailByContentId(
+          article.value.attractionId,
+          (response) => {
+            selectAttractionItem.value = response.data.attractionInfo;
+            selectAttractTitle.value = response.data.attractionInfo.title;
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  if (editor) {
+    editor.addEventListener('paste', async (event) => {
+      const items = (event.clipboardData || event.originalEvent.clipboardData)
+        .items;
+
+      for (const item of items) {
+        if (item.kind === 'file') {
+          const file = item.getAsFile();
+          const formData = new FormData();
+          formData.append('file', file);
+
+          // 서버에 이미지 업로드
+          await axios
+            .post('http://localhost:8080/image/upload', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            })
+            .then((response) => {
+              const imageUrl = VITE_VUE_API_URL + response.data.url;
+              document.execCommand(
+                'insertHTML',
+                false,
+                `<img src="${imageUrl}" class="resizable" style="max-width: 100%; overflow: auto;" />`
+              );
+              addImageResizeFunctionality();
+            })
+            .catch((error) => {
+              console.error('Error uploading image:', error);
+            });
+        }
+      }
+    });
+
+    function addImageResizeFunctionality() {
+      const imgs = editor.getElementsByTagName('img');
+      for (const img of imgs) {
+        interact(img).resizable({
+          edges: { left: true, right: true, bottom: true, top: true },
+          listeners: {
+            move(event) {
+              const { target } = event;
+              let x = parseFloat(target.getAttribute('data-x')) || 0;
+              let y = parseFloat(target.getAttribute('data-y')) || 0;
+
+              // update the element's style
+              target.style.width = event.rect.width + 'px';
+              target.style.height = event.rect.height + 'px';
+
+              // translate when resizing from top or left edges
+              x += event.deltaRect.left;
+              y += event.deltaRect.top;
+
+              target.style.transform = `translate(${x}px, ${y}px)`;
+
+              target.setAttribute('data-x', x);
+              target.setAttribute('data-y', y);
+            },
+          },
+          modifiers: [
+            interact.modifiers.restrictEdges({
+              outer: 'parent',
+            }),
+            interact.modifiers.restrictSize({
+              min: { width: 50, height: 50 },
+            }),
+          ],
+          inertia: true,
+          autoScroll: {
+            container: editor,
+            margin: 50,
+            distance: 5,
+            interval: 10,
+          },
+        });
+
+        img.addEventListener('mousedown', (event) => {
+          event.preventDefault();
+        });
+      }
+    }
+
+    addImageResizeFunctionality();
+  } else {
+    console.error('Editor element not found');
+  }
+});
+
+async function callSidos(sido) {
+  getListSido(
+    ({ data }) => {
+      sidos.value = data;
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+  callGuguns(sido);
+}
+
+async function callGuguns(sido) {
+  getListGugun(
+    sido,
+    ({ data }) => {
+      guguns.value = data;
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+}
+
+async function callContentTypes() {
+  getListContentType(
+    ({ data }) => {
+      contentTypes.value = data;
+    },
+    ({ error }) => {
+      console.log(error);
+    }
+  );
+}
+
+/* 무한 스크롤 */
+
+const page = ref(1);
+const size = ref(10);
+const isLoading = ref(false);
+const hasMore = ref(true);
+const bottomElement = ref('');
+
+const observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        console.dir('intersecting');
+        loadMoreAttractions();
+      }
+    });
+  },
+  { rootMargin: '0px 0px 100px 0px' }
+);
+
+async function initSearchAttractions() {
+  // 페이지 번호와 결과를 초기화
+  page.value = 1;
+  attractions.value = [];
+  hasMore.value = true;
+  isLoading.value = false;
+
+  if (bottomElement.value) {
+    observer.observe(bottomElement.value);
+  }
+
+  loadMoreAttractions();
+}
+
+async function loadMoreAttractions() {
+  if (isLoading.value || !hasMore.value) return;
+
+  isLoading.value = true;
+  getListAttraction(
+    {
+      ...inputInformation.value,
+      page: page.value,
+      size: size.value,
+    },
+    ({ data }) => {
+      if (data.length < size.value) {
+        hasMore.value = false;
+      }
+      attractions.value.push(...data);
+      page.value++;
+      isLoading.value = false;
+    },
+    (error) => {
+      console.log(error);
+      isLoading.value = false;
+    }
+  );
+}
+
+callSidos(1);
+callContentTypes();
+
+const clickReturnList = () => {
+  router.push({ name: 'reviewBoardList' });
+};
+
+const clickPostArticle = () => {
+  const editor = document.getElementById('editor');
+  article.value.content = editor.innerHTML;
+  addAttractionReview(
+    article.value,
+    (response) => {
+      router.push({ name: 'reviewBoardList' });
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const clickModifyArticle = () => {
+  const editor = document.getElementById('editor');
+  article.value.content = editor.innerHTML;
+  modifyAttractionBoard(
+    article.value,
+    (response) => {
+      router.push({ name: 'reviewBoardList' });
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const handleFileUpload = async (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    fileName.value = file.name;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/image/upload',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      article.value.imageUrl = response.data.url;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  }
+};
+</script>
+
 <template>
   <Header></Header>
   <div class="board-write-page">
@@ -11,21 +363,12 @@
       <div class="horizontal-line"></div>
       <div class="select-attraction-box line-height-center">
         [필수] 리뷰를 작성할 관광지를 선택해주세요!
-        <!-- <button
-          type="button"
-          class="btn btn-outline-secondary select-attraction-btn"
-          @click="openModal"
-        >
-          <div class="btn-inner-font">선택하기</div>
-        </button> -->
-
         <div class="file-upload-wrapper" @click="openModal">
           <input id="attractionInput" type="text" class="file-input" />
           <label for="attractionInput" class="file-upload-button">
             <div class="fileInput-font">관광지선택</div>
           </label>
         </div>
-
         <span
           class="attraction-unselected"
           v-show="selectAttractionItem === undefined"
@@ -114,7 +457,7 @@
         v-model="inputInformation.sidoCode"
         @change="callGuguns(inputInformation.sidoCode)"
       >
-        <option value="-1">시도</option>
+        <option value="0">시도</option>
         <option
           v-for="sido in sidos"
           :value="sido.sidoCode"
@@ -125,7 +468,7 @@
       </select>
 
       <select class="custom-select w-100" v-model="inputInformation.gugunCode">
-        <option disabled value="-1">구군</option>
+        <option value="0">구군</option>
         <option
           v-for="gugun in guguns"
           :value="gugun.gugunCode"
@@ -139,7 +482,7 @@
         class="custom-select w-100"
         v-model="inputInformation.contentTypeId"
       >
-        <option value="-1">컨텐츠</option>
+        <option value="0">컨텐츠</option>
         <option
           v-for="content in contentTypes"
           :value="content.contentId"
@@ -161,7 +504,7 @@
       <img
         src="@/img/search_icon.png"
         class="search_icon"
-        @click="searchAttractions"
+        @click="initSearchAttractions"
       />
     </div>
     <div class="attraction-set">
@@ -171,328 +514,10 @@
         :attraction="attraction"
         @click-attraction-add="selectAttraction"
       ></AttractionItem>
+      <div ref="bottomElement" class="bottom-element"></div>
     </div>
   </Modal>
 </template>
-
-<script setup>
-import { onMounted } from "vue";
-import axios from "axios";
-import Header from "@/components/Header.vue";
-import Footer from "@/components/Footer.vue";
-import Modal from "@/modal/SearchAttractionModal.vue";
-import AttractionItem from "@/components/item/AttractionItem.vue";
-import { ref } from "vue";
-import {
-  getListAttraction,
-  getListSido,
-  getListGugun,
-  getListContentType,
-} from "@/api/attraction";
-import { AttractionDetailByContentId } from "@/api/attraction/attraction.js";
-import {
-  addAttractionReview,
-  modifyAttractionBoard,
-} from "@/api/attraction-board/attraction-board.js";
-import { useMemberStore } from "@/store/member";
-import { storeToRefs } from "pinia";
-import { useRoute, useRouter } from "vue-router";
-import { getAttractionReviewArticle } from "@/api/attraction-board/attraction-board.js";
-const router = useRouter();
-const memberStore = useMemberStore();
-const { userInfo } = storeToRefs(memberStore);
-const showModal = ref(false);
-const selectAttractionItem = ref();
-const selectAttractTitle = ref();
-const attractions = ref([]);
-const keyword = ref();
-const sidos = ref([]);
-const guguns = ref([]);
-const contentTypes = ref([]);
-const route = useRoute();
-const attractionBoardReviewId = ref(null);
-const isModify = ref(false);
-
-const article = ref({
-  id: "",
-  title: "",
-  content: "",
-  memberId: userInfo._value.id,
-  attractionId: "",
-  imageUrl: "",
-});
-const inputInformation = ref({
-  sidoCode: "",
-  gugunCode: "",
-  contentTypeId: "",
-  keyword: "",
-});
-const fileName = ref("");
-
-const openModal = () => {
-  showModal.value = true;
-};
-
-const closeModal = () => {
-  showModal.value = false;
-};
-
-const selectAttraction = (attractionItem) => {
-  selectAttractionItem.value = attractionItem;
-  article.value.attractionId = attractionItem.attractionInfo.contentId;
-  selectAttractTitle.value = attractionItem.attractionInfo.title;
-  closeModal();
-};
-
-const { VITE_VUE_API_URL } = import.meta.env;
-
-onMounted(() => {
-  const editor = document.getElementById("editor");
-  attractionBoardReviewId.value = route.query.attractionBoardReviewId;
-  isModify.value = route.query.isModify;
-
-  if (isModify) {
-    getAttractionReviewArticle(
-      attractionBoardReviewId.value,
-      (response) => {
-        console.log(response.data);
-        article.value.id = attractionBoardReviewId.value;
-        article.value.title = response.data.title;
-        article.value.content = response.data.content;
-        article.value.memberId = response.data.memberId;
-        article.value.attractionId = response.data.attractionId;
-        article.value.imageUrl = response.data.imageUrl;
-        console.log(article.value);
-        AttractionDetailByContentId(
-          article.value.attractionId,
-          (response) => {
-            console.log(response.data);
-            selectAttractionItem.value = response.data.attractionInfo;
-            selectAttractTitle.value = response.data.attractionInfo.title;
-          },
-          (error) => {
-            console.log(error);
-          }
-        );
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
-
-  if (editor) {
-    editor.addEventListener("paste", async (event) => {
-      console.log("occur event");
-      const items = (event.clipboardData || event.originalEvent.clipboardData)
-        .items;
-
-      for (const item of items) {
-        if (item.kind === "file") {
-          const file = item.getAsFile();
-          const formData = new FormData();
-          formData.append("file", file);
-
-          // 서버에 이미지 업로드
-          await axios
-            .post("http://localhost:8080/image/upload", formData, {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            })
-            .then((response) => {
-              console.log(response.data.url);
-              const imageUrl = VITE_VUE_API_URL + response.data.url; // 서버에서 반환된 이미지 URL
-              // 에디터에 이미지 URL 삽입
-              document.execCommand(
-                "insertHTML",
-                false,
-                `<img src="${imageUrl}" class="resizable" style="max-width: 100%; overflow: auto;" />`
-              );
-              console.log(imageUrl);
-              addImageResizeFunctionality();
-            })
-            .catch((error) => {
-              console.error("Error uploading image:", error);
-            });
-        }
-      }
-    });
-
-    function addImageResizeFunctionality() {
-      const imgs = editor.getElementsByTagName("img");
-      for (const img of imgs) {
-        interact(img).resizable({
-          edges: { left: true, right: true, bottom: true, top: true },
-          listeners: {
-            move(event) {
-              const { target } = event;
-              let x = parseFloat(target.getAttribute("data-x")) || 0;
-              let y = parseFloat(target.getAttribute("data-y")) || 0;
-
-              // update the element's style
-              target.style.width = event.rect.width + "px";
-              target.style.height = event.rect.height + "px";
-
-              // translate when resizing from top or left edges
-              x += event.deltaRect.left;
-              y += event.deltaRect.top;
-
-              target.style.transform = `translate(${x}px, ${y}px)`;
-
-              target.setAttribute("data-x", x);
-              target.setAttribute("data-y", y);
-            },
-          },
-          modifiers: [
-            interact.modifiers.restrictEdges({
-              outer: "parent",
-            }),
-            interact.modifiers.restrictSize({
-              min: { width: 50, height: 50 },
-            }),
-          ],
-          inertia: true,
-          autoScroll: {
-            container: editor,
-            margin: 50,
-            distance: 5,
-            interval: 10,
-          },
-        });
-
-        img.addEventListener("mousedown", (event) => {
-          event.preventDefault();
-        });
-      }
-    }
-
-    // 기존 이미지에 크기 조절 기능 적용
-    addImageResizeFunctionality();
-  } else {
-    console.error("Editor element not found");
-  }
-});
-
-async function callSidos(sido) {
-  getListSido(
-    ({ data }) => {
-      sidos.value = data;
-    },
-    ({ error }) => {
-      console.log(error);
-    }
-  );
-  callGuguns(sido);
-}
-
-async function callGuguns(sido) {
-  getListGugun(
-    sido,
-    ({ data }) => {
-      guguns.value = data;
-    },
-    ({ error }) => {
-      console.log(error);
-    }
-  );
-}
-
-async function callContentTypes() {
-  getListContentType(
-    ({ data }) => {
-      contentTypes.value = data;
-    },
-    ({ error }) => {
-      console.log(error);
-    }
-  );
-}
-
-async function searchAttractions() {
-  console.log("shoot api");
-  console.log({ ...inputInformation.value });
-  getListAttraction(
-    {
-      ...inputInformation.value,
-      page: 1,
-      size: 100,
-    },
-    ({ data }) => {
-      console.log(data.attractionInfo);
-      console.log(data);
-      attractions.value.push(...data);
-      page.value++;
-      isLoading.value = false;
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-}
-callSidos(1);
-callContentTypes();
-
-const clickReturnList = () => {
-  router.push({ name: "reviewBoardList" });
-};
-
-const clickPostArticle = () => {
-  const editor = document.getElementById("editor");
-  console.log(editor);
-  article.value.content = editor.innerHTML;
-  addAttractionReview(
-    article.value,
-    (response) => {
-      router.push({ name: "reviewBoardList" });
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-};
-
-const clickModifyArticle = () => {
-  console.log(article.value);
-  const editor = document.getElementById("editor");
-  article.value.content = editor.innerHTML;
-  modifyAttractionBoard(
-    article.value,
-    (response) => {
-      router.push({ name: "reviewBoardList" });
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
-};
-
-const handleFileUpload = async (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    fileName.value = file.name;
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/image/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log("File uploaded successfully:", response.data);
-      article.value.imageUrl = response.data.url;
-      console.log(response.data.url);
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    }
-  }
-};
-</script>
 
 <style scoped>
 /* 크기 조절 핸들을 처리하기 위한 스타일 추가 */
@@ -506,7 +531,6 @@ img.resizable {
 
 .board-write-page {
   display: flex;
-  /* height: 100vh; */
 }
 
 .board-write-box {
@@ -528,7 +552,7 @@ img.resizable {
   width: 1200px;
   height: 2px;
   background-color: black;
-  margin: 0; /* 선과 위 요소 사이에 간격을 줄 수 있습니다 */
+  margin: 0;
 }
 
 .select-attraction-box {
@@ -578,7 +602,6 @@ img.resizable {
   font-size: 20px;
   text-align: center;
   margin-left: 5px;
-  /* border: none; */
 }
 .footer {
   margin-top: 25px;
@@ -601,9 +624,8 @@ img.resizable {
   cursor: pointer;
 }
 .attraction-set {
-  height: 600px; /* 높이를 필요에 맞게 조정하세요 */
-  overflow-y: scroll; /* 상하 스크롤을 항상 표시 */
-  /* 또는 overflow-y: auto; /* 필요할 때만 상하 스크롤을 표시 */
+  height: 600px;
+  overflow-y: scroll;
 }
 .custom-select {
   border-radius: 8px;
@@ -657,5 +679,10 @@ img.resizable {
 .file-upload-filename {
   font-size: 14px;
   color: #333;
+}
+
+.bottom-element {
+  height: 1px;
+  width: 100%;
 }
 </style>
