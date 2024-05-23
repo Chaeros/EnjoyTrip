@@ -400,10 +400,49 @@ const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
       console.dir(data);
       console.dir(typeof data);
       if (data && typeof data === 'object') {
-        departureTime.value = data.departureTime;
-        arrivalTime.value = data.arrivalTime;
-        memo.value = data.memo;
-        moveTime.value = data.moveTime;
+        // axios랑 쓴 내용이랑 겹칠 때 쓴 내용을 우선적으로 보여줌
+        if (
+          selectedAttractionDetailsByDate.value[tripDate - 1][sequence]
+            .departureTime !== ''
+        ) {
+          departureTime.value =
+            selectedAttractionDetailsByDate.value[tripDate - 1][
+              sequence
+            ].departureTime;
+        } else {
+          departureTime.value = data.departureTime;
+        }
+        if (
+          selectedAttractionDetailsByDate.value[tripDate - 1][sequence]
+            .arrivalTime !== ''
+        ) {
+          arrivalTime.value =
+            selectedAttractionDetailsByDate.value[tripDate - 1][
+              sequence
+            ].arrivalTime;
+        } else {
+          arrivalTime.value = data.arrivalTime;
+        }
+        if (
+          selectedAttractionDetailsByDate.value[tripDate - 1][sequence].memo !==
+          ''
+        ) {
+          memo.value =
+            selectedAttractionDetailsByDate.value[tripDate - 1][sequence].memo;
+        } else {
+          memo.value = data.memo;
+        }
+        if (
+          selectedAttractionDetailsByDate.value[tripDate - 1][sequence]
+            .moveTime !== ''
+        ) {
+          moveTime.value =
+            selectedAttractionDetailsByDate.value[tripDate - 1][
+              sequence
+            ].moveTime;
+        } else {
+          moveTime.value = data.moveTime;
+        }
         console.dir('굿. maketripplan detail 잘받아옴.');
         console.dir(departureTime.value);
         console.dir(arrivalTime.value);
