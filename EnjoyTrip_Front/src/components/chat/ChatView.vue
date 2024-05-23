@@ -197,7 +197,7 @@
         @dblclick="toggleMinimize"
         :style="{ left: `${position.x}px`, top: `${position.y}px` }"
       >
-        💬
+        🗨️
       </button>
     </div>
   </div>
@@ -834,6 +834,11 @@ const addEmoji = (emoji) => {
   cursor: move;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+}
+
+.talk-button-img {
+  width: 70px;
+  height: 70px;
 }
 .chat-input-box {
   display: flex;

@@ -19,7 +19,12 @@
                   <img class="writer-profile-img" :src="writerInfo.image" />
                 </div>
               </template>
-              <div>{{ writerInfo.nickname }}</div>
+              <div class="nickname-and-date">
+                <div class="writer-profile-nickname">
+                  {{ writerInfo.nickname }}
+                </div>
+                <div class="date">{{ formattedRegdate }}</div>
+              </div>
             </div>
           </div>
           <template v-if="isMyComment">
@@ -27,14 +32,14 @@
               <template v-if="isModifyMode">
                 <button
                   type="button"
-                  class="btn btn-danger"
+                  class="btn btn-danger delete-modify-btn"
                   @click="clickModifyCommentBtn"
                 >
                   수정
                 </button>
                 <button
                   type="button"
-                  class="btn btn-danger"
+                  class="btn btn-danger delete-modify-btn"
                   @click="clickModifyCommentToggleBtn"
                 >
                   취소
@@ -43,14 +48,14 @@
               <template v-else>
                 <button
                   type="button"
-                  class="btn btn-outline-secondary"
+                  class="btn btn-outline-secondary delete-modify-btn"
                   @click="clickModifyCommentToggleBtn"
                 >
                   수정
                 </button>
                 <button
                   type="button"
-                  class="btn btn-outline-secondary"
+                  class="btn btn-outline-secondary delete-modify-btn"
                   @click="clickRemoveCommentBtn"
                 >
                   삭제
@@ -59,7 +64,6 @@
             </div>
           </template>
         </div>
-        <div class="date">{{ comment.regdate }}</div>
       </div>
     </div>
     <template v-if="isModifyMode">
@@ -77,7 +81,7 @@
 
 <script setup>
 import { getUserInfomationById } from "@/api/member/member.js";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { getLocalStorage } from "@/util/localstorage/localstorage.js";
 import {
   addComment,
@@ -92,6 +96,21 @@ const writerInfo = ref(null);
 const isMyComment = ref(true);
 const isModifyMode = ref(false);
 const modifyCommentContent = ref("");
+
+const formattedRegdate = computed(() => {
+  if (!comment || !comment.regdate) {
+    return "";
+  }
+  const date = new Date(comment.regdate);
+  return date.toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+});
 
 const clickModifyCommentToggleBtn = () => {
   isModifyMode.value = !isModifyMode.value;
@@ -160,8 +179,16 @@ const getWriterInfo = () => {
   font-size: 20px;
 }
 .comment-wrap {
+  border-radius: 10px;
   width: 100%;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+/* .comment-wrap:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+} */
+
 .comment-description {
   display: flex;
   width: 100%;
@@ -173,6 +200,7 @@ const getWriterInfo = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin: 10px;
 }
 .description-top-left {
   align-items: center;
@@ -182,9 +210,25 @@ const getWriterInfo = () => {
 }
 .writer-info-box {
   display: flex;
+  align-items: center;
 }
 .writer-profile-img {
   border-radius: 100%;
   width: 50px;
+  height: 50px;
+}
+.writer-profile-nickname {
+  font-size: 20px;
+  font-weight: bold;
+}
+.nickname-and-date {
+  margin: 0 5px;
+}
+.comment-content {
+  margin: 10px;
+  font-size: 17px;
+}
+.delete-modify-btn {
+  margin: 3px;
 }
 </style>

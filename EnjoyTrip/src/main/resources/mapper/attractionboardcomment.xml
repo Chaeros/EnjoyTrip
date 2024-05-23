@@ -26,6 +26,7 @@
         select id, content, attraction_board_id, member_id, regdate
           from attraction_board_comments
          where attraction_board_id = #{attractionBoardId}
+         order by regdate desc
     </select>
 
     <select id="findCommentCount" parameterType="int" resultType="int">

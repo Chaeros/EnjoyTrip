@@ -9,15 +9,23 @@
         v-model="article.title"
       />
       <div class="horizontal-line"></div>
-      <div class="select-attraction-box">
+      <div class="select-attraction-box line-height-center">
         [필수] 리뷰를 작성할 관광지를 선택해주세요!
-        <button
+        <!-- <button
           type="button"
           class="btn btn-outline-secondary select-attraction-btn"
           @click="openModal"
         >
           <div class="btn-inner-font">선택하기</div>
-        </button>
+        </button> -->
+
+        <div class="file-upload-wrapper" @click="openModal">
+          <input id="attractionInput" type="text" class="file-input" />
+          <label for="attractionInput" class="file-upload-button">
+            <div class="fileInput-font">관광지선택</div>
+          </label>
+        </div>
+
         <span
           class="attraction-unselected"
           v-show="selectAttractionItem === undefined"
@@ -32,12 +40,24 @@
         </span>
       </div>
       <div class="attach-represant-img-box">
-        <span>[선택] 대표 이미지를 선택해주세요!</span>
-        <input type="file" @change="handleFileUpload" />
-        <span v-if="fileName">{{ fileName }}</span>
-        <sapn v-if="isModify" class="modify-notice"
-          >(수정시 이전에 등록한 이미지가 자동 업로드 되어있습니다)</sapn
+        <span class="line-height-center"
+          >[선택] 대표 이미지를 선택해주세요!</span
         >
+        <div class="file-upload-wrapper">
+          <input
+            type="file"
+            id="fileInput"
+            @change="handleFileUpload"
+            class="file-input"
+          />
+          <label for="fileInput" class="file-upload-button">
+            <div class="fileInput-font">파일선택</div>
+          </label>
+          <span v-if="fileName">{{ fileName }}</span>
+          <span v-if="isModify" class="modify-notice"
+            >(수정시 이전에 등록한 이미지가 자동 업로드 되어있습니다)</span
+          >
+        </div>
       </div>
       <div
         id="editor"
@@ -514,6 +534,12 @@ img.resizable {
 .select-attraction-box {
   margin: 10px 0;
   width: 1200px;
+  display: flex;
+  line-height: 100%;
+}
+
+.line-height-center {
+  line-height: 100%;
 }
 
 .select-attraction-btn {
@@ -523,6 +549,7 @@ img.resizable {
   display: flex;
   margin: 10px 0;
   width: 1200px;
+  line-height: 100%;
 }
 
 .modify-notice {
@@ -595,5 +622,40 @@ img.resizable {
 }
 .changon-img {
   width: 60px;
+}
+.file-upload-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload-button {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  color: #495057;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+  margin: 0 3px;
+}
+.fileInput-font {
+  font-size: 15px;
+  font-weight: bold;
+}
+.file-upload-button:hover {
+  background-color: #f8f9fa;
+  border-color: #80bdff;
+}
+
+.file-upload-filename {
+  font-size: 14px;
+  color: #333;
 }
 </style>

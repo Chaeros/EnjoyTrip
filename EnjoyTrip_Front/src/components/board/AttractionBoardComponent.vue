@@ -38,6 +38,7 @@ const clickAttractionBoardArticleCard = (attractionBoardReview) => {
   display: flex;
   flex-wrap: wrap;
   gap: 20px; /* 카드 간격 추가 */
+  margin-left: 20px;
 }
 
 .article-card {

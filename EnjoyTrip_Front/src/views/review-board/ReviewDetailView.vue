@@ -21,11 +21,9 @@
     <div class="board-detail-center">
       <div class="board-detail-box">
         <div class="board-detail-info-box">
-          <div class="board-title">
-            <template v-if="article.title !== ''">
-              <h1>{{ article.title }}</h1>
-            </template>
-          </div>
+          <template v-if="article.title !== ''">
+            <div class="board-title-font">{{ article.title }}</div>
+          </template>
           <div class="board-post-detail-info">
             <div class="board-post-detail-info-left">
               <div class="writer-info-box">
@@ -42,22 +40,24 @@
                     <img class="writer-profile-img" :src="writerInfo.image" />
                   </div>
                 </template>
-                <div>{{ writerInfo.nickname }}</div>
+                <div class="writer-profile-nickname">
+                  {{ writerInfo.nickname }}
+                </div>
+                <div class="regdate">{{ formattedRegdate }}</div>
               </div>
-              <div class="regdate">{{ article.regdate }}</div>
             </div>
             <div class="post-detail-info-right">
               <template v-if="isMyArticle">
                 <button
                   type="button"
-                  class="btn btn-outline-secondary"
+                  class="btn btn-outline-secondary manage-btn"
                   @click="clickArticleModifyButton"
                 >
                   <b> 수정 </b>
                 </button>
                 <button
                   type="button"
-                  class="btn btn-outline-secondary"
+                  class="btn btn-outline-secondary manage-btn"
                   @click="clickArticleRemoveButton"
                 >
                   <b> 삭제 </b>
@@ -87,7 +87,7 @@
       </div>
       <div
         id="article-content"
-        class="article-content"
+        class="article-contentarticle-content"
         v-html="article.content"
       ></div>
       <CommentView
@@ -110,7 +110,7 @@ import {
 } from "@/api/attraction-board/attraction-board.js";
 import { getUserInfomationById } from "@/api/member/member.js";
 import { useRoute, useRouter } from "vue-router";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { getLocalStorage } from "@/util/localstorage/localstorage.js";
 import {
   addFriend,
@@ -139,6 +139,21 @@ const friendDto = ref({
   friendId: "",
 });
 const router = useRouter();
+
+const formattedRegdate = computed(() => {
+  if (!article.value || !article.value.regdate) {
+    return "";
+  }
+  const date = new Date(article.value.regdate);
+  return date.toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+});
 
 const clickArticleModifyButton = () => {
   router.push({
@@ -342,6 +357,7 @@ const getWriterInfo = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -350,11 +366,14 @@ const getWriterInfo = () => {
   margin-bottom: 20px;
 }
 
-.board-title h1 {
-  font-size: 24px;
+.board-title-font {
+  font-size: 70px;
   font-weight: 700;
   color: #333;
-  margin-bottom: 10px;
+  word-break: break-all; /* 단어가 넘칠 경우 줄 바꿈 */
+  overflow-wrap: break-word;
+  padding: 0;
+  margin-bottom: 20px;
 }
 
 .board-post-detail-info {
@@ -375,9 +394,26 @@ const getWriterInfo = () => {
   margin-right: 10px;
 }
 
+.writer-profile-nickname {
+  font-size: 25px;
+  font-weight: bold;
+}
+
 .regdate {
+  font-size: 25px;
   color: #777;
-  font-size: 14px;
+  margin-left: 40px;
+}
+
+.manage-btn {
+  margin-left: 10px;
+  /* border: none; */
+  border-radius: 20px;
+}
+
+.manage-btn > b {
+  font-size: 20px;
+  font-weight: bold;
 }
 
 .article-content {
