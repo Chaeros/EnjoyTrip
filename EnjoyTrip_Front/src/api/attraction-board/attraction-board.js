@@ -1,7 +1,7 @@
-import { localAxios } from "@/util/http-commons";
+import { localAxios } from '@/util/http-commons';
 const local = localAxios();
 const headers = {
-  "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+  'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
 };
 
 function addAttractionReview(article, success, fail) {
@@ -41,10 +41,18 @@ function modifyAttractionBoard(article, success, fail) {
   local.patch(`/attractionboard`, article, headers).then(success).catch(fail);
 }
 
+function getAttractionReviewArticles(id, success, fail) {
+  local
+    .get(`/attractionboard/attractionId/` + id)
+    .then(success)
+    .catch(fail);
+}
+
 export {
   addAttractionReview,
   getAttractionReviewList,
   getAttractionReviewArticle,
   removeAttractionBoard,
   modifyAttractionBoard,
+  getAttractionReviewArticles,
 };
