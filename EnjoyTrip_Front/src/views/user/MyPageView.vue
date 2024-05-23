@@ -14,9 +14,9 @@
           <li class="menu-item">
             <a href="#" @click="clickFriendManagement">친구관리</a>
           </li>
-          <li class="menu-item">
+          <!-- <li class="menu-item">
             <a href="#" @click="clickTripPlan">여행계획 </a>
-          </li>
+          </li> -->
         </ul>
       </div>
       <div class="content">

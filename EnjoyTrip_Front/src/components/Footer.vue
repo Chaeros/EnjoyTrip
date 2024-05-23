@@ -1,6 +1,6 @@
 <script setup></script>
 
-<template>
+<template class="footer-box">
   <body>
     <div class="footer">
       <div class="footer-content">
@@ -36,6 +36,10 @@
 </template>
 
 <style scoped>
+.footer-box {
+  width: 1200px;
+  margin: 0 auto;
+}
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -57,6 +61,7 @@ body {
   display: flex;
   align-items: center;
   gap: 80px;
+  margin: 0 auto;
 }
 .footer .footer-content .footer-logo img {
   max-height: 50px;
