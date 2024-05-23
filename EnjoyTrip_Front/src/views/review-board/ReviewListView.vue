@@ -1,17 +1,35 @@
 <template>
-  <Header></Header>
+  <Header />
   <div class="board-list-page">
     <div class="board-list-box">
       <div class="board-list-box-top">
         <div class="board-list-description-and-write-btn">
           <div class="review-title">리뷰 목록</div>
-          <button
-            type="button"
-            class="btn btn-outline-secondary user-button"
-            @click="clickBoardWriteBtn"
-          >
-            글쓰기
-          </button>
+          <div class="board-list-top-right-input-box">
+            <div class="search-box">
+              <input
+                class="form-control me-2 search-text"
+                type="search"
+                placeholder="Search"
+                aria-label="Search"
+              />
+              <img
+                src="@/img/search_icon.png"
+                alt="Show Password"
+                title="Show Password"
+                class="search_icon"
+                @mousedown="showPassword(true)"
+                @mouseup="showPassword(false)"
+              />
+            </div>
+            <button
+              type="button"
+              class="btn btn-outline-secondary user-button"
+              @click="clickBoardWriteBtn"
+            >
+              글쓰기
+            </button>
+          </div>
         </div>
         <div class="review-card-list">
           <template
@@ -28,7 +46,10 @@
       </div>
     </div>
   </div>
-  <Footer></Footer>
+  <Footer />
+  <button @click="scrollToTop" class="scroll-to-top" v-if="showScrollButton">
+    ↑
+  </button>
 </template>
 
 <script setup>
@@ -36,7 +57,7 @@ import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import AttractionBoardArticleCard from "@/components/item/card/AttractionBoardArticleCard.vue";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useMemberStore } from "@/store/member";
 import { storeToRefs } from "pinia";
 import { getAttractionReviewList } from "@/api/attraction-board/attraction-board";
@@ -44,6 +65,8 @@ import { getAttractionReviewList } from "@/api/attraction-board/attraction-board
 const router = useRouter();
 const memberStore = useMemberStore();
 const { isLogin } = storeToRefs(memberStore);
+const attractionBoardReviews = ref([]);
+const showScrollButton = ref(false);
 
 const clickBoardWriteBtn = () => {
   if (isLogin.value) {
@@ -54,15 +77,33 @@ const clickBoardWriteBtn = () => {
   }
 };
 
-const attractionBoardReviews = ref([]);
-getAttractionReviewList(
-  (response) => {
-    attractionBoardReviews.value = response.data;
-  },
-  (error) => {
-    console.error(error);
-  }
-);
+const getReviews = () => {
+  getAttractionReviewList(
+    (response) => {
+      attractionBoardReviews.value = response.data;
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
+};
+
+const handleScroll = () => {
+  showScrollButton.value = window.scrollY > 200;
+};
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+onMounted(() => {
+  getReviews();
+  window.addEventListener("scroll", handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("scroll", handleScroll);
+});
 
 const clickAttractionBoardArticleCard = (attractionBoardReview) => {
   router.push({
@@ -73,9 +114,16 @@ const clickAttractionBoardArticleCard = (attractionBoardReview) => {
 </script>
 
 <style scoped>
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .board-list-page {
   padding: 20px;
-  background-color: #f8f9fa; /* 밝은 배경색 추가 */
   min-height: 100vh; /* 최소 높이 설정 */
 }
 
@@ -83,7 +131,6 @@ const clickAttractionBoardArticleCard = (attractionBoardReview) => {
   max-width: 1200px;
   margin: 0 auto;
   background-color: #ffffff; /* 흰색 배경 추가 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
   border-radius: 8px; /* 모서리 둥글게 */
   padding: 20px;
 }
@@ -170,5 +217,59 @@ const clickAttractionBoardArticleCard = (attractionBoardReview) => {
   display: -webkit-box;
   -webkit-line-clamp: 3; /* 최대 3줄까지만 표시 */
   -webkit-box-orient: vertical;
+}
+
+.scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.scroll-to-top.show {
+  opacity: 1;
+  visibility: visible;
+}
+.search-box {
+  position: relative;
+}
+
+.search-text {
+  width: 300px;
+  padding: 8px 40px 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  transition: border-color 0.3s;
+}
+
+.search-text:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.search_icon {
+  width: 20px;
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+.board-list-top-right-input-box {
+  display: flex;
 }
 </style>

@@ -63,6 +63,8 @@ const unreadMessageCount = ref(0);
 const emit = defineEmits(["select-friend"]);
 const tempRoomId = ref(0);
 
+console.log(props.unreadMessageCountList);
+
 const selectFriend = () => {
   console.log("###################################################");
   console.log(props);
@@ -114,7 +116,8 @@ watch(
   (newValue, oldValue) => {
     updateUnreadMessageCount();
     console.log(newValue, oldValue);
-  }
+  },
+  { deep: true }
 );
 
 onMounted(() => {

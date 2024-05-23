@@ -108,11 +108,11 @@ const displayMember = ref({
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
 
 .header-wrap {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   height: 80px;
   align-content: center;
   background-color: #fff;
   border-bottom: 1px solid #eaeaea;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .header {

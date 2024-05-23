@@ -51,3 +51,9 @@ npm install pinia
 ```sh
 npm i vue-jwt-decode
 ```
+
+### 이모지
+
+```sh
+npm i emoji-mart-vue-fast
+```

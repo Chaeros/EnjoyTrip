@@ -1,56 +1,3 @@
-<script setup>
-import Header from "@/components/Header.vue";
-import Footer from "@/components/Footer.vue";
-import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
-import { getUserInfomation } from "@/api/member/member.js";
-
-// 'default' 대신 '*'를 사용하여 CommonJS 형식으로 가져오기
-import VueJwtDecode from "vue-jwt-decode";
-import {
-  getLocalStorage,
-  setLocalStorage,
-} from "@/util/localstorage/localstorage.js";
-import { storeToRefs } from "pinia";
-import { useMemberStore } from "@/store/member";
-
-const memberStore = useMemberStore();
-const accessToken = ref("");
-const email = ref("");
-const route = useRoute();
-const { userInfo, isLogin } = storeToRefs(memberStore);
-
-onMounted(() => {
-  accessToken.value = route.query.accessToken;
-  console.log(accessToken.value);
-
-  if (accessToken.value) {
-    try {
-      // CommonJS 형식으로 가져온 모듈에서 함수를 호출
-      const decodedToken = VueJwtDecode.decode(accessToken.value);
-      email.value = decodedToken.email;
-      console.log(decodedToken);
-      getUserInfomation(
-        email.value,
-        (response) => {
-          console.log(response.data);
-          setLocalStorage("userId", response.data.id);
-          setLocalStorage("access_token", accessToken.value);
-          console.log(getLocalStorage("userId"));
-          isLogin.value = true;
-          userInfo.value = response.data;
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    } catch (error) {
-      console.error("Invalid token:", error);
-    }
-  }
-});
-</script>
-
 <template>
   <div>
     <Header></Header>
@@ -95,9 +42,134 @@ onMounted(() => {
         <span>!</span>
       </h1>
     </div>
+    <div class="board-list">
+      <div class="board-list-top-bar">
+        <div class="board-list-top-bar-left">
+          <img src="@/img/coldragon2-removebg.png" class="main-sub-title-img" />
+          <div class="main-sub-title-font">HOT 리뷰</div>
+        </div>
+        <div class="board-list-top-bar-right">
+          <button type="button" class="btn btn-outline-dark no-outline">
+            <div class="moreInfoButton" @click="toggleHotReviewMode">
+              <template v-if="isOpenHotReviewComponent"> 접기 </template>
+              <template v-if="!isOpenHotReviewComponent"> 펼치기 </template>
+            </div>
+          </button>
+          <button type="button" class="btn btn-outline-dark no-outline">
+            <div class="moreInfoButton">더보기</div>
+          </button>
+        </div>
+      </div>
+      <!-- 관광지 리뷰 Component 장착 -->
+      <template v-if="isOpenHotReviewComponent">
+        <AttractionBoardComponent
+          :attractionBoardReviews="attractionBoardReviews"
+        ></AttractionBoardComponent>
+      </template>
+
+      <div class="board-list-top-bar">
+        <div class="board-list-top-bar-left">
+          <img src="@/img/coldragon2-removebg.png" class="main-sub-title-img" />
+          <div class="main-sub-title-font">내 여행계획</div>
+        </div>
+        <div class="board-list-top-bar-right">
+          <button type="button" class="btn btn-outline-dark no-outline">
+            <div class="moreInfoButton" @click="toggleMyPlanMode">
+              <template v-if="isOpenMyPlanComponent"> 접기 </template>
+              <template v-if="!isOpenMyPlanComponent"> 펼치기 </template>
+            </div>
+          </button>
+          <button type="button" class="btn btn-outline-dark no-outline">
+            <div class="moreInfoButton">더보기</div>
+          </button>
+        </div>
+      </div>
+      <!-- 내 여행계획 Component 장착 -->
+    </div>
     <Footer></Footer>
   </div>
 </template>
+
+<script setup>
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
+import { onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { getUserInfomation } from "@/api/member/member.js";
+
+// 'default' 대신 '*'를 사용하여 CommonJS 형식으로 가져오기
+import VueJwtDecode from "vue-jwt-decode";
+import {
+  getLocalStorage,
+  setLocalStorage,
+} from "@/util/localstorage/localstorage.js";
+import { storeToRefs } from "pinia";
+import { useMemberStore } from "@/store/member";
+import { getAttractionReviewList } from "@/api/attraction-board/attraction-board";
+import AttractionBoardComponent from "@/components/board/AttractionBoardComponent.vue";
+
+const memberStore = useMemberStore();
+const accessToken = ref("");
+const email = ref("");
+const route = useRoute();
+const { userInfo, isLogin } = storeToRefs(memberStore);
+const attractionBoardReviews = ref([]);
+const router = useRouter();
+
+// Mode 관련 변수
+const isOpenHotReviewComponent = ref(true); // OPEN, FOLD
+const isOpenMyPlanComponent = ref(true); // OPEN, FOLD
+
+const toggleHotReviewMode = () => {
+  isOpenHotReviewComponent.value = !isOpenHotReviewComponent.value;
+};
+
+const toggleMyPlanMode = () => {
+  isOpenMyPlanComponent.value = !isOpenMyPlanComponent.value;
+};
+
+onMounted(() => {
+  accessToken.value = route.query.accessToken;
+  console.log(accessToken.value);
+
+  if (accessToken.value) {
+    try {
+      // CommonJS 형식으로 가져온 모듈에서 함수를 호출
+      const decodedToken = VueJwtDecode.decode(accessToken.value);
+      email.value = decodedToken.email;
+      console.log(decodedToken);
+      getUserInfomation(
+        email.value,
+        (response) => {
+          console.log(response.data);
+          setLocalStorage("userId", response.data.id);
+          setLocalStorage("access_token", accessToken.value);
+          console.log(getLocalStorage("userId"));
+          isLogin.value = true;
+          userInfo.value = response.data;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    } catch (error) {
+      console.error("Invalid token:", error);
+    }
+  }
+  getReviews();
+});
+
+const getReviews = () => {
+  getAttractionReviewList(
+    (response) => {
+      attractionBoardReviews.value = response.data;
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
+};
+</script>
 
 <style scoped>
 /* 스타일은 필요에 따라 추가 */
@@ -128,6 +200,8 @@ onMounted(() => {
 #slide1 > ul {
   font-size: 0;
   list-style: none; /* 점을 제거합니다 */
+  margin: 0;
+  padding: 0;
 }
 .main-slide-image {
   width: 1200px;
@@ -208,5 +282,52 @@ h1 span:nth-child(8) {
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+2074, U+20AC, U+2122, U+2191,
     U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
+
+.board-list {
+  width: 1200px;
+  margin: 0 auto;
+}
+.board-list-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eaeaea;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+/* .board-list-top-bar:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+} */
+.board-list-top-bar-left {
+  display: flex;
+}
+.board-list-top-bar-right {
+  display: flex;
+  margin-right: 20px;
+}
+.no-outline {
+  border: none;
+}
+.moreInfoButton {
+  cursor: pointer;
+  font-size: 17px;
+  font-weight: bold;
+  font-family: "Noto Sans KR", sans-serif;
+}
+.main-sub-title-img {
+  width: 70px;
+}
+.main-sub-title-font {
+  font-size: 35px;
+  font-weight: bold;
+  font-family: "Noto Sans KR", sans-serif;
+}
+.separate-line {
+  margin-top: 0px;
+  margin-bottom: 20px;
 }
 </style>

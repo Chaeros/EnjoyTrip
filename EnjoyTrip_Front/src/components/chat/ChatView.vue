@@ -95,8 +95,8 @@
                 v-for="friend in friends"
                 :key="friend.id"
                 :friend="friend"
-                :unreadMessageCountList="unreadMessageCountList"
-                :selectedFriend="selectedFriend"
+                :unread-message-count-list="unreadMessageCountList"
+                :selected-friend="selectedFriend"
                 @select-friend="selectFriend"
               />
             </template>
@@ -105,8 +105,8 @@
                 v-for="friend in chattingMembers"
                 :key="friend.id"
                 :friend="friend"
-                :unreadMessageCountList="unreadMessageCountList"
-                :selectedFriend="selectedFriend"
+                :unread-message-count-list="unreadMessageCountList"
+                :selected-friend="selectedFriend"
                 @select-friend="selectFriend"
               />
             </template>
@@ -167,12 +167,22 @@
               />
             </template>
             <template v-else>
-              <input
-                type="text"
-                v-model="newMessage"
-                @keydown.enter="sendMessage"
-                placeholder="메시지를 입력하세요."
-              />
+              <div class="chat-input-box">
+                <input
+                  type="text"
+                  v-model="newMessage"
+                  @keydown.enter="sendMessage"
+                  placeholder="메시지를 입력하세요."
+                />
+                <!-- <input type="file" @change="onFileChange" accept="image/*" /> -->
+              </div>
+              <div>
+                <Picker @emoji-click="addEmoji" />
+                <!-- 버튼 -->
+                <button id="emoji_btn" @click="addEmoji">button</button>
+                <!-- input 상자 -->
+                <input type="text" id="message" />
+              </div>
             </template>
           </div>
         </div>
@@ -181,7 +191,7 @@
     <div v-else>
       <button
         type="button"
-        class="chat-minimized btn btn-outline-secondary"
+        class="btn btn-dark chat-minimized"
         ref="minimizedButton"
         @mousedown="startDrag"
         @dblclick="toggleMinimize"
@@ -195,8 +205,11 @@
 
 <script setup>
 import { ref, watch, onMounted, nextTick } from "vue";
+import axios from "axios";
 import ChatMemberItem from "@/components/item/chat/ChatMemberItem.vue";
 import { getLocalStorage } from "@/util/localstorage/localstorage";
+import { Picker } from "emoji-mart-vue-fast";
+import "emoji-mart-vue-fast/css/emoji-mart.css"; // 이모지 선택기 스타일 가져오기
 import {
   getUserInfomationById,
   getChattingMemberId,
@@ -221,7 +234,7 @@ import { useChatStore } from "@/store/chat/chat";
 import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
 import { useMemberStore } from "@/store/member";
 import { useFriendManagementStore } from "@/store/friend-management/friend-management.js";
-
+const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
 const friendManagementStore = useFriendManagementStore();
 const { friends } = storeToRefs(friendManagementStore);
 const { bringMyFriendsList } = friendManagementStore;
@@ -266,6 +279,51 @@ const myRooms = ref([]);
 const chatContainer = ref(null);
 const minimizedButton = ref(null);
 const chatBody = ref(null); // 추가: chat-body 참조
+
+const selectedFile = ref(null); // 파일 선택 상태 저장
+const onFileChange = (event) => {
+  selectedFile.value = event.target.files[0];
+  sendImage();
+};
+
+const sendImage = async () => {
+  if (!selectedFile.value) return;
+
+  const formData = new FormData();
+  formData.append("file", selectedFile.value);
+  formData.append("senderId", userId); // 필요한 경우 추가 데이터
+
+  try {
+    const response = await axios.post(
+      VITE_VUE_IMAGE_SERVER_URL + "/image/upload",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    console.log(response.data);
+    // 성공 시 처리
+    sendMsg(response.data.imageUrl, userId, "IMAGE"); // 이미지 URL과 함께 메시지 전송
+    registChatMessage(
+      {
+        roomId: currentSelectedRoomId.value,
+        memberId: getLocalStorage("userId"),
+        message: response.data.imageUrl,
+        messageType: "IMAGE", // 이미지 타입 메시지
+      },
+      (response) => {
+        console.log(response.data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 searchUnreadMessageCountListById(
   getLocalStorage("userId"),
@@ -319,6 +377,20 @@ socket.value.onmessage = function (e) {
   };
   console.log(parsedData);
 
+  let isMember = false;
+  if (currentMode.value == "CHATTING") {
+    console.log(chattingMembers);
+    console.log(parsedData);
+    chattingMembers.value.forEach((member) => {
+      if (member.myId == parsedData.senderId) {
+        isMember = true;
+      }
+    });
+    if (isMember == false) {
+      chattingMembers.value.push();
+    }
+  }
+
   if (parsedData.chatRoomId == currentSelectedRoomId.value) {
     activeChat.value.messages.push(tempData);
   } else {
@@ -329,8 +401,11 @@ socket.value.onmessage = function (e) {
     unreadMessageCountList.value.forEach((unreadMessageCount, index) => {
       if (unreadMessageCount.roomId == parsedData.chatRoomId) {
         console.log(unreadMessageCount.roomId, "1증가");
-        unreadMessageCountList.value[index].count =
-          unreadMessageCountList.value[index].count + 1;
+        console.log("index=", index);
+        console.log(unreadMessageCountList.value[index]);
+        const tempVal = unreadMessageCountList.value[index].count;
+        unreadMessageCountList.value[index].count = tempVal + 1;
+        console.log(unreadMessageCountList.value[index].count);
         isMyRoom = true;
       }
     });
@@ -352,71 +427,6 @@ socket.value.onmessage = function (e) {
       );
     }
   }
-
-  // bringPrivateChatRoomList;
-
-  // console.log(tempData);
-  // console.log(
-  //   "userId=",
-  //   getLocalStorage("userId"),
-  //   "currentRoomId=",
-  //   currentSelectedRoomId.value
-  // );
-
-  // let isMyRoom = false;
-  // myRooms.value.forEach((roomId) => {
-  //   if (roomId == parsedData.chatRoomId) {
-  //     isMyRoom = true;
-  //   }
-  // });
-
-  // if (parsedData.chatRoomId == currentSelectedRoomId.value) {
-  //   activeChat.value.messages.push(tempData);
-  // }
-
-  // if (parsedData.senderId == getLocalStorage("userId")) {
-  //   isMyRoom = true;
-  //   console.log(isMyRoom);
-  //   return;
-  // }
-  // console.log(isMyRoom);
-
-  // if (isMyRoom == false) {
-  //   sendEnterToRoomMsg(parsedData.chatRoomId);
-  // }
-
-  // // 내가 보낸 메시지가 아니면서 현재 입장해있는 방이 아니라면
-  // if (
-  //   parsedData.senderId != getLocalStorage("userId") &&
-  //   parsedData.chatRoomId != currentSelectedRoomId.value
-  // ) {
-  // if (currentMode.value === "FRIEND") {
-  //   console.log(unreadMessageCountList.value);
-  //   unreadMessageCountList.value.forEach((unreadMessageCount, index) => {
-  //     if (unreadMessageCount.roomId == parsedData.chatRoomId) {
-  //       console.log(unreadMessageCountList.value[index]);
-  //       unreadMessageCountList.value[index].count =
-  //         unreadMessageCountList.value[index].count + 1;
-  //       console.log("index", index);
-  //     }
-  //   });
-  //     console.log(unreadMessageCountList.value);
-  //     // friends.value.forEach((friend) => {
-  //     //   if (friend.id == parsedData.chatRoomId) {
-  //     //     friends.value.count = friends.value.count + 1;
-  //     //   }
-  //     // });
-
-  //     // clickCallMyFriendList();
-  //   } else if (currentMode.value === "CHATTING") {
-  //     // clickCallMyChatRoomList();
-  //     // chattingMembers.value.forEach((friend) => {
-  //     //   if (friend.id == parsedData.chatRoomId) {
-  //     //     chattingMembers.value.count = chattingMembers.value.count + 1;
-  //     //   }
-  //     // });
-  //   }
-  // }
 };
 
 onMounted(() => {
@@ -505,7 +515,6 @@ const selectFriend = (friendId) => {
           activeChat.value.id = response.data.id;
           activeChat.value.name = response.data.nickname;
           activeChat.value.avatar = response.data.image;
-          // resetCount(response.data);
         },
         (error) => {
           console.log(error);
@@ -526,8 +535,6 @@ const resetCount = (roomId) => {
     (response) => {
       if (currentMode.value === "FRIEND") {
         clickCallMyFriendList();
-      } else if (currentMode.value === "CHATTING") {
-        // clickCallMyChatRoomList();
       }
     },
     (error) => {
@@ -543,19 +550,22 @@ const clickCallMyFriendList = () => {
     (response) => {
       friends.value = [];
       friends.value = response.data;
+      console.log(friends.value);
       response.data.forEach((friend) => {
-        searchPrivateChatRoom(
-          getLocalStorage("userId"),
-          friend.friendId,
-          (roomId) => {
-            enterOrRegistPrivateChatRoom(roomId);
-            console.log("enter room ", roomId);
-          },
-          (error2) => {
-            console.log(error2);
-          }
-        );
-        // bringFriendInfo(friend.friendId);
+        enterOrRegistPrivateChatRoom({
+          myId: getLocalStorage("userId"),
+          opponentId: friend.friendId,
+        });
+        // searchPrivateChatRoom(
+        //   getLocalStorage("userId"),
+        //   friend.friendId,
+        //   (roomId) => {
+        //     console.log("enter room ", roomId);
+        //   },
+        //   (error2) => {
+        //     console.log(error2);
+        //   }
+        // );
       });
       console.log(response.data);
     },
@@ -564,30 +574,7 @@ const clickCallMyFriendList = () => {
     }
   );
   callUnreadMessageCountList();
-  // searchUnreadMessageCountListById(
-  //   getLocalStorage("userId"),
-  //   (response) => {
-  //     unreadMessageCountList.value = response.data;
-  //     console.log("@@@@@@@@@@@@@");
-  //     console.log(unreadMessageCountList.value);
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //   }
-  // );
 };
-
-// const bringFriendInfo = (friendId) => {
-//   getUserInfomationById(
-//     friendId,
-//     (response) => {
-//       friends.value.push(response.data);
-//     },
-//     (error) => {
-//       console.log(error);
-//     }
-//   );
-// };
 
 const clickCallGroupChatRoomList = () => {
   currentMode.value = "GROUP";
@@ -599,17 +586,11 @@ const clickCallMyChatRoomList = () => {
     getLocalStorage("userId"),
     (response) => {
       chattingMembers.value = [];
-      const tempArray = [];
       response.data.forEach(async (receiverId) => {
         await searchPrivateChatRoom(
           getLocalStorage("userId"),
           receiverId,
           (roomId) => {
-            // tempArray.push({
-            //   id: roomId.data,
-            //   myId: getLocalStorage("userId"),
-            //   opponentId: receiverId,
-            // });
             chattingMembers.value.push({
               id: roomId.data,
               myId: getLocalStorage("userId"),
@@ -620,11 +601,8 @@ const clickCallMyChatRoomList = () => {
             console.log(error2);
           }
         );
-        // bringFriendInfo(chatMemberId);
       });
       console.log(chattingMembers.value);
-      // friends.value = tempArray;
-      // console.log(friends);
     },
     (error) => {
       console.log(error);
@@ -636,6 +614,24 @@ const clickCallMyChatRoomList = () => {
 const enterChatRoom = (friendId) => {
   receiverId.value = friendId;
 };
+
+const addEmoji = (emoji) => {
+  newMessage.value += emoji.native;
+};
+
+// const button = document.querySelector("#emoji_btn");
+// const picker = new EmojiButton({
+//   position: "bottom-start",
+// });
+
+// button.addEventListener("click", () => {
+//   picker.togglePicker(button);
+// });
+
+// picker.on("emoji", (emoji) => {
+//   const text_box = document.querySelector("#message");
+//   text_box.value += emoji;
+// });
 </script>
 
 <style scoped>
@@ -653,7 +649,6 @@ const enterChatRoom = (friendId) => {
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  /* background-color: white; */
   border-bottom: 1px solid #ccc;
   border-radius: 10px;
 }
@@ -692,7 +687,7 @@ const enterChatRoom = (friendId) => {
 }
 .chat-content {
   display: flex;
-  height: calc(100% - 50px); /* Adjust the height to account for the top bar */
+  height: calc(100% - 50px);
 }
 .chat-selectbar {
   width: 60px;
@@ -700,7 +695,6 @@ const enterChatRoom = (friendId) => {
   flex-direction: column;
   justify-items: center;
   align-items: center;
-  /* background-color: rgb(234, 226, 226); */
 }
 .chat-selectbar-logo {
   width: 60px;
@@ -736,19 +730,16 @@ const enterChatRoom = (friendId) => {
 }
 .chat-sidebar {
   width: 200px;
-  /* background-color: white; */
   border-left: 1px solid #ccc;
   border-right: 1px solid #ccc;
   overflow-y: auto;
   flex-shrink: 0;
 }
 .chat-list {
-  /* padding: 10px; */
 }
 .chat-item {
   display: flex;
   align-items: center;
-  /* padding: 10px; */
   cursor: pointer;
   border-bottom: 1px solid #ccc;
 }
@@ -823,7 +814,6 @@ const enterChatRoom = (friendId) => {
 }
 .chat-footer {
   padding: 10px;
-  /* background-color: #fff; */
   border-top: 1px solid #ccc;
 }
 .chat-footer input {
@@ -834,11 +824,9 @@ const enterChatRoom = (friendId) => {
 }
 .chat-minimized {
   position: fixed;
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  /* border: 2px solid; */
-  /* background-color: #007bff; */
   color: white;
   display: flex;
   justify-content: center;
@@ -846,5 +834,13 @@ const enterChatRoom = (friendId) => {
   cursor: move;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+}
+.chat-input-box {
+  display: flex;
+}
+.emoji {
+  width: 2000px;
+  height: 100px;
+  z-index: 99999;
 }
 </style>
