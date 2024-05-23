@@ -374,6 +374,7 @@ socket.value.onmessage = function (e) {
     roomId: parsedData.chatRoomId,
     memberId: parsedData.senderId,
     message: parsedData.message,
+    messageType: parsedData.messageType,
   };
   console.log(parsedData);
 
@@ -411,7 +412,9 @@ socket.value.onmessage = function (e) {
   }
   console.log(parsedData.chatRoomId, currentSelectedRoomId.value);
   if (parsedData.chatRoomId == currentSelectedRoomId.value) {
-    activeChat.value.messages.push(tempData);
+    if (parsedData.messageType == "TALK") {
+      activeChat.value.messages.push(tempData);
+    }
     console.log("이 방으로 옴");
   } else {
     // 수신받은 메시지의 출처가 , 현재 내가 머문 방과 다른 경우
@@ -424,7 +427,9 @@ socket.value.onmessage = function (e) {
         console.log("index=", index);
         console.log(unreadMessageCountList.value[index]);
         const tempVal = unreadMessageCountList.value[index].count;
-        unreadMessageCountList.value[index].count = tempVal + 1;
+        if (parsedData.messageType == "TALK") {
+          unreadMessageCountList.value[index].count = tempVal + 1;
+        }
         console.log(unreadMessageCountList.value[index].count);
         isMyRoom = true;
       }

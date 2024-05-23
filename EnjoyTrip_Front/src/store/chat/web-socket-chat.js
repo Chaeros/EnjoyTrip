@@ -51,7 +51,7 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
     if (socket.value) {
       let payload = {
         messageType: "ENTER",
-        senderId: userId,
+        senderId: getLocalStorage("userId"),
         message: userId + "님이 입장하셨습니다.",
         chatRoomId: currentSelectedRoomId.value,
       };
@@ -66,7 +66,7 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
     if (socket.value) {
       let payload = {
         messageType: "ENTER",
-        senderId: userId,
+        senderId: getLocalStorage("userId"),
         message: userId + "님이 입장하셨습니다.",
         chatRoomId: roomId,
       };
@@ -81,7 +81,7 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
     if (socket.value) {
       let payload = {
         messageType: "LEAVE",
-        senderId: userId,
+        senderId: getLocalStorage("userId"),
         message: "사용자가 방을 떠났습니다.",
         chatRoomId: currentSelectedRoomId.value,
       };

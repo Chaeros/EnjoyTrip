@@ -1,26 +1,26 @@
 <script setup>
-import { getLocalStorage } from '@/util/localstorage/localstorage';
-const userId = parseInt(getLocalStorage('userId'));
-console.dir('유저아이디');
+import { getLocalStorage } from "@/util/localstorage/localstorage";
+const userId = parseInt(getLocalStorage("userId"));
+console.dir("유저아이디");
 console.dir(userId);
 
-import { ref, watch } from 'vue';
-import AttractionSearchBar from '@/components/AttractionSearchBar.vue';
-import AccomodationSearchBar from '@/components/AccomodationSearchBar.vue';
-import KakaoMap from '@/components/KakaoMap.vue';
-import AttractionSearch from '@/components/AttractionSearch.vue';
-import AccomodationSearch from '@/components/AccomodationSearch.vue';
-import DateCheck from '@/components/DateCheck.vue';
-import TotalSelectedAttractions from '@/components/TotalSelectedAttractions.vue';
-import DateContainer from '@/components/DateContainer.vue';
-import AttractionAddModal from '@/components/AttractionAddModal.vue';
-import AccomodationAddModal from '@/components/AccomodationAddModal.vue';
-import ShowPlanDetailModal from '@/components/ShowPlanDetailModal.vue';
-import fillDetailPlanModal from '@/components/FillDetailPlanModal.vue';
-import MyPlanListModal from '@/components/MyPlanListModal.vue';
-import AttractionDetailModal from '@/components/AttractionDetailModal.vue';
+import { ref, watch } from "vue";
+import AttractionSearchBar from "@/components/AttractionSearchBar.vue";
+import AccomodationSearchBar from "@/components/AccomodationSearchBar.vue";
+import KakaoMap from "@/components/KakaoMap.vue";
+import AttractionSearch from "@/components/AttractionSearch.vue";
+import AccomodationSearch from "@/components/AccomodationSearch.vue";
+import DateCheck from "@/components/DateCheck.vue";
+import TotalSelectedAttractions from "@/components/TotalSelectedAttractions.vue";
+import DateContainer from "@/components/DateContainer.vue";
+import AttractionAddModal from "@/components/AttractionAddModal.vue";
+import AccomodationAddModal from "@/components/AccomodationAddModal.vue";
+import ShowPlanDetailModal from "@/components/ShowPlanDetailModal.vue";
+import fillDetailPlanModal from "@/components/FillDetailPlanModal.vue";
+import MyPlanListModal from "@/components/MyPlanListModal.vue";
+import AttractionDetailModal from "@/components/AttractionDetailModal.vue";
 
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 import {
   registTripPlan,
   editTripPlan,
@@ -28,35 +28,35 @@ import {
   getDetailTripPlan,
   removeTripPlan,
   getDetailMakeTripPlan,
-} from '@/api/plan/plan';
+} from "@/api/plan/plan";
 
 import {
   getDetailAttractionInfo,
   getAttractionLikeCnt,
-} from '@/api/attraction';
+} from "@/api/attraction";
 
 const router = useRouter();
-const currentView = ref('search');
+const currentView = ref("search");
 
-const departureDate = ref('');
-const arrivalDate = ref('');
+const departureDate = ref("");
+const arrivalDate = ref("");
 const totalTripDates = ref(0);
 const selectedAttractions = ref([]);
 const selectedAccomodations = ref([]);
 const selectedAttractionsByDate = ref([]);
 const selectedAccomodationsByDate = ref([]);
 const selectedAttractionDetailsByDate = ref([]);
-const title = ref('');
-const content = ref('');
-const image = ref('');
-const fileName = ref('');
+const title = ref("");
+const content = ref("");
+const image = ref("");
+const fileName = ref("");
 
 const showModal = ref(false);
 
-const activeTab = ref('attraction');
+const activeTab = ref("attraction");
 function setActiveTab(tab) {
   activeTab.value = tab;
-  if (activeTab.value === 'dateCheck') {
+  if (activeTab.value === "dateCheck") {
     toggleModal();
   }
 }
@@ -71,7 +71,7 @@ function toggleModal() {
   showModal.value = !showModal.value;
 }
 
-const isExistSelectView = ref(false);
+const isExistSelectView = ref(true);
 const toggleSelectContent = () => {
   isExistSelectView.value = !isExistSelectView.value;
 };
@@ -111,14 +111,14 @@ const clickAccomodationAdd = (accomodation) => {
 };
 
 // const date = ref('');
-const tripPlanId = ref('');
+const tripPlanId = ref("");
 const tripPlanRequest = ref({
   tripPlan: {
-    title: '',
-    content: '',
-    departureDate: '',
-    arrivalDate: '',
-    image: '',
+    title: "",
+    content: "",
+    departureDate: "",
+    arrivalDate: "",
+    image: "",
     memberId: userId,
   },
   makeTripPlans: [],
@@ -138,20 +138,20 @@ async function registerTripPlan(param) {
 }
 
 const createPlan = () => {
-  console.dir('예외 처리');
+  console.dir("예외 처리");
   // 예외 처리
   if (!departureDate.value || !arrivalDate.value) {
-    window.alert('날짜를 정확히 입력해주세요');
+    window.alert("날짜를 정확히 입력해주세요");
     return;
   }
 
   if (selectedAttractions.value.length === 0) {
-    window.alert('1개 이상의 관광지를 선택해주세요');
+    window.alert("1개 이상의 관광지를 선택해주세요");
     return;
   }
 
   if (selectedAccomodations.value.length === 0) {
-    window.alert('1개 이상의 숙소를 선택해주세요');
+    window.alert("1개 이상의 숙소를 선택해주세요");
     return;
   }
 
@@ -166,12 +166,12 @@ const createPlan = () => {
     selectedAttractionDetailsByDate.value[i] = [];
   }
 
-  title.value = '';
-  content.value = '';
-  image.value = '';
-  fileName.value = '';
+  title.value = "";
+  content.value = "";
+  image.value = "";
+  fileName.value = "";
 
-  currentView.value = 'plan';
+  currentView.value = "plan";
 };
 
 const updateDates = (startDate, endDate, totalDates) => {
@@ -186,25 +186,25 @@ const updateDates = (startDate, endDate, totalDates) => {
 };
 
 const handleDragged = (attraction) => {
-  console.dir('드래그 됨');
+  console.dir("드래그 됨");
 };
 
 const dateContainerDragged = (date, index) => {
-  console.dir('dateContainer 드래그 처리');
+  console.dir("dateContainer 드래그 처리");
 };
 
 const onSpaceDrop = (event, date) => {
   try {
-    const attraction = JSON.parse(event.dataTransfer.getData('attraction'));
-    console.dir('어트랙션 아이디');
+    const attraction = JSON.parse(event.dataTransfer.getData("attraction"));
+    console.dir("어트랙션 아이디");
     console.dir(attraction.contentId);
     selectedAttractionsByDate.value[date - 1].push(attraction);
     const makeTripPlan = {
       sequence: selectedAttractionsByDate.value[date - 1].length - 1,
-      departureTime: '',
-      arrivalTime: '',
-      memo: '',
-      moveTime: '',
+      departureTime: "",
+      arrivalTime: "",
+      memo: "",
+      moveTime: "",
       tripDate: date,
       memberId: userId,
       tripPlanId: tripPlanId.value,
@@ -213,13 +213,13 @@ const onSpaceDrop = (event, date) => {
     selectedAttractionDetailsByDate.value[date - 1].push(makeTripPlan);
     console.dir(selectedAttractionsByDate);
   } catch (error) {
-    console.log('Invalid JSON:', error);
+    console.log("Invalid JSON:", error);
   }
 };
 
 const onDateDrop = (event, date, index) => {
-  const fromDate = event.dataTransfer.getData('date');
-  const fromIndex = event.dataTransfer.getData('index');
+  const fromDate = event.dataTransfer.getData("date");
+  const fromIndex = event.dataTransfer.getData("index");
 
   const temp = selectedAttractionsByDate.value[date - 1][index];
   selectedAttractionsByDate.value[date - 1][index] =
@@ -246,7 +246,7 @@ const onDateDrop = (event, date, index) => {
     selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex];
   selectedAttractionDetailsByDate.value[fromDate - 1][fromIndex] = detailTemp;
 
-  console.dir('데이트 드롭');
+  console.dir("데이트 드롭");
   console.dir(selectedAttractionsByDate.value);
   console.dir(selectedAttractionDetailsByDate.value);
 };
@@ -265,13 +265,13 @@ async function updateTripPlanImageTitleContent(planId) {
   await getDetailTripPlan(
     planId,
     ({ data }) => {
-      console.dir('타입');
+      console.dir("타입");
       console.dir(typeof data);
       console.dir(data);
       title.value = data.tripPlan.title;
       content.value = data.tripPlan.content;
       image.value = data.tripPlan.image;
-      fileName.value = '';
+      fileName.value = "";
     },
     ({ error }) => {
       console.dir(error);
@@ -282,7 +282,7 @@ async function updateTripPlanImageTitleContent(planId) {
 const showPlanDetailModalOpen = ref(false);
 async function showPlanDetailModalToggle() {
   await updateTripPlanImageTitleContent(tripPlanId.value);
-  console.dir('트립플랜아이디');
+  console.dir("트립플랜아이디");
   console.dir(tripPlanId.value);
   showPlanDetailModalOpen.value = !showPlanDetailModalOpen.value;
 }
@@ -308,11 +308,11 @@ async function updateTripPlan(title, content, imageUrl) {
   const tripPlanRequest = {
     tripPlan: {
       id: tripPlanId.value,
-      title: '',
-      content: '',
-      departureDate: '',
-      arrivalDate: '',
-      image: '',
+      title: "",
+      content: "",
+      departureDate: "",
+      arrivalDate: "",
+      image: "",
       memberId: userId,
     },
     makeTripPlans: [],
@@ -333,19 +333,19 @@ async function updateTripPlan(title, content, imageUrl) {
     }
   }
 
-  console.dir('tripPlanRequest는');
+  console.dir("tripPlanRequest는");
   console.dir(tripPlanRequest);
 
   try {
     await editMyTripPlan(tripPlanRequest);
-    console.dir('업데이트 완료');
+    console.dir("업데이트 완료");
   } catch (error) {
-    console.log('업데이트 실패:', error);
+    console.log("업데이트 실패:", error);
   }
 }
 
 const removeAttraction = (date, index) => {
-  console.dir('자 짜르자');
+  console.dir("자 짜르자");
   console.dir(date);
   console.dir(index);
   console.dir(selectedAttractionsByDate.value);
@@ -377,15 +377,15 @@ const currentModalViewAccomodation = () => {
   accomodationAddModalOpen.value = true;
 };
 
-const dateContainerMaxWidth = ref('');
+const dateContainerMaxWidth = ref("");
 watch(totalTripDates, (newTotalTripDates) => {
   dateContainerMaxWidth.value = `${newTotalTripDates * 170}px`;
 });
 
-const departureTime = ref('');
-const arrivalTime = ref('');
-const memo = ref('');
-const moveTime = ref('');
+const departureTime = ref("");
+const arrivalTime = ref("");
+const memo = ref("");
+const moveTime = ref("");
 const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
   const param = {
     tripPlanId: tripPlanId,
@@ -396,14 +396,14 @@ const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
   await getDetailMakeTripPlan(
     param,
     ({ data }) => {
-      console.dir('axios받은 데이타');
+      console.dir("axios받은 데이타");
       console.dir(data);
       console.dir(typeof data);
-      if (data && typeof data === 'object') {
+      if (data && typeof data === "object") {
         // axios랑 쓴 내용이랑 겹칠 때 쓴 내용을 우선적으로 보여줌
         if (
           selectedAttractionDetailsByDate.value[tripDate - 1][sequence]
-            .departureTime !== ''
+            .departureTime !== ""
         ) {
           departureTime.value =
             selectedAttractionDetailsByDate.value[tripDate - 1][
@@ -414,7 +414,7 @@ const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
         }
         if (
           selectedAttractionDetailsByDate.value[tripDate - 1][sequence]
-            .arrivalTime !== ''
+            .arrivalTime !== ""
         ) {
           arrivalTime.value =
             selectedAttractionDetailsByDate.value[tripDate - 1][
@@ -425,7 +425,7 @@ const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
         }
         if (
           selectedAttractionDetailsByDate.value[tripDate - 1][sequence].memo !==
-          ''
+          ""
         ) {
           memo.value =
             selectedAttractionDetailsByDate.value[tripDate - 1][sequence].memo;
@@ -434,7 +434,7 @@ const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
         }
         if (
           selectedAttractionDetailsByDate.value[tripDate - 1][sequence]
-            .moveTime !== ''
+            .moveTime !== ""
         ) {
           moveTime.value =
             selectedAttractionDetailsByDate.value[tripDate - 1][
@@ -443,7 +443,7 @@ const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
         } else {
           moveTime.value = data.moveTime;
         }
-        console.dir('굿. maketripplan detail 잘받아옴.');
+        console.dir("굿. maketripplan detail 잘받아옴.");
         console.dir(departureTime.value);
         console.dir(arrivalTime.value);
         console.dir(memo.value);
@@ -453,7 +453,7 @@ const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
         // arrivalTime.value = '';
         // memo.value = '';
         // moveTime.value = '';
-        console.dir('maketripplan detail 못받아옴. 셀렉트 디테일은');
+        console.dir("maketripplan detail 못받아옴. 셀렉트 디테일은");
         console.dir(tripDate);
         console.dir(selectedAttractionDetailsByDate.value);
         departureTime.value =
@@ -478,14 +478,14 @@ const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
   );
 };
 
-const modalDate = ref('');
-const modalIndex = ref('');
+const modalDate = ref("");
+const modalIndex = ref("");
 const detailPlanModalOpen = async (date, index) => {
   modalDate.value = date;
   modalIndex.value = index;
-  console.dir('열리는 modalDate : ');
+  console.dir("열리는 modalDate : ");
   console.dir(modalDate.value);
-  console.dir('열리는 modalIndex : ');
+  console.dir("열리는 modalIndex : ");
   console.dir(modalIndex.value);
 
   console.dir(selectedAttractionDetailsByDate.value);
@@ -507,7 +507,7 @@ const planDetailToggle = () => {
 };
 
 const submitPlanDetail = (departureTime, arrivalTime, memo, moveTime) => {
-  console.dir('받은 모달');
+  console.dir("받은 모달");
   console.dir(modalDate.value);
   console.dir(modalIndex.value);
 
@@ -523,7 +523,7 @@ const submitPlanDetail = (departureTime, arrivalTime, memo, moveTime) => {
   selectedAttractionDetailsByDate.value[modalDate.value - 1][
     modalIndex.value
   ].moveTime = moveTime;
-  console.dir('상세설명');
+  console.dir("상세설명");
   console.dir(selectedAttractionDetailsByDate.value);
 };
 
@@ -537,32 +537,32 @@ const OpenMyPlanListModal = () => {
 };
 
 const goHomePage = () => {
-  router.push({ name: 'home' });
+  router.push({ name: "home" });
 };
 
 const goSearchPage = () => {
-  departureDate.value = '';
-  arrivalDate.value = '';
+  departureDate.value = "";
+  arrivalDate.value = "";
   totalTripDates.value = 0;
   selectedAttractions.value.length = 0;
   selectedAccomodations.value.length = 0;
   selectedAttractionsByDate.value.length = 0;
-  title.value = '';
-  content.value = '';
-  image.value = '';
-  fileName.value = '';
+  title.value = "";
+  content.value = "";
+  image.value = "";
+  fileName.value = "";
 
-  activeTab.value = 'attraction';
+  activeTab.value = "attraction";
   activeDate.value = 0;
   isExistSelectView.value = false;
   tripPlanId.value = 0;
   tripPlanRequest.value = {
     tripPlan: {
-      title: '',
-      content: '',
-      departureDate: '',
-      arrivalDate: '',
-      image: '',
+      title: "",
+      content: "",
+      departureDate: "",
+      arrivalDate: "",
+      image: "",
       memberId: userId,
     },
     makeTripPlans: [],
@@ -572,7 +572,7 @@ const goSearchPage = () => {
   console.dir(title.value);
   console.dir(content.value);
   console.dir(fileName.value);
-  currentView.value = 'search';
+  currentView.value = "search";
 };
 
 function getTotalTripDates(startDate, endDate) {
@@ -601,7 +601,7 @@ async function detailAttractionInfo(contentId, i, j) {
     getDetailAttractionInfo(
       contentId,
       ({ data }) => {
-        console.dir('어트랙션인포');
+        console.dir("어트랙션인포");
         console.dir(data);
         selectedAttractionsByDate.value[i][j] = { attractionInfo: data };
         resolve();
@@ -619,18 +619,18 @@ async function getMyTripPlans(planId) {
     planId,
     ({ data }) => {
       getTotalTripDates(data.tripPlan.departureDate, data.tripPlan.arrivalDate);
-      console.dir('데이타');
+      console.dir("데이타");
       console.dir(data);
-      console.log('test1 start', totalTripDates.value);
+      console.log("test1 start", totalTripDates.value);
       for (let i = 0; i < totalTripDates.value; i++) {
         selectedAttractionsByDate.value[i] = [];
         selectedAttractionDetailsByDate.value[i] = [];
       }
 
-      console.log('test2 start', data.makeTripPlans.length);
+      console.log("test2 start", data.makeTripPlans.length);
       for (let i = 0; i < data.makeTripPlans.length; i++) {
         const makeTripPlan = data.makeTripPlans[i];
-        console.dir('메이크트립');
+        console.dir("메이크트립");
         console.dir(makeTripPlan);
         selectedAttractionsByDate.value[
           parseInt(makeTripPlan.tripDate) - 1
@@ -654,11 +654,11 @@ async function getMyTripPlans(planId) {
         );
       }
 
-      console.dir('selectedAttractionDetailsByDAte');
+      console.dir("selectedAttractionDetailsByDAte");
       console.dir(selectedAttractionDetailsByDate);
-      console.dir('인덱시스');
+      console.dir("인덱시스");
       console.dir(indexes);
-      console.log('resolve 실행');
+      console.log("resolve 실행");
     },
     ({ error }) => {
       console.log(error);
@@ -674,20 +674,20 @@ async function getMyTripPlans(planId) {
 }
 
 const modifyPlanDetail = async (planId) => {
-  departureDate.value = '';
-  arrivalDate.value = '';
+  departureDate.value = "";
+  arrivalDate.value = "";
   totalTripDates.value = 0;
   selectedAttractions.value.length = 0;
   selectedAccomodations.value.length = 0;
   selectedAttractionsByDate.value.length = 0;
-  title.value = '';
-  content.value = '';
+  title.value = "";
+  content.value = "";
   tripPlanId.value = planId;
 
   await getDetailTripPlan(
     planId,
     ({ data }) => {
-      console.dir('템프');
+      console.dir("템프");
       console.dir(data);
       title.value = data.tripPlan.title;
       content.value = data.tripPlan.content;
@@ -703,11 +703,11 @@ const modifyPlanDetail = async (planId) => {
   tripPlanId.value = planId;
   tripPlanRequest.value = {
     tripPlan: {
-      title: '',
-      content: '',
+      title: "",
+      content: "",
       departureDate: departureDate.value,
       arrivalDate: arrivalDate.value,
-      image: '',
+      image: "",
       memberId: userId,
     },
     makeTripPlans: [],
@@ -716,7 +716,7 @@ const modifyPlanDetail = async (planId) => {
   await getMyTripPlans(planId);
 
   myPlanListModalOpen.value = false;
-  currentView.value = 'plan';
+  currentView.value = "plan";
 };
 
 const contentId = ref(0);
@@ -735,7 +735,7 @@ async function deletePlanDetail(planId) {
   await removeTripPlan(
     planId,
     ({ data }) => {
-      console.dir('삭제 data');
+      console.dir("삭제 data");
       console.dir(data);
     },
     ({ error }) => {
@@ -750,7 +750,7 @@ async function getMyTripPlanList(userId) {
   await getListMyTripPlan(
     userId,
     ({ data }) => {
-      console.dir('data');
+      console.dir("data");
       console.dir(data);
       tripPlanRequests.value = data;
     },
@@ -1045,7 +1045,7 @@ const updateMyTripPlanList = () => {
   width: 100%; /* 부모 요소 너비 100% */
   display: flex;
   justify-content: center; /* 내부 컨텐츠 가운데 정렬 */
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   font-weight: 600;
   font-style: normal;
   /* position: relative; */

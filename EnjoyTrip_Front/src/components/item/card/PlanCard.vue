@@ -81,15 +81,15 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router';
-import { getLocalStorage } from '@/util/localstorage/localstorage';
-const userId = parseInt(getLocalStorage('userId'));
+import { useRouter } from "vue-router";
+import { getLocalStorage } from "@/util/localstorage/localstorage";
+const userId = parseInt(getLocalStorage("userId"));
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
 
-import { getUserInfomationById } from '@/api/member/member.js';
-import { ref, onMounted, computed } from 'vue';
-import { getAttractionBoardLikeCount } from '@/api/attraction-board-like/attraction-board-like.js';
-import { getCommentCount } from '@/api/attraction-board-comment/attraction-board-comment.js';
+import { getUserInfomationById } from "@/api/member/member.js";
+import { ref, onMounted, computed } from "vue";
+import { getAttractionBoardLikeCount } from "@/api/attraction-board-like/attraction-board-like.js";
+import { getCommentCount } from "@/api/attraction-board-comment/attraction-board-comment.js";
 const router = useRouter();
 const imageServerURL = import.meta.env.VITE_VUE_IMAGE_SERVER_URL;
 const { tripPlanRequest } = defineProps({
@@ -102,22 +102,22 @@ const likeCount = ref(0);
 
 const truncatedTitle = computed(() => {
   const title = tripPlanRequest.title;
-  return title.length > 10 ? title.slice(0, 10) + '...' : title;
+  return title.length > 10 ? title.slice(0, 10) + "..." : title;
 });
 
 const truncatedContent = computed(() => {
   const content = tripPlanRequest.content;
-  return content.length > 20 ? content.slice(0, 20) + '...' : content;
+  return content.length > 20 ? content.slice(0, 20) + "..." : content;
 });
 
 const formattedRegdate = computed(() => {
   const date = new Date(tripPlanRequest.regdate);
-  return date.toLocaleString('ko-KR', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
+  return date.toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
   });
 });
 
@@ -138,7 +138,7 @@ onMounted(() => {
 });
 
 const routeSearchAttraction = () => {
-  router.push({ name: 'searchattraction' });
+  router.push({ name: "searchattraction" });
 };
 </script>
 
