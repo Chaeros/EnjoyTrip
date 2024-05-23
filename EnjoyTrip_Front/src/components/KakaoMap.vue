@@ -150,43 +150,52 @@ const makeMarkersAndOverlays = () => {
 
 const getOverlayContent = (attraction) => {
   return (
-    '<div class="overlay_wrap">' +
-    '    <div class="overlay_info">' +
-    '        <div class="overlay_title">' +
-    `            ${attraction.attractionInfo.title}` +
-    // `            <div class="overlay_close" onclick="closeOverlay(${i})" title="닫기"></div>` +
-    '        </div>' +
-    '        <div class="overlay_body">' +
-    `           <div v-if="${attraction.attractionInfo.firstImage} !== ''" class="overlay_img">` +
-    `               <img src="${attraction.attractionInfo.firstImage}" width="73" height="70">` +
-    '           </div>' +
-    // `           <div v-else class="overlay_img">` +
-    // `               <img src="${VITE_VUE_IMAGE_SERVER_URL}/image/uploads/1716297494437_colddragon.png" width="73" height="70">` +
-    // `           </div>` +
-    '            <div class="overlay_desc">' +
-    `                <div class="overlay_ellipsis">${attraction.attractionInfo.addr1}</div>` +
-    `                <div class="overlay_jibun overlay_ellipsis">${attraction.attractionInfo.addr2}</div>` +
-    // '                <div><a href="https://www.kakaocorp.com/main" target="_blank" class="overlay_link">홈페이지</a></div>' +
-    '            </div>' +
-    '        </div>' +
-    '    </div>' +
-    '</div>' +
-    '<style>' +
-    `    .overlay_wrap {position: absolute;left: 0;bottom: 40px;width: 288px;height: 132px;margin-left: -144px;text-align: left;overflow: hidden;font-size: 12px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}` +
-    `    .overlay_wrap * {padding: 0;margin: 0;}` +
-    `    .overlay_wrap .overlay_info {width: 286px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}` +
-    `    .overlay_wrap .overlay_info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}` +
-    `    .overlay_info .overlay_title {padding: 5px 0 0 10px;height: 30px;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}` +
-    `    .overlay_info .overlay_close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}` +
-    `    .overlay_info .overlay_close:hover {cursor: pointer;}` +
-    `    .overlay_info .overlay_body {position: relative;overflow: hidden;}` +
-    `    .overlay_info .overlay_desc {position: relative;margin: 13px 0 0 90px;height: 75px;}` +
-    `    .overlay_desc .overlay_ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}` +
-    `    .overlay_desc .overlay_jibun {font-size: 11px;color: #888;margin-top: -2px;}` +
-    `    .overlay_info .overlay_img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}` +
-    `    .overlay_info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}` +
-    `    .overlay_info .overlay_link {color: #5085BB;}` +
-    '</style>'
+    // '<div class="overlay_wrap">' +
+    // '    <div class="overlay_info">' +
+    // '        <div class="overlay_title">' +
+    // `            ${attraction.attractionInfo.title}` +
+    // // `            <div class="overlay_close" onclick="closeOverlay(${i})" title="닫기"></div>` +
+    // '        </div>' +
+    // // '        <div class="overlay_body">' +
+    // // `           <div v-if="${attraction.attractionInfo.firstImage} !== ''" class="overlay_img">` +
+    // // `               <img src="${attraction.attractionInfo.firstImage}" width="73" height="70">` +
+    // // '           </div>' +
+    // // `           <div v-else class="overlay_img">` +
+    // // `               <img src="${VITE_VUE_IMAGE_SERVER_URL}/image/uploads/1716297494437_colddragon.png" width="73" height="70">` +
+    // // `           </div>` +
+    // // '            <div class="overlay_desc">' +
+    // // `                <div class="overlay_ellipsis">${attraction.attractionInfo.addr1}</div>` +
+    // // `                <div class="overlay_jibun overlay_ellipsis">${attraction.attractionInfo.addr2}</div>` +
+    // // '                <div><a href="https://www.kakaocorp.com/main" target="_blank" class="overlay_link">홈페이지</a></div>' +
+    // // '            </div>' +
+    // '        </div>' +
+    // '    </div>' +
+    // '</div>' +
+    // '<style>' +
+    // `    .overlay_wrap {background: #88A0A7 , position: absolute;left: -20px;bottom: 40px;width: 328px;height: 50px; text-align: center;overflow: hidden;font-size: 10px;font-family: 'Malgun Gothic', dotum, '돋움', sans-serif;line-height: 1.5;}` +
+    // `    .overlay_wrap * {padding: 0;margin: 0;}` +
+    // `    .overlay_wrap .overlay_info {width: 286px;height: 120px;border-radius: 5px;border-bottom: 2px solid #ccc;border-right: 1px solid #ccc;overflow: hidden;background: #fff;}` +
+    // `    .overlay_wrap .overlay_info:nth-child(1) {border: 0;box-shadow: 0px 1px 2px #888;}` +
+    // `    .overlay_info .overlay_title {padding: 5px 0 0 10px;height: 100%;background: #eee;border-bottom: 1px solid #ddd;font-size: 18px;font-weight: bold;}` +
+    // `    .overlay_info .overlay_close {position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');}` +
+    // `    .overlay_info .overlay_close:hover {cursor: pointer;}` +
+    // `    .overlay_info .overlay_body {position: relative;overflow: hidden;}` +
+    // `    .overlay_info .overlay_desc {position: relative;margin: 13px 0 0 90px;height: 75px;}` +
+    // `    .overlay_desc .overlay_ellipsis {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}` +
+    // `    .overlay_desc .overlay_jibun {font-size: 11px;color: #888;margin-top: -2px;}` +
+    // `    .overlay_info .overlay_img {position: absolute;top: 6px;left: 5px;width: 73px;height: 71px;border: 1px solid #ddd;color: #888;overflow: hidden;}` +
+    // `    .overlay_info:after {content: '';position: absolute;margin-left: -12px;left: 50%;bottom: 0;width: 22px;height: 12px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}` +
+    // `    .overlay_info .overlay_link {color: #5085BB;}` +
+    // '</style>'
+    `<div class="container">` +
+    `${attraction.attractionInfo.title}` +
+    `</div>` +
+    `<style>` +
+    `.container {` +
+    `color: blue` +
+    `font-size: 30px;` +
+    `}` +
+    `</style>`
   );
 };
 

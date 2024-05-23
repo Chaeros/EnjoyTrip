@@ -1,5 +1,9 @@
 <template>
-  <div class="card-outter-box" v-if="writerInfo">
+  <div
+    class="card-outter-box"
+    v-if="writerInfo"
+    @click.prevent="routeSearchAttraction"
+  >
     <div class="card-content-box">
       <div class="title-and-content-box">
         <template v-if="tripPlanRequest.tripPlan.image !== ''">
@@ -77,6 +81,7 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 import { getLocalStorage } from '@/util/localstorage/localstorage';
 const userId = parseInt(getLocalStorage('userId'));
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
@@ -85,6 +90,7 @@ import { getUserInfomationById } from '@/api/member/member.js';
 import { ref, onMounted, computed } from 'vue';
 import { getAttractionBoardLikeCount } from '@/api/attraction-board-like/attraction-board-like.js';
 import { getCommentCount } from '@/api/attraction-board-comment/attraction-board-comment.js';
+const router = useRouter();
 const imageServerURL = import.meta.env.VITE_VUE_IMAGE_SERVER_URL;
 const { tripPlanRequest } = defineProps({
   tripPlanRequest: Object,
@@ -130,6 +136,10 @@ onMounted(() => {
     }
   );
 });
+
+const routeSearchAttraction = () => {
+  router.push({ name: 'searchattraction' });
+};
 </script>
 
 <style scoped>

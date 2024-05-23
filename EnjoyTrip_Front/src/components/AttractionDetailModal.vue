@@ -44,7 +44,7 @@ async function getDetailByContentId(contentId) {
   );
 
   await getAttractionReviewArticles(
-    2834353,
+    contentId,
     ({ data }) => {
       console.dir(data);
       boards.value = data;
@@ -88,8 +88,6 @@ const seeMore = (id) => {
         </div>
         <div class="title">{{ title }}</div>
         <div class="address">주소: {{ addr1 }}{{ addr2 }}</div>
-        <!-- <div class="zipcode">우편번호: {{ zipcode }}</div> -->
-        <!-- <div class="tel">전화번호: {{ tel }}</div> -->
         <div class="overview">{{ overview }}</div>
         <button
           @click.prevent="attractionDetailModalClose"
@@ -107,6 +105,7 @@ const seeMore = (id) => {
           class="attraction-board-item"
         ></AttractionBoardItem>
       </div>
+      <div v-else class="review-container">등록된 게시글이 없습니다.</div>
     </div>
   </div>
 </template>
@@ -127,7 +126,7 @@ const seeMore = (id) => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 850px;
+  width: 1200px;
   height: 80%;
   overflow-y: hidden;
   background: #fff; /* F1F5F6 */
@@ -147,6 +146,7 @@ const seeMore = (id) => {
 .review-container {
   width: 40%;
   overflow-y: auto;
+  margin-left: 15px;
 }
 
 .board-container {
@@ -165,7 +165,7 @@ const seeMore = (id) => {
 }
 
 .detail-container::-webkit-scrollbar-thumb {
-  background-color: #6c7a89;
+  background-color: #e0e7e9;
   border-radius: 10px;
   border: 2px solid #f8f9fa;
 }
@@ -185,7 +185,7 @@ const seeMore = (id) => {
 }
 
 .review-container::-webkit-scrollbar-thumb {
-  background-color: #6c7a89;
+  background-color: #e0e7e9;
   border-radius: 10px;
   border: 2px solid #f8f9fa;
 }

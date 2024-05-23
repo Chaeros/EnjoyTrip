@@ -94,7 +94,7 @@ onMounted(() => {
   max-height: 100vh;
   overflow-y: auto;
   padding: 0;
-  border: 1px solid black;
+  border: 1px solid #354649;
 }
 
 /* Custom Scrollbar for WebKit (Chrome, Safari) */

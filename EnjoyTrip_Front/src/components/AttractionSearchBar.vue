@@ -1,5 +1,7 @@
 <script setup>
 import { ref, defineEmits } from 'vue';
+const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
+
 const { selectedAttractions } = defineProps({ selectedAttractions: Object });
 
 const emit = defineEmits(['selectAttractionReset', 'deleteAttraction']);
@@ -21,7 +23,21 @@ const deleteAttraction = (index) => {
       v-for="(attraction, index) in selectedAttractions"
       :key="index"
     >
-      <img class="attraction-img" :src="attraction.attractionInfo.firstImage" />
+      <div v-if="attraction.attractionInfo.firstImage !== ''">
+        <img
+          class="attraction-img"
+          :src="attraction.attractionInfo.firstImage"
+        />
+      </div>
+      <div v-else>
+        <img
+          class="attraction-img"
+          :src="
+            VITE_VUE_IMAGE_SERVER_URL +
+            '/image/uploads/1716297494437_colddragon.png'
+          "
+        />
+      </div>
       <div class="select-attraction-content">
         <div class="attraction-title">
           {{ attraction.attractionInfo.title }}
@@ -48,9 +64,9 @@ const deleteAttraction = (index) => {
 }
 
 .select-content {
-  width: 12%;
+  width: 14%;
   height: 100vh;
-  background-color: white;
+  background-color: #f1f5f6;
   z-index: 1;
   overflow-y: auto; /* 세로 스크롤바 자동 표시 */
   overflow-x: hidden;

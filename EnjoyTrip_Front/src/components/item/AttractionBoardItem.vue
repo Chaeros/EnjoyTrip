@@ -89,7 +89,7 @@ const seeMore = () => {
 
 .board-image {
   width: 150px;
-  height: 150px;
+  max-height: 200px;
   background-color: #e0e7e9;
   margin-right: 20px;
   border-radius: 10px;

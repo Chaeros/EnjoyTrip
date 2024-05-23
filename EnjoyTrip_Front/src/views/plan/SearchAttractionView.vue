@@ -785,21 +785,21 @@ const updateMyTripPlanList = () => {
                     :class="{ active: activeTab === 'dateCheck' }"
                     @click.prevent="setActiveTab('dateCheck')"
                   >
-                    여행 일자
+                    여행<br />일자
                   </a>
                   <a
                     href="#"
                     class="list-group-item list-group-item-action"
                     :class="{ active: activeTab === 'attraction' }"
                     @click.prevent="setActiveTab('attraction')"
-                    >장소 선택</a
+                    >장소<br />선택</a
                   >
                   <a
                     href="#"
                     class="list-group-item list-group-item-action"
                     :class="{ active: activeTab === 'accomodation' }"
                     @click.prevent="setActiveTab('accomodation')"
-                    >숙소 선택</a
+                    >숙소<br />선택</a
                   >
                 </div>
               </div>
