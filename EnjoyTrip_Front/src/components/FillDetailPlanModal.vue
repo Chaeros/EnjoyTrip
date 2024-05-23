@@ -123,7 +123,7 @@ const planDetailToggle = () => {
   left: 50%;
   transform: translate(-50%, -50%);
   width: 550px;
-  height: 80%;
+  height: 57%;
   overflow-y: auto;
   background: #fff; /* F1F5F6 */
   border-radius: 10px;
