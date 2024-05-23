@@ -4,6 +4,17 @@ const { board } = defineProps({ board: Object });
 
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
 
+const truncatedTitle = ref('');
+truncatedTitle.value = computed(() => {
+  const content = board.title;
+  console.dir(content.length);
+  return content.length >= 27
+    ? content.substring(0, 27) + '...'
+    : content.length === 0
+    ? '제목'
+    : content;
+});
+
 const truncatedContent = computed(() => {
   const content = board.content;
   console.dir(content.length);
@@ -36,12 +47,16 @@ const seeMore = () => {
       />
     </div>
     <div class="board-detail">
-      <div class="board-title">
-        {{ board.title }}
+      <div class="board-text">
+        <div class="board-title">
+          {{ truncatedTitle }}
+        </div>
+        <div v-html="truncatedContent" class="board-content"></div>
       </div>
-      <div v-html="truncatedContent" class="board-content"></div>
-      <div class="board-hit">조회수: {{ board.hit }}</div>
-      <div class="board-regdate">작성시간: {{ board.regdate }}</div>
+      <div class="info-container">
+        <div class="board-hit">조회수: {{ board.hit }}</div>
+        <div class="board-regdate">작성시간: {{ board.regdate }}</div>
+      </div>
     </div>
   </div>
 </template>
@@ -49,23 +64,27 @@ const seeMore = () => {
 <style scoped>
 .board-container {
   display: flex;
-  border: 2px solid #354649;
+  border: 1px solid #354649;
   background-color: #f1f5f6;
   padding: 20px;
   border-radius: 10px;
-  transition: transform 0.3s, box-shadow 0.3s;
+  /* transition: transform 0.3s, box-shadow 0.3s; */
   cursor: pointer;
 }
 
 .board-container:hover {
-  transform: translateY(-5px);
+  /* transform: translateY(-5px); */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .board-title {
-  font-size: 25px;
+  font-size: 20px;
+  font-weight: bold;
   color: #354649;
   margin-bottom: 10px;
+  min-height: 15px;
+  max-height: 65px;
+  overflow: hidden;
 }
 
 .board-image {
@@ -86,12 +105,19 @@ const seeMore = () => {
 
 .board-detail {
   flex: 1;
+  display: flex;
+  height: 160px;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .board-content {
   font-size: 16px;
   color: #6c7a89;
   margin-bottom: 10px;
+  max-height: 44px;
+  overflow: hidden;
 }
 
 .board-hit {
@@ -100,7 +126,7 @@ const seeMore = () => {
 }
 
 .board-regdate {
-  font-size: 14px;
+  font-size: 12px;
   color: #96b3b6;
 }
 </style>
