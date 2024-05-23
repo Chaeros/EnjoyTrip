@@ -10,13 +10,13 @@
       />
       <div class="horizontal-line"></div>
       <div class="select-attraction-box">
-        리뷰를 작성할 관광지를 선택해주세요!
+        [필수] 리뷰를 작성할 관광지를 선택해주세요!
         <button
           type="button"
           class="btn btn-outline-secondary select-attraction-btn"
           @click="openModal"
         >
-          선택하기
+          <div class="btn-inner-font">선택하기</div>
         </button>
         <span
           class="attraction-unselected"
@@ -32,7 +32,7 @@
         </span>
       </div>
       <div class="attach-represant-img-box">
-        <span>대표 이미지를 선택해주세요!(선택)</span>
+        <span>[선택] 대표 이미지를 선택해주세요!</span>
         <input type="file" @change="handleFileUpload" />
         <span v-if="fileName">{{ fileName }}</span>
         <sapn v-if="isModify" class="modify-notice"
@@ -48,31 +48,36 @@
       ></div>
       <div class="board-write-buttons">
         <div>
-          <button
-            type="button"
-            class="btn btn-outline-secondary user-button"
-            @click="clickReturnList"
+          <img src="@/img/coldragon2-removebg.png" class="changon-img" />
+          <span
+            >글 작성 중간에 이미지를 Ctr+C, Ctr+V하여 붙여놓을 수
+            있습니다.</span
           >
-            목록으로
-          </button>
         </div>
         <div>
+          <button
+            type="button"
+            class="btn btn-outline-dark user-button"
+            @click="clickReturnList"
+          >
+            <div class="btn-inner-font">목록으로</div>
+          </button>
           <template v-if="isModify">
             <button
               type="button"
-              class="btn btn-outline-secondary user-button"
+              class="btn btn-outline-dark user-button"
               @click="clickModifyArticle"
             >
-              수정하기
+              <div class="btn-inner-font">수정하기</div>
             </button>
           </template>
           <template v-else>
             <button
               type="button"
-              class="btn btn-outline-secondary user-button"
+              class="btn btn-outline-dark user-button"
               @click="clickPostArticle"
             >
-              게시하기
+              <div class="btn-inner-font">게시하기</div>
             </button>
           </template>
         </div>
@@ -545,6 +550,8 @@ img.resizable {
 .user-button {
   font-size: 20px;
   text-align: center;
+  margin-left: 5px;
+  /* border: none; */
 }
 .footer {
   margin-top: 25px;
@@ -582,5 +589,11 @@ img.resizable {
 }
 .attraction-unselected {
   color: red;
+}
+.btn-inner-font {
+  font-weight: bold;
+}
+.changon-img {
+  width: 60px;
 }
 </style>
