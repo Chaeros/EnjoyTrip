@@ -72,7 +72,7 @@
             />
             <p class="chat-selectbar-title">채팅</p>
           </div>
-          <div class="chat-selectbar-wrap" @click="clickCallGroupChatRoomList">
+          <!-- <div class="chat-selectbar-wrap" @click="clickCallGroupChatRoomList">
             <img
               v-show="currentMode == `GROUP`"
               src="@/img/chat/grouptalk-select.png"
@@ -86,7 +86,7 @@
               class="chat-selectbar-img"
             />
             <p class="chat-selectbar-title">그룹채팅</p>
-          </div>
+          </div> -->
         </div>
         <div class="chat-sidebar">
           <div class="chat-list">
