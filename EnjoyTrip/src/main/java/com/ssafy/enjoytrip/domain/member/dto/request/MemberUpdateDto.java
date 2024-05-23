@@ -12,7 +12,7 @@ public class MemberUpdateDto {
     String name;
     String nickname;
     String tel;
-    String cyty;
+    String city;
     String confirmEmail;
     String image;
 }

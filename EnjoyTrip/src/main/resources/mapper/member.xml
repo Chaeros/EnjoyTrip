@@ -51,7 +51,7 @@
 		update members
 		   set name = #{name},
 		       tel = #{tel},
-			   cyty = #{cyty},
+			   city = #{city},
 		       role = "USER",
 		   	   email = #{email}
 		 where email = #{confirmEmail}

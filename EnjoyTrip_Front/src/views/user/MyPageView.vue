@@ -223,6 +223,7 @@ getFriendList();
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
 .left-search-friend-box {
   width: 50%;
   /* height: 680px; */
@@ -251,7 +252,6 @@ getFriendList();
   margin-left: 5px;
   overflow-y: scroll; /* 상하 스크롤을 항상 표시 */
 }
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
 
 .my-page {
   width: 1200px;

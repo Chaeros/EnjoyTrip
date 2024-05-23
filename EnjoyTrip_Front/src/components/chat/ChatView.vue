@@ -378,21 +378,41 @@ socket.value.onmessage = function (e) {
   console.log(parsedData);
 
   let isMember = false;
+  let preFriend = null;
   if (currentMode.value == "CHATTING") {
     console.log(chattingMembers);
     console.log(parsedData);
     chattingMembers.value.forEach((member) => {
-      if (member.myId == parsedData.senderId) {
+      if (member.friendId == parsedData.senderId) {
         isMember = true;
+        console.log("여기 오긴함");
+        preFriend = member;
       }
     });
+    console.log("결과", isMember);
     if (isMember == false) {
-      chattingMembers.value.push();
+      console.log("여긴옴?");
+      searchPrivateChatRoom(
+        getLocalStorage("userId"),
+        parsedData.senderId,
+        (roomId) => {
+          chattingMembers.value.push({
+            id: roomId.data,
+            myId: getLocalStorage("userId"),
+            friendId: parsedData.senderId,
+          });
+          console.log("데이터삽입", chattingMembers);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     }
   }
-
+  console.log(parsedData.chatRoomId, currentSelectedRoomId.value);
   if (parsedData.chatRoomId == currentSelectedRoomId.value) {
     activeChat.value.messages.push(tempData);
+    console.log("이 방으로 옴");
   } else {
     // 수신받은 메시지의 출처가 , 현재 내가 머문 방과 다른 경우
     // 1. 내가 지닌 방들 중 하나인 경우 - count를 1 증가시킨다.
@@ -471,6 +491,7 @@ const stopDrag = () => {
 
 const sendMessage = () => {
   if (newMessage.value.trim() !== "") {
+    console.log(newMessage.value, getLocalStorage("userId"));
     sendMsg(newMessage.value, getLocalStorage("userId"));
     registChatMessage(
       {

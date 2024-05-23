@@ -74,6 +74,7 @@ const selectFriend = () => {
     getLocalStorage("userId"),
     props.friend.friendId,
     (response) => {
+      console.log(response.data);
       countResetUnreadMessageCount(
         response.data,
         getLocalStorage("userId"),

@@ -87,7 +87,7 @@
       </div>
       <div
         id="article-content"
-        class="article-contentarticle-content"
+        class="article-content"
         v-html="article.content"
       ></div>
       <CommentView
@@ -268,6 +268,18 @@ const clickFollow = () => {
     friendDto.value,
     (response) => {
       isItMyFriend.value = true;
+      enterOrRegistPrivateChatRoom(
+        {
+          myId: getLocalStorage("userId"),
+          opponentId: friendDto.value.friendId,
+        },
+        (response) => {
+          console.log(response.data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
     },
     (error) => {
       console.log(error);
@@ -343,6 +355,7 @@ const getWriterInfo = () => {
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  width: 1200px;
 }
 
 .board-detail-title-img {
@@ -421,10 +434,11 @@ const getWriterInfo = () => {
   padding: 20px;
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
   margin-bottom: 20px;
   overflow: hidden;
   word-break: break-word;
+  font-size: 25px;
 }
 
 .comment {

@@ -63,11 +63,16 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from 'vue-router';
-import { useMemberStore } from '@/store/member';
-import { useWebSocketChatStore } from '@/store/chat/web-socket-chat.js';
-import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
+import { useRoute, useRouter } from "vue-router";
+import { useMemberStore } from "@/store/member";
+import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
+import { storeToRefs } from "pinia";
+import { ref } from "vue";
+import {
+  getLocalStorage,
+  setLocalStorage,
+  removeLocalStorage,
+} from "@/util/localstorage/localstorage.js";
 
 const memberStore = useMemberStore();
 const webSocketChatStore = useWebSocketChatStore();
@@ -76,36 +81,39 @@ const { sendEscapeMsg } = webSocketChatStore;
 const router = useRouter();
 
 const clickLogin = () => {
-  router.push({ name: 'login' });
+  router.push({ name: "login" });
 };
 const clickSignUp = () => {
-  router.push({ name: 'normalSingUp' });
+  router.push({ name: "normalSingUp" });
 };
 const clickTitle = () => {
-  router.push({ name: 'home' });
+  router.push({ name: "home" });
 };
 const clickAttraction = () => {
-  router.push({ name: 'searchattraction' });
+  router.push({ name: "searchattraction" });
 };
 const clickCummunity = () => {
-  router.push({ name: 'reviewBoardList' });
+  router.push({ name: "reviewBoardList" });
 };
 const clickLogOut = () => {
   userInfo.value = null;
   isLogin.value = false;
+  removeLocalStorage("userId");
+  removeLocalStorage("access_token");
+  removeLocalStorage("refresh_token");
   sendEscapeMsg();
 };
 const clickMyPage = () => {
-  router.push({ name: 'myPage' });
+  router.push({ name: "myPage" });
 };
 const displayMember = ref({
-  id: '',
-  img: '',
+  id: "",
+  img: "",
 });
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
 
 .header-wrap {
   height: 80px;
@@ -127,7 +135,7 @@ const displayMember = ref({
 
 .header-logo {
   font-size: 30px;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   font-weight: bold;
   cursor: pointer;
   transition: color 0.3s;
@@ -139,7 +147,7 @@ const displayMember = ref({
 
 .header-link {
   margin: 0 10px;
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   color: #333;
   text-decoration: none;
   font-weight: 500;
@@ -194,7 +202,7 @@ const displayMember = ref({
   border-radius: 10px;
   text-align: center;
   /* text-decoration: none; */
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   cursor: pointer;
   transition: background-color 0.3s;
   /* font-weight: bold; */

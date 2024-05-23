@@ -32,6 +32,7 @@ import {
   removeFriend,
   bringFriendList,
 } from "@/api/friend/friend.js";
+import { enterOrRegistPrivateChatRoom } from "@/api/chat/chat.js";
 import {
   getLocalStorage,
   setLocalStorage,
@@ -66,6 +67,19 @@ const clickAddBtn = () => {
     (response) => {
       console.log(response.data);
       console.log(friendDto.value);
+      enterOrRegistPrivateChatRoom(
+        {
+          myId: getLocalStorage("userId"),
+          opponentId: friendDto.value.friendId,
+        },
+        (response) => {
+          console.log(response.data);
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+
       emit("clickFriendAddBtn", friendDto.value);
     },
     (error) => {

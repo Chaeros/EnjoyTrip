@@ -56,6 +56,7 @@ public class PrivateChatRoomController {
         Integer result = privateChatRoomService.searchPrivateChatRoom(
                 PrivateChatRoom.builder().myId(myId).opponentId(opponentId).build());
         if ( result == null ){
+            log.info("value is empty");
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(result);

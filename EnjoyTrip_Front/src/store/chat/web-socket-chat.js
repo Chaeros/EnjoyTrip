@@ -36,7 +36,7 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
     if (socket.value) {
       let payload = {
         messageType: "TALK",
-        senderId: senderId,
+        senderId: parseInt(getLocalStorage("userId"), 10),
         message: content,
         chatRoomId: currentSelectedRoomId.value,
       };
