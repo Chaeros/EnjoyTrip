@@ -141,7 +141,7 @@ async function loadMoreAccomodations() {
           v-model="inputInformation.sidoCode"
           @change="callGuguns(inputInformation.sidoCode)"
         >
-          <option value="-1">시도</option>
+          <option value="0">전체</option>
           <option
             v-for="sido in sidos"
             :value="sido.sidoCode"
@@ -155,7 +155,7 @@ async function loadMoreAccomodations() {
           class="custom-select w-100"
           v-model="inputInformation.gugunCode"
         >
-          <option disabled value="-1">구군</option>
+          <option value="0">전체</option>
           <option
             v-for="gugun in guguns"
             :value="gugun.gugunCode"

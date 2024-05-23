@@ -1,28 +1,57 @@
 <script setup>
-import { ref, defineEmits, defineProps, watchEffect } from 'vue';
+import { ref, defineEmits, defineProps, watch } from 'vue';
 import axios from 'axios';
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
-const props = defineProps({ title: String, content: String, image: String });
+
+const props = defineProps({
+  title: String,
+  content: String,
+  image: String,
+  fileName: String,
+});
+
 const emit = defineEmits(['showPlanDetailModalToggle', 'updateTripPlan']);
+
 const showPlanDetailModalToggle = () => {
   emit('showPlanDetailModalToggle');
 };
 
+const localFileName = ref(props.fileName);
+
 const localTitle = ref(props.title);
 const localContent = ref(props.content);
-const fileName = ref('');
 const localImage = ref(props.image);
 
-// watchEffect를 사용하여 props 변경 감지
-watchEffect(() => {
-  localTitle.value = props.title;
-});
+// watch를 사용하여 props 변경 감지
+watch(
+  () => props.title,
+  (newVal) => {
+    localTitle.value = newVal;
+  }
+);
 
-watchEffect(() => {
-  localContent.value = props.content;
-});
+watch(
+  () => props.content,
+  (newVal) => {
+    localContent.value = newVal;
+  }
+);
 
-const updateTripPlan = () => {
+watch(
+  () => props.image,
+  (newVal) => {
+    localImage.value = newVal;
+  }
+);
+
+watch(
+  () => props.fileName,
+  (newVal) => {
+    localFileName.value = newVal;
+  }
+);
+
+const updateTripPlan = (event) => {
   if (localTitle.value === '') {
     window.alert('이름을 설정해주세요');
     return;
@@ -46,7 +75,7 @@ const updateTripPlan = () => {
 const handleFileUpload = async (event) => {
   const file = event.target.files[0];
   if (file) {
-    fileName.value = file.name;
+    localFileName.value = file.name;
     const formData = new FormData();
     formData.append('file', file);
 
@@ -64,6 +93,7 @@ const handleFileUpload = async (event) => {
       localImage.value = response.data.url;
       console.log(localImage.value);
       console.log(response.data.url);
+      event.target.value = '';
     } catch (error) {
       console.error('Error uploading file:', error);
     }
@@ -75,13 +105,17 @@ const handleFileUpload = async (event) => {
   <div class="show-plan-detail-modal-wrap">
     <div class="show-plan-detail-modal-container">
       <div class="attach-represant-img-box">
-        <span>대표 이미지를 선택해주세요!(선택)</span>
-        <input type="file" @change="handleFileUpload" />
-        <span v-if="fileName">{{ fileName }}</span>
-        <img
-          :src="VITE_VUE_IMAGE_SERVER_URL + localImage"
-          class="local-image"
-        />
+        <div class="attraction-represent">
+          <div>대표 이미지를 선택해주세요!</div>
+          <input type="file" @change="handleFileUpload" />
+          <!-- <span v-if="localFileName">{{ localFileName }}</span> -->
+        </div>
+        <div v-if="localImage !== ''" class="plan-image-container">
+          <img
+            class="plan-image"
+            :src="VITE_VUE_IMAGE_SERVER_URL + localImage"
+          />
+        </div>
       </div>
       <div class="plan-title">
         <label for="title">여행 이름</label>
@@ -122,7 +156,7 @@ const handleFileUpload = async (event) => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 550px;
+  width: 650px;
   height: 70%;
   overflow-y: auto;
   background: #fff; /* F1F5F6 */
@@ -204,7 +238,26 @@ const handleFileUpload = async (event) => {
   background-color: #88a0a7; /* 88A0A7 */
 }
 
-.local-image {
+/* .local-image {
   width: 150px;
+} */
+
+.attraction-represent {
+  margin-left: 30px;
+  margin-bottom: 30px;
+}
+
+.attach-represant-img-box {
+  width: 100%;
+  display: flex;
+}
+
+.plan-image-container {
+  width: 100%;
+}
+
+.plan-image {
+  width: 200px;
+  margin-bottom: 30px;
 }
 </style>

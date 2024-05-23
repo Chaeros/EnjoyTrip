@@ -2,6 +2,8 @@
 import { ref, onMounted, watch } from 'vue';
 import { mapKey } from '../config/index.ts';
 
+const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
+
 const { selectedAttractions, selectedAccomodations } = defineProps({
   selectedAttractions: Array,
   selectedAccomodations: Array,
@@ -155,13 +157,16 @@ const getOverlayContent = (attraction) => {
     // `            <div class="overlay_close" onclick="closeOverlay(${i})" title="닫기"></div>` +
     '        </div>' +
     '        <div class="overlay_body">' +
-    '            <div class="overlay_img">' +
+    `           <div v-if="${attraction.attractionInfo.firstImage} !== ''" class="overlay_img">` +
     `               <img src="${attraction.attractionInfo.firstImage}" width="73" height="70">` +
     '           </div>' +
+    // `           <div v-else class="overlay_img">` +
+    // `               <img src="${VITE_VUE_IMAGE_SERVER_URL}/image/uploads/1716297494437_colddragon.png" width="73" height="70">` +
+    // `           </div>` +
     '            <div class="overlay_desc">' +
     `                <div class="overlay_ellipsis">${attraction.attractionInfo.addr1}</div>` +
     `                <div class="overlay_jibun overlay_ellipsis">${attraction.attractionInfo.addr2}</div>` +
-    '                <div><a href="https://www.kakaocorp.com/main" target="_blank" class="overlay_link">홈페이지</a></div>' +
+    // '                <div><a href="https://www.kakaocorp.com/main" target="_blank" class="overlay_link">홈페이지</a></div>' +
     '            </div>' +
     '        </div>' +
     '    </div>' +

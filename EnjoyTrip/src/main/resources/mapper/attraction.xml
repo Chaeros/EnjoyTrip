@@ -119,6 +119,7 @@
         select *
         from
             content_type
+        where content_id != 32
     </select>
 
 

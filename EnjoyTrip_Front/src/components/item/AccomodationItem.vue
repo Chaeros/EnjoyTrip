@@ -11,6 +11,8 @@ const clickAccomodationAdd = () => {
 const openAttractionDetailModal = (contentId) => {
   emit('openAttractionDetailModal', contentId);
 };
+
+const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
 </script>
 
 <template>
@@ -21,7 +23,21 @@ const openAttractionDetailModal = (contentId) => {
         openAttractionDetailModal(attraction.attractionInfo.contentId)
       "
     >
-      <img class="attraction-img" :src="attraction.attractionInfo.firstImage" />
+      <div v-if="attraction.attractionInfo.firstImage !== ''">
+        <img
+          class="attraction-img"
+          :src="attraction.attractionInfo.firstImage"
+        />
+      </div>
+      <div v-else>
+        <img
+          class="attraction-img"
+          :src="
+            VITE_VUE_IMAGE_SERVER_URL +
+            '/image/uploads/1716297494437_colddragon.png'
+          "
+        />
+      </div>
       <div class="attraction-content">
         <div class="attraction-title">
           {{ attraction.attractionInfo.title }}

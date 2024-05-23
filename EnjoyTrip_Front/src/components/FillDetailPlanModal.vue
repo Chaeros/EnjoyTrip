@@ -1,86 +1,82 @@
 <script setup>
 import { ref, watch, defineEmits, defineProps } from 'vue';
-import { getDetailMakeTripPlan } from '@/api/plan/plan';
 
-const departureTime = ref('');
-const arrivalTime = ref('');
-const memo = ref('');
-const moveTime = ref('');
-
+const localDepartureTime = ref('');
+const localArrivalTime = ref('');
+const localMemo = ref('');
+const localMoveTime = ref('');
 const props = defineProps({
-  modalDate: Number,
-  modalIndex: Number,
-  tripPlanId: Number,
-  selectedAttractionDetailsByDate: Array,
+  departureTime: String,
+  arrivalTime: String,
+  memo: String,
+  moveTime: String,
 });
 
 const emit = defineEmits(['submitPlanDetail', 'planDetailToggle']);
 
-const makeTripPlanRequestDto = ref({
-  tripPlanId: 0,
-  tripDate: 0,
-  sequence: 0,
-});
-const fetchMakeTripPlanDetails = async (tripPlanId, tripDate, sequence) => {
-  try {
-    const param = {
-      tripPlanId,
-      tripDate,
-      sequence,
-    };
-
-    const response = await getDetailMakeTripPlan(
-      param,
-      ({ data }) => {
-        departureTime.value = data.departureTime;
-        arrivalTime.value = data.arrivalTime;
-        memo.value = data.memo;
-        moveTime.value = data.moveTime;
-        // props.selectedAttractionDetailsByDate.value[data.tripDate - 1][
-        //   data.sequence
-        // ] = {
-        //   departureTime: data.departureTime,
-        //   arrivalTime: data.arrivalTime,
-        //   memo: data.memo,
-        //   moveTime: data.moveTime,
-        // };
-      },
-      ({ error }) => {
-        console.log(error);
-      }
-    );
-  } catch (error) {
-    console.log(error);
-  }
+// Reset local state
+const resetLocalState = () => {
+  localDepartureTime.value = '';
+  localArrivalTime.value = '';
+  localMemo.value = '';
+  localMoveTime.value = '';
 };
 
+// Watch props and update local state
 watch(
-  () => [props.modalDate, props.modalIndex],
-  async ([newModalDate, newModalIndex]) => {
-    await fetchMakeTripPlanDetails(
-      props.tripPlanId,
-      newModalDate,
-      newModalIndex
-    );
+  () => props.departureTime,
+  (newVal) => {
+    localDepartureTime.value = newVal;
   },
   { immediate: true }
 );
 
+watch(
+  () => props.arrivalTime,
+  (newVal) => {
+    localArrivalTime.value = newVal;
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.memo,
+  (newVal) => {
+    localMemo.value = newVal;
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.moveTime,
+  (newVal) => {
+    localMoveTime.value = newVal;
+  },
+  { immediate: true }
+);
+
+// watch(
+//   () => props.fillDetailPlanModalOpen,
+//   (newVal) => {
+//     resetLocalState();
+//   },
+//   { immediate: true }
+// );
+
 const submitPlanDetail = () => {
   emit(
     'submitPlanDetail',
-    props.modalDate - 1,
-    props.modalIndex,
-    departureTime.value,
-    arrivalTime.value,
-    memo.value,
-    moveTime.value
+    localDepartureTime.value,
+    localArrivalTime.value,
+    localMemo.value,
+    localMoveTime.value
   );
   window.alert('적용되었습니다.');
 };
 
 const planDetailToggle = () => {
   emit('planDetailToggle');
+  resetLocalState();
 };
 </script>
 
@@ -88,13 +84,18 @@ const planDetailToggle = () => {
   <div class="wrap">
     <div class="container">
       <label for="departureTime">시작 시간</label>
-      <input type="time" name="departureTime" v-model="departureTime" />
+      <input type="time" name="departureTime" v-model="localDepartureTime" />
       <label for="arrivalTime">끝 시간</label>
-      <input type="time" name="arrivalTime" v-model="arrivalTime" />
+      <input type="time" name="arrivalTime" v-model="localArrivalTime" />
       <label for="memo">메모</label>
-      <textarea name="memo" v-model="memo"></textarea>
+      <textarea name="memo" v-model="localMemo"></textarea>
       <label for="moveTime">이동 시간:</label>
-      <input type="text" id="moveTime" name="moveTime" v-model="moveTime" />
+      <input
+        type="text"
+        id="moveTime"
+        name="moveTime"
+        v-model="localMoveTime"
+      />
       <button @click.prevent="submitPlanDetail" class="apply-button">
         적용
       </button>

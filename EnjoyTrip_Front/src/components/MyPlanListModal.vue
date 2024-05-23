@@ -1,42 +1,48 @@
 <script setup>
-import { ref, defineEmits, defineProps } from 'vue';
-
-import { getListMyTripPlan } from '@/api/plan/plan';
+import { ref, defineEmits, defineProps, watch } from 'vue';
 
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
+const props = defineProps({
+  tripPlanRequests: Array,
+  userId: Number,
+});
+const emit = defineEmits([
+  'MyPlanListModalClose',
+  'modifyPlanDetail',
+  'deletePlanDetail',
+]);
 
-const props = defineProps({ userId: Number });
-const emit = defineEmits(['MyPlanListModalClose', 'modifyPlanDetail']);
+// const localTripPlanRequests = ref(props.tripPlanRequests);
+
 const MyPlanListModalClose = () => {
   emit('MyPlanListModalClose');
 };
+
 const modifyPlanDetail = (tripPlanId) => {
   emit('modifyPlanDetail', tripPlanId);
 };
 
-const tripPlanRequests = ref([]);
-async function getMyTripPlans(userId) {
-  getListMyTripPlan(
-    userId,
-    ({ data }) => {
-      console.dir('data');
-      console.dir(data);
-      tripPlanRequests.value = data;
-    },
-    ({ error }) => {
-      console.log(error);
-    }
-  );
-}
-getMyTripPlans(props.userId);
+const deletePlanDetail = (tripPlanId) => {
+  emit('deletePlanDetail', tripPlanId);
+};
+
+// // Watch for changes in tripPlanRequests and update localTripPlanRequests accordingly
+// watch(
+//   () => props.tripPlanRequests,
+//   (newTripPlanRequests) => {
+//     localTripPlanRequests.value = newTripPlanRequests;
+//   },
+//   { immediate: true, deep: true } // Ensure immediate and deep watching
+// );
 </script>
 
 <template>
   <div class="wrap">
     <div class="container">
+      <!-- :key="tripPlanRequest.id" -->
       <div
-        v-for="tripPlanRequest in tripPlanRequests"
-        :key="tripPlanRequest.id"
+        v-for="(tripPlanRequest, index) in tripPlanRequests"
+        :key="index"
         class="request-container"
       >
         <div class="trip-plan-container">
@@ -45,31 +51,42 @@ getMyTripPlans(props.userId);
               {{ tripPlanRequest.tripPlan.title }}
             </div>
             <div>메모: {{ tripPlanRequest.tripPlan.content }}</div>
-            <div>출발일자: {{ tripPlanRequest.tripPlan.departureDate }}</div>
-            <div>도착일자: {{ tripPlanRequest.tripPlan.arrivalDate }}</div>
+            <div>출발: {{ tripPlanRequest.tripPlan.departureDate }}</div>
+            <div>도착: {{ tripPlanRequest.tripPlan.arrivalDate }}</div>
           </div>
-          <button
-            @click.prevent="modifyPlanDetail(tripPlanRequest.tripPlan.id)"
-          >
-            상세보기 & 수정
-          </button>
+          <div class="plan-btns">
+            <button
+              @click.prevent="modifyPlanDetail(tripPlanRequest.tripPlan.id)"
+            >
+              조회
+            </button>
+            <button
+              @click.prevent="modifyPlanDetail(tripPlanRequest.tripPlan.id)"
+            >
+              수정
+            </button>
+            <button
+              @click.prevent="deletePlanDetail(tripPlanRequest.tripPlan.id)"
+            >
+              삭제
+            </button>
+          </div>
         </div>
-        <div class="plan-image-container">
-          <div v-if="tripPlanRequest.tripPlan.image !== ''">
-            <img
-              class="plan-image"
-              :src="VITE_VUE_IMAGE_SERVER_URL + tripPlanRequest.tripPlan.image"
-            />
-          </div>
-          <div v-else>
-            <img
-              :src="
-                VITE_VUE_IMAGE_SERVER_URL +
-                '/image/uploads/1716297494437_colddragon.png'
-              "
-              class="plan-image"
-            />
-          </div>
+        <div class="plan-image-container"></div>
+        <div v-if="tripPlanRequest.tripPlan.image !== ''">
+          <img
+            class="plan-image"
+            :src="VITE_VUE_IMAGE_SERVER_URL + tripPlanRequest.tripPlan.image"
+          />
+        </div>
+        <div v-else>
+          <img
+            :src="
+              VITE_VUE_IMAGE_SERVER_URL +
+              '/image/uploads/1716297494437_colddragon.png'
+            "
+            class="plan-image"
+          />
         </div>
       </div>
       <button @click.prevent="MyPlanListModalClose" class="close-button">
@@ -140,6 +157,7 @@ getMyTripPlans(props.userId);
 .trip-plan-container {
   max-width: 250px;
   width: 100%;
+  margin-left: 8px;
 }
 
 .trip-plan-item {
@@ -181,5 +199,12 @@ button:hover {
 .plan-image {
   height: 180px;
   margin: 10px 0;
+  margin-right: 13px;
+  border-radius: 10px;
+}
+
+.plan-btns {
+  display: flex;
+  justify-content: space-around;
 }
 </style>
