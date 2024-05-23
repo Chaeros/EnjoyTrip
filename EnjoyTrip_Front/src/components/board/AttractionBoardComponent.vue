@@ -1,7 +1,7 @@
 <template>
   <div class="review-card-list">
     <template
-      v-for="attractionBoardReview in attractionBoardReviews"
+      v-for="attractionBoardReview in props.attractionBoardReviews"
       :key="attractionBoardReview.id"
     >
       <AttractionBoardArticleCard
@@ -24,8 +24,6 @@ const props = defineProps({
     type: Array,
   },
 });
-
-const attractionBoardReviews = ref(props.attractionBoardReviews);
 
 const clickAttractionBoardArticleCard = (attractionBoardReview) => {
   router.push({

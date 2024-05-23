@@ -8,16 +8,13 @@
             :src="imageServerURL + attractionBoardReview.imageUrl"
           />
         </template>
-        <div class="card-title">{{ attractionBoardReview.title }}</div>
+        <div class="card-title">{{ truncatedTitle }}</div>
         <div class="card-content">
-          <div
-            class="card-content-inner"
-            v-html="attractionBoardReview.content"
-          ></div>
+          <div class="card-content-inner" v-html="truncatedContent"></div>
         </div>
       </div>
-      <div class="attraction-board-regdate">
-        {{ attractionBoardReview.regdate }}
+      <div class="attraction-board-regdate inner-content-left-margin">
+        {{ formattedRegdate }}
       </div>
       <hr class="contour" />
 
@@ -38,19 +35,19 @@
               </div>
             </template>
           </div>
-          <div>by {{ writerInfo.nickname }}</div>
+          <div class="writer-nickname-font">by {{ writerInfo.nickname }}</div>
         </div>
         <div class="writer-info-box-right">
-          <img
-            class="writer-info-box-right-comment-img"
-            src="@/img/comment/comment.png"
-          />
-          {{ commentCount }}
           <img
             class="writer-info-box-right-like-img"
             src="@/img/like/like.png"
           />
-          {{ likeCount }}
+          <div class="indicator">{{ likeCount }}</div>
+          <img
+            class="writer-info-box-right-comment-img"
+            src="@/img/comment/comment.png"
+          />
+          <div class="indicator">{{ commentCount }}</div>
         </div>
       </div>
       <div class="card-writer">{{ attractionBoardReview.writer }}</div>
@@ -64,7 +61,7 @@
 
 <script setup>
 import { getUserInfomationById } from "@/api/member/member.js";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { getAttractionBoardLikeCount } from "@/api/attraction-board-like/attraction-board-like.js";
 import { getCommentCount } from "@/api/attraction-board-comment/attraction-board-comment.js";
 const imageServerURL = import.meta.env.VITE_VUE_IMAGE_SERVER_URL;
@@ -75,6 +72,27 @@ console.log(attractionBoardReview);
 const writerInfo = ref(null);
 const commentCount = ref(0);
 const likeCount = ref(0);
+
+const truncatedTitle = computed(() => {
+  const title = attractionBoardReview.title;
+  return title.length > 10 ? title.slice(0, 10) + "..." : title;
+});
+
+const truncatedContent = computed(() => {
+  const content = attractionBoardReview.content;
+  return content.length > 20 ? content.slice(0, 20) + "..." : content;
+});
+
+const formattedRegdate = computed(() => {
+  const date = new Date(attractionBoardReview.regdate);
+  return date.toLocaleString("ko-KR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  });
+});
 
 // 데이터 로드를 위한 함수를 onMounted 안으로 이동하여 컴포넌트가 마운트 된 후 호출되도록 함
 onMounted(() => {
@@ -136,11 +154,15 @@ onMounted(() => {
 }
 .attraction-board-regdate {
   height: 30px;
-  margin-left: 3px;
+  margin-left: 10px;
+  margin-top: 3px;
 }
 .card-title {
   font-size: 20px;
   font-weight: bold;
+  margin-top: 5px;
+  margin-left: 10px;
+  margin-bottom: 0;
 }
 .card-content {
   flex-grow: 1; /* 컨테이너의 남은 공간을 모두 차지하도록 설정 */
@@ -155,6 +177,7 @@ onMounted(() => {
   text-overflow: ellipsis;
   white-space: normal; /* 여러 줄을 허용 */
   height: 20px;
+  margin: 3px 10px;
 }
 
 .card-content-wrap {
@@ -170,6 +193,7 @@ onMounted(() => {
   display: flex;
   height: 60px;
   margin: 3px;
+  align-items: center;
 }
 .writer-info-box-left {
   display: flex;
@@ -178,14 +202,30 @@ onMounted(() => {
   border-radius: 100%;
   width: 50px;
 }
+.writer-nickname-font {
+  font-size: 18px;
+  font-weight: bold;
+}
 .writer-info-box {
   display: flex;
   justify-content: space-between;
 }
+.writer-info-box-right {
+  margin-bottom: 15px;
+  display: flex;
+}
 .writer-info-box-right-comment-img {
-  width: 30px;
+  width: 18px;
+  height: 23px;
+  margin-right: 5px;
 }
 .writer-info-box-right-like-img {
-  width: 30px;
+  width: 18px;
+  height: 19px;
+  margin-right: 5px;
+}
+.indicator {
+  font-size: 15px;
+  margin-right: 8px;
 }
 </style>

@@ -49,13 +49,21 @@
           <div class="main-sub-title-font">HOT 리뷰</div>
         </div>
         <div class="board-list-top-bar-right">
-          <button type="button" class="btn btn-outline-dark no-outline">
-            <div class="moreInfoButton" @click="toggleHotReviewMode">
+          <button
+            type="button"
+            class="btn btn-outline-dark no-outline"
+            @click="toggleHotReviewMode"
+          >
+            <div class="moreInfoButton">
               <template v-if="isOpenHotReviewComponent"> 접기 </template>
               <template v-if="!isOpenHotReviewComponent"> 펼치기 </template>
             </div>
           </button>
-          <button type="button" class="btn btn-outline-dark no-outline">
+          <button
+            type="button"
+            class="btn btn-outline-dark no-outline"
+            @click="moveReviewList"
+          >
             <div class="moreInfoButton">더보기</div>
           </button>
         </div>
@@ -65,6 +73,7 @@
         <AttractionBoardComponent
           :attractionBoardReviews="attractionBoardReviews"
         ></AttractionBoardComponent>
+        <div class="y-diff"></div>
       </template>
 
       <div class="board-list-top-bar">
@@ -73,8 +82,12 @@
           <div class="main-sub-title-font">내 여행계획</div>
         </div>
         <div class="board-list-top-bar-right">
-          <button type="button" class="btn btn-outline-dark no-outline">
-            <div class="moreInfoButton" @click="toggleMyPlanMode">
+          <button
+            type="button"
+            class="btn btn-outline-dark no-outline"
+            @click="toggleMyPlanMode"
+          >
+            <div class="moreInfoButton">
               <template v-if="isOpenMyPlanComponent"> 접기 </template>
               <template v-if="!isOpenMyPlanComponent"> 펼치기 </template>
             </div>
@@ -128,9 +141,16 @@ const toggleMyPlanMode = () => {
   isOpenMyPlanComponent.value = !isOpenMyPlanComponent.value;
 };
 
+const moveReviewList = () => {
+  router.push({
+    name: "reviewBoardList",
+  });
+};
+
 onMounted(() => {
   accessToken.value = route.query.accessToken;
   console.log(accessToken.value);
+  getReviews();
 
   if (accessToken.value) {
     try {
@@ -156,7 +176,6 @@ onMounted(() => {
       console.error("Invalid token:", error);
     }
   }
-  getReviews();
 });
 
 const getReviews = () => {
@@ -329,5 +348,8 @@ h1 span:nth-child(8) {
 .separate-line {
   margin-top: 0px;
   margin-bottom: 20px;
+}
+.y-diff {
+  height: 50px;
 }
 </style>
