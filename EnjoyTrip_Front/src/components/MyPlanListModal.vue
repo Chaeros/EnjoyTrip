@@ -25,15 +25,6 @@ const modifyPlanDetail = (tripPlanId) => {
 const deletePlanDetail = (tripPlanId) => {
   emit('deletePlanDetail', tripPlanId);
 };
-
-// // Watch for changes in tripPlanRequests and update localTripPlanRequests accordingly
-// watch(
-//   () => props.tripPlanRequests,
-//   (newTripPlanRequests) => {
-//     localTripPlanRequests.value = newTripPlanRequests;
-//   },
-//   { immediate: true, deep: true } // Ensure immediate and deep watching
-// );
 </script>
 
 <template>
@@ -50,7 +41,7 @@ const deletePlanDetail = (tripPlanId) => {
             <div class="trip-plan-title">
               {{ tripPlanRequest.tripPlan.title }}
             </div>
-            <div>메모: {{ tripPlanRequest.tripPlan.content }}</div>
+            <div>설명: {{ tripPlanRequest.tripPlan.content }}</div>
             <div>출발: {{ tripPlanRequest.tripPlan.departureDate }}</div>
             <div>도착: {{ tripPlanRequest.tripPlan.arrivalDate }}</div>
           </div>
