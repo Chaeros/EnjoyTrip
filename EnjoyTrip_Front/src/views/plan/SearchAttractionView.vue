@@ -805,7 +805,7 @@ const updateMyTripPlanList = () => {
               </div>
             </nav>
           </div>
-          <div class="black-btns">
+          <div class="black-btns-search">
             <div class="show-my-plans">
               <button
                 id="my-plan-btn"
@@ -823,6 +823,7 @@ const updateMyTripPlanList = () => {
             </div>
             <div class="make-plan">
               <button
+                id="make-planid-btn"
                 type="button"
                 class="btn btn-dark make-plan-btn"
                 style="
@@ -1294,7 +1295,17 @@ const updateMyTripPlanList = () => {
   z-index: 30;
 }
 
+.black-btns-search {
+  width: 100%;
+  align-items: center;
+}
+
 #my-plan-btn {
+  width: 100%;
+  height: 50px;
+}
+
+#make-planid-btn {
   width: 100%;
   height: 50px;
 }

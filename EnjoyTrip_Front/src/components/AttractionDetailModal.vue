@@ -1,6 +1,12 @@
 <script setup>
 import { ref, defineProps, defineEmits, watch } from 'vue';
 import { getAttractionDetailByContentId } from '@/api/attraction';
+import { getAttractionReviewArticles } from '@/api/attraction-board/attraction-board';
+
+import AttractionBoardItem from '@/components/item/AttractionBoardItem.vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const router = useRouter();
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
 
 const props = defineProps({ contentId: Number });
@@ -16,6 +22,8 @@ const zipcode = ref('');
 const tel = ref('');
 const firstImage = ref('');
 const overview = ref('');
+
+const boards = ref([]);
 
 async function getDetailByContentId(contentId) {
   await getAttractionDetailByContentId(
@@ -34,6 +42,17 @@ async function getDetailByContentId(contentId) {
       console.dir(error);
     }
   );
+
+  await getAttractionReviewArticles(
+    2834353,
+    ({ data }) => {
+      console.dir(data);
+      boards.value = data;
+    },
+    ({ error }) => {
+      console.dir(error);
+    }
+  );
 }
 
 // Watch for changes in contentId and call getDetailByContentId when it changes
@@ -45,31 +64,49 @@ watch(
   },
   { immediate: true } // Call the watcher immediately with the initial value
 );
+
+const seeMore = (id) => {
+  router.push(`/reviewboard/${id}`);
+};
 </script>
 
 <template>
   <div class="wrap">
     <div class="container">
-      <div v-if="firstImage !== ''">
-        <img class="plan-image" :src="firstImage" />
+      <div class="detail-container">
+        <div v-if="firstImage !== ''">
+          <img class="plan-image" :src="firstImage" />
+        </div>
+        <div v-else>
+          <img
+            class="plan-image"
+            :src="
+              VITE_VUE_IMAGE_SERVER_URL +
+              '/image/uploads/1716297494437_colddragon.png'
+            "
+          />
+        </div>
+        <div class="title">{{ title }}</div>
+        <div class="address">주소: {{ addr1 }}{{ addr2 }}</div>
+        <!-- <div class="zipcode">우편번호: {{ zipcode }}</div> -->
+        <!-- <div class="tel">전화번호: {{ tel }}</div> -->
+        <div class="overview">{{ overview }}</div>
+        <button
+          @click.prevent="attractionDetailModalClose"
+          class="close-button"
+        >
+          닫기
+        </button>
       </div>
-      <div v-else>
-        <img
-          class="plan-image"
-          :src="
-            VITE_VUE_IMAGE_SERVER_URL +
-            '/image/uploads/1716297494437_colddragon.png'
-          "
-        />
+      <div class="review-container" v-if="boards.length">
+        <AttractionBoardItem
+          v-for="board in boards"
+          :key="board.id"
+          :board="board"
+          @see-more="seeMore"
+          class="attraction-board-item"
+        ></AttractionBoardItem>
       </div>
-      <div class="title">{{ title }}</div>
-      <div class="address">주소: {{ addr1 }}{{ addr2 }}</div>
-      <!-- <div class="zipcode">우편번호: {{ zipcode }}</div> -->
-      <!-- <div class="tel">전화번호: {{ tel }}</div> -->
-      <div class="overview">{{ overview }}</div>
-      <button @click.prevent="attractionDetailModalClose" class="close-button">
-        닫기
-      </button>
     </div>
   </div>
 </template>
@@ -90,34 +127,70 @@ watch(
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 600px;
+  width: 850px;
   height: 80%;
-  overflow-y: auto;
+  overflow-y: hidden;
   background: #fff; /* F1F5F6 */
   border-radius: 10px;
   padding: 20px;
   box-sizing: border-box;
   border: 2px solid #e0e7e9; /* E0E7E9 */
   color: #354649; /* 354649 */
+  display: flex;
+}
+
+.detail-container {
+  width: 60%;
+  overflow-y: auto;
+}
+
+.review-container {
+  width: 40%;
+  overflow-y: auto;
+}
+
+.board-container {
+  /* background-color: #88a0a7; */
+  margin-bottom: 10px;
 }
 
 /* Custom Scrollbar for WebKit (Chrome, Safari) */
-.container::-webkit-scrollbar {
+.detail-container::-webkit-scrollbar {
   width: 8px;
 }
 
-.container::-webkit-scrollbar-track {
+.detail-container::-webkit-scrollbar-track {
   background: #f8f9fa;
   border-radius: 10px;
 }
 
-.container::-webkit-scrollbar-thumb {
+.detail-container::-webkit-scrollbar-thumb {
   background-color: #6c7a89;
   border-radius: 10px;
   border: 2px solid #f8f9fa;
 }
 
-.container::-webkit-scrollbar-thumb:hover {
+.detail-container::-webkit-scrollbar-thumb:hover {
+  background-color: #6c7a89;
+}
+
+/* Custom Scrollbar for WebKit (Chrome, Safari) */
+.review-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.review-container::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.review-container::-webkit-scrollbar-thumb {
+  background-color: #6c7a89;
+  border-radius: 10px;
+  border: 2px solid #f8f9fa;
+}
+
+.review-container::-webkit-scrollbar-thumb:hover {
   background-color: #6c7a89;
 }
 
@@ -172,5 +245,9 @@ button:hover {
   margin: 10px 0;
   border-radius: 5px;
   border: 2px solid #e0e7e9; /* E0E7E9 */
+}
+
+.attraction-board-item:hover {
+  cursor: pointer;
 }
 </style>

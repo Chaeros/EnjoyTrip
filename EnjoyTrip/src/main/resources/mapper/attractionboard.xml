@@ -30,7 +30,7 @@
         from attraction_board
     </select>
 
-    <select id="findAttractionBoard" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
+    <select id="findAttractionBoard" parameterType="int" resultType="com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard">
         select id, title, content, hit, member_id, attraction_id, image_url, regdate
         from attraction_board
         where id = #{id}
@@ -47,4 +47,5 @@
         from attraction_board
         where attraction_id = #{attractionId}
     </select>
+
 </mapper>

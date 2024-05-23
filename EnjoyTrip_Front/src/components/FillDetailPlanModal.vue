@@ -89,7 +89,7 @@ const planDetailToggle = () => {
       <input type="time" name="arrivalTime" v-model="localArrivalTime" />
       <label for="memo">메모</label>
       <textarea name="memo" v-model="localMemo"></textarea>
-      <label for="moveTime">이동 시간:</label>
+      <label for="moveTime">다음 목적지로 이동 시간:</label>
       <input
         type="text"
         id="moveTime"
