@@ -21,7 +21,7 @@ function submitUserInfo() {
     (response) => {
       alert("유저 수정이 완료되었습니다.");
       console.log(response);
-      moveMainPage(response);
+      moveMainPage();
     },
     (error) => {
       alert("유저 수정이 실패했습니다.");

@@ -10,7 +10,7 @@ const headers2 = {
 function addUserInformation(param, success, fail) {
   console.log(param);
   local
-    .post(`/oauth2/sign-up`, JSON.stringify(param))
+    .post(`/oauth2/sign-up`, JSON.stringify(param), { headers: headers2 })
     .then(success)
     .catch(fail);
 }

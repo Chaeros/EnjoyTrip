@@ -211,13 +211,13 @@ onMounted(() => {
   console.log(accessToken.value);
   getReviews();
   getMyPlans();
-
   if (accessToken.value) {
     try {
       // CommonJS 형식으로 가져온 모듈에서 함수를 호출
       const decodedToken = VueJwtDecode.decode(accessToken.value);
       email.value = decodedToken.email;
       console.log(decodedToken);
+      console.log(email.value);
       getUserInfomation(
         email.value,
         (response) => {
@@ -227,6 +227,8 @@ onMounted(() => {
           console.log(getLocalStorage("userId"));
           isLogin.value = true;
           userInfo.value = response.data;
+          getReviews();
+          getMyPlans();
         },
         (error) => {
           console.log(error);
