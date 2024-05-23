@@ -140,6 +140,12 @@
         </div>
       </div>
       <!-- 찬곤이 소개 Component 장착 -->
+      <div class="changon-introduce">
+        <img
+          class="changon-dance"
+          src="https://github.com/Chaeros/Problem_Solved/assets/91451735/7fe87e5b-e33a-4111-bfec-1d7831f16604"
+        />
+      </div>
     </div>
     <Footer></Footer>
   </div>
@@ -433,5 +439,9 @@ h1 span:nth-child(8) {
   padding: 10px;
   box-sizing: border-box;
   border-radius: 5px;
+}
+.changon-introduce {
+  width: 1200px;
+  margin: 0 auto;
 }
 </style>

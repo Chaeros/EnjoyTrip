@@ -38,7 +38,7 @@ function moveMainPage() {
 <template>
   <div>
     <form>
-      <div class="mb-3">
+      <!-- <div class="mb-3">
         <label for="exampleInputEmail1" class="form-label">Email 주소</label>
         <input
           type="email"
@@ -46,7 +46,7 @@ function moveMainPage() {
           id="email"
           v-model="userInfo.email"
         />
-      </div>
+      </div> -->
       <div class="mb-3">
         <label for="exampleInputPassword1" class="form-label">이름</label>
         <input
