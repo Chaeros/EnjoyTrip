@@ -22,7 +22,7 @@ function removeFriendByDto(friendDto, success, fail) {
 }
 
 function bringFriendList(myId, success, fail) {
-  console.log(userId);
+  console.log(getLocalStorage("userId"));
   console.log(myId);
   local
     .get(`/friend/list/` + myId)

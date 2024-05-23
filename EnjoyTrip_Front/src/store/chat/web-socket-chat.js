@@ -52,7 +52,7 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
       let payload = {
         messageType: "ENTER",
         senderId: getLocalStorage("userId"),
-        message: userId + "님이 입장하셨습니다.",
+        message: getLocalStorage("userId") + "님이 입장하셨습니다.",
         chatRoomId: currentSelectedRoomId.value,
       };
       console.log(payload);
@@ -67,7 +67,7 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
       let payload = {
         messageType: "ENTER",
         senderId: getLocalStorage("userId"),
-        message: userId + "님이 입장하셨습니다.",
+        message: getLocalStorage("userId") + "님이 입장하셨습니다.",
         chatRoomId: roomId,
       };
       console.log(payload);

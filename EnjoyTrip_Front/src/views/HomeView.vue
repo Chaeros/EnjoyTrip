@@ -245,7 +245,7 @@ const getReviews = () => {
 
 const getMyPlans = () => {
   getListMyTripPlan(
-    userId,
+    getLocalStorage("userId"),
     (data) => {
       console.dir("data 까지는 잘받아옴.그리고 뒤에  data 붙여줘야함");
       tripPlanRequests.value = data.data;

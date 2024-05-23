@@ -125,6 +125,7 @@ import {
   isMyLikeReview,
 } from "@/api/attraction-board-like/attraction-board-like.js";
 import Swal from "sweetalert2";
+import { enterOrRegistPrivateChatRoom } from "@/api/chat/chat.js";
 
 const imageServerURL = ref(import.meta.env.VITE_VUE_IMAGE_SERVER_URL);
 const route = useRoute();

@@ -17,7 +17,7 @@ export const useFriendManagementStore = defineStore(
 
     const bringMyFriendsList = () => {
       bringFriendList(
-        userId,
+        getLocalStorage("userId"),
         (response) => {
           friends.value = response.data;
           console.log("friend목록 받아오기 완료");
