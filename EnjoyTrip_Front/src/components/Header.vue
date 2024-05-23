@@ -3,7 +3,12 @@
     <div class="header">
       <div class="left-side-header">
         <h3 class="header-logo" @click="clickTitle">CHANGON</h3>
-        <a class="header-link" @click="clickAttraction">관광지찾기</a>
+        <a
+          id="header-link-find-tour"
+          class="header-link"
+          @click="clickAttraction"
+          >관광지찾기</a
+        >
         <a class="header-link" @click="clickCummunity">커뮤니티</a>
         <a class="header-link">공지사항</a>
       </div>
@@ -64,17 +69,17 @@
 </template>
 
 <script setup>
-import { useRoute, useRouter } from "vue-router";
-import { useMemberStore } from "@/store/member";
-import { useWebSocketChatStore } from "@/store/chat/web-socket-chat.js";
-import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { useRoute, useRouter } from 'vue-router';
+import { useMemberStore } from '@/store/member';
+import { useWebSocketChatStore } from '@/store/chat/web-socket-chat.js';
+import { storeToRefs } from 'pinia';
+import { ref } from 'vue';
 import {
   getLocalStorage,
   setLocalStorage,
   removeLocalStorage,
-} from "@/util/localstorage/localstorage.js";
-import { findAttractionBoardsByTitle } from "@/api/attraction-board/attraction-board";
+} from '@/util/localstorage/localstorage.js';
+import { findAttractionBoardsByTitle } from '@/api/attraction-board/attraction-board';
 
 const memberStore = useMemberStore();
 const webSocketChatStore = useWebSocketChatStore();
@@ -83,46 +88,46 @@ const { sendEscapeMsg } = webSocketChatStore;
 const router = useRouter();
 
 const clickLogin = () => {
-  router.push({ name: "login" });
+  router.push({ name: 'login' });
 };
 const clickSignUp = () => {
-  router.push({ name: "normalSingUp" });
+  router.push({ name: 'normalSingUp' });
 };
 const clickTitle = () => {
-  router.push({ name: "home" });
+  router.push({ name: 'home' });
 };
 const clickAttraction = () => {
-  router.push({ name: "searchattraction" });
+  router.push({ name: 'searchattraction' });
 };
 const clickCummunity = () => {
-  router.push({ name: "reviewBoardList" });
+  router.push({ name: 'reviewBoardList' });
 };
 const clickLogOut = () => {
   userInfo.value = null;
   isLogin.value = false;
-  removeLocalStorage("userId");
-  removeLocalStorage("access_token");
-  removeLocalStorage("refresh_token");
+  removeLocalStorage('userId');
+  removeLocalStorage('access_token');
+  removeLocalStorage('refresh_token');
   sendEscapeMsg();
 };
 const clickMyPage = () => {
-  router.push({ name: "myPage" });
+  router.push({ name: 'myPage' });
 };
 const displayMember = ref({
-  id: "",
-  img: "",
+  id: '',
+  img: '',
 });
-const homeKkeyword = ref("");
+const homeKkeyword = ref('');
 const callAttractionBoardByTitle = () => {
   router.push({
-    name: "reviewBoardList",
+    name: 'reviewBoardList',
     query: { sendKeyword: homeKkeyword.value },
   });
 };
 </script>
 
 <style scoped>
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
 
 .header-wrap {
   height: 80px;
@@ -144,7 +149,7 @@ const callAttractionBoardByTitle = () => {
 
 .header-logo {
   font-size: 30px;
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   font-weight: bold;
   cursor: pointer;
   transition: color 0.3s;
@@ -156,7 +161,7 @@ const callAttractionBoardByTitle = () => {
 
 .header-link {
   margin: 0 10px;
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   color: #333;
   text-decoration: none;
   font-weight: 500;
@@ -211,7 +216,7 @@ const callAttractionBoardByTitle = () => {
   border-radius: 10px;
   text-align: center;
   /* text-decoration: none; */
-  font-family: "Noto Sans KR", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   cursor: pointer;
   transition: background-color 0.3s;
   /* font-weight: bold; */
@@ -225,5 +230,9 @@ const callAttractionBoardByTitle = () => {
   margin: 0 10px;
   font-weight: bold;
   color: #333;
+}
+
+#header-link-find-tour {
+  margin-left: 40px;
 }
 </style>
