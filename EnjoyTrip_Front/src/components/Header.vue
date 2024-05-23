@@ -14,14 +14,15 @@
             type="search"
             placeholder="Search"
             aria-label="Search"
+            @keydown.enter="callAttractionBoardByTitle"
+            v-model="homeKkeyword"
           />
           <img
             src="@/img/search_icon.png"
             alt="Show Password"
             title="Show Password"
             class="search_icon"
-            @mousedown="showPassword(true)"
-            @mouseup="showPassword(false)"
+            @click="callAttractionBoardByTitle"
           />
         </div>
         <template v-if="isLogin === false">
@@ -73,6 +74,7 @@ import {
   setLocalStorage,
   removeLocalStorage,
 } from "@/util/localstorage/localstorage.js";
+import { findAttractionBoardsByTitle } from "@/api/attraction-board/attraction-board";
 
 const memberStore = useMemberStore();
 const webSocketChatStore = useWebSocketChatStore();
@@ -110,6 +112,13 @@ const displayMember = ref({
   id: "",
   img: "",
 });
+const homeKkeyword = ref("");
+const callAttractionBoardByTitle = () => {
+  router.push({
+    name: "reviewBoardList",
+    query: { sendKeyword: homeKkeyword.value },
+  });
+};
 </script>
 
 <style scoped>

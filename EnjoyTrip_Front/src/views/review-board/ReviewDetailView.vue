@@ -6,18 +6,7 @@
     v-if="article"
   />
   <div class="board-detail-page" v-if="writerInfo">
-    <div class="board-detail-left">
-      <template v-if="isMyLikeArticle">
-        <button class="like-button" @click="clickLikeBtn">
-          ♥ 좋아요({{ totalLikeCount }}) 취소
-        </button>
-      </template>
-      <template v-else>
-        <button class="like-button" @click="clickLikeBtn">
-          ♡ 좋아요({{ totalLikeCount }}) 하기
-        </button>
-      </template>
-    </div>
+    <div class="board-detail-left"></div>
     <div class="board-detail-center">
       <div class="board-detail-box">
         <div class="board-detail-info-box">
@@ -90,6 +79,18 @@
         class="article-content"
         v-html="article.content"
       ></div>
+      <div class="like-button-box">
+        <template v-if="isMyLikeArticle">
+          <button class="like-button" @click="clickLikeBtn">
+            <div class="like-button-font">♥ {{ totalLikeCount }}</div>
+          </button>
+        </template>
+        <template v-else>
+          <button class="like-button" @click="clickLikeBtn">
+            <div class="like-button-font">♡ {{ totalLikeCount }}</div>
+          </button>
+        </template>
+      </div>
       <CommentView
         class="comment"
         :attractionBoardReviewId="attractionBoardReviewId"
@@ -320,7 +321,6 @@ const getWriterInfo = () => {
   grid-template-columns: 1fr 3fr 1fr;
   gap: 20px;
   padding: 20px;
-  background-color: #f8f9fa; /* 밝은 배경색 추가 */
   min-height: 100vh;
 }
 
@@ -329,9 +329,7 @@ const getWriterInfo = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #ffffff;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
 
@@ -356,6 +354,7 @@ const getWriterInfo = () => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   width: 1200px;
+  margin: 0 auto;
 }
 
 .board-detail-title-img {
@@ -439,6 +438,20 @@ const getWriterInfo = () => {
   overflow: hidden;
   word-break: break-word;
   font-size: 25px;
+}
+
+.like-button-box {
+  margin: 0 auto;
+  text-align: center;
+  height: 70px;
+}
+
+.like-button {
+  height: 100%;
+}
+
+.like-button-font {
+  font-size: 30px;
 }
 
 .comment {

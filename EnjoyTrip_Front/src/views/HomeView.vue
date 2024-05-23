@@ -76,40 +76,45 @@
         <div class="y-diff"></div>
       </template>
 
-      <div class="board-list-top-bar">
-        <div class="board-list-top-bar-left">
-          <img src="@/img/coldragon2-removebg.png" class="main-sub-title-img" />
-          <div class="main-sub-title-font">내 여행계획</div>
+      <div v-if="isLogin">
+        <div class="board-list-top-bar">
+          <div class="board-list-top-bar-left">
+            <img
+              src="@/img/coldragon2-removebg.png"
+              class="main-sub-title-img"
+            />
+            <div class="main-sub-title-font">내 여행계획</div>
+          </div>
+          <div class="board-list-top-bar-right">
+            <button
+              type="button"
+              class="btn btn-outline-dark no-outline"
+              @click="toggleMyPlanMode"
+            >
+              <div class="moreInfoButton">
+                <template v-if="isOpenMyPlanComponent"> 접기 </template>
+                <template v-if="!isOpenMyPlanComponent"> 펼치기 </template>
+              </div>
+            </button>
+            <button type="button" class="btn btn-outline-dark no-outline">
+              <div class="moreInfoButton">더보기</div>
+            </button>
+          </div>
         </div>
-        <div class="board-list-top-bar-right">
-          <button
-            type="button"
-            class="btn btn-outline-dark no-outline"
-            @click="toggleMyPlanMode"
-          >
-            <div class="moreInfoButton">
-              <template v-if="isOpenMyPlanComponent"> 접기 </template>
-              <template v-if="!isOpenMyPlanComponent"> 펼치기 </template>
-            </div>
-          </button>
-          <button type="button" class="btn btn-outline-dark no-outline">
-            <div class="moreInfoButton">더보기</div>
-          </button>
-        </div>
-      </div>
-      <!-- 내 여행계획 Component 장착 -->
-      <div
-        v-if="isOpenMyPlanComponent"
-        class="my-plan-list-modal-home-view-container"
-      >
-        <!-- class="my-plan-list-modal-home-view" -->
+        <!-- 내 여행계획 Component 장착 -->
+        <div
+          v-if="isOpenMyPlanComponent"
+          class="my-plan-list-modal-home-view-container"
+        >
+          <!-- class="my-plan-list-modal-home-view" -->
 
-        <PlanCard
-          v-for="tripPlanRequest in tripPlanRequests"
-          :trip-plan-request="tripPlanRequest"
-        ></PlanCard>
+          <PlanCard
+            v-for="tripPlanRequest in tripPlanRequests"
+            :trip-plan-request="tripPlanRequest"
+          ></PlanCard>
+        </div>
+        <div class="y-diff" v-if="isOpenMyPlanComponent"></div>
       </div>
-      <div class="y-diff" v-if="isOpenMyPlanComponent"></div>
 
       <div class="board-list-top-bar">
         <div class="board-list-top-bar-left">

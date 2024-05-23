@@ -12,14 +12,15 @@
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
+                @keydown.enter="callAttractionBoardByTitle"
+                v-model="keyword"
               />
               <img
                 src="@/img/search_icon.png"
                 alt="Show Password"
                 title="Show Password"
                 class="search_icon"
-                @mousedown="showPassword(true)"
-                @mouseup="showPassword(false)"
+                @click="callAttractionBoardByTitle"
               />
             </div>
             <button
@@ -56,17 +57,35 @@
 import Header from "@/components/Header.vue";
 import Footer from "@/components/Footer.vue";
 import AttractionBoardArticleCard from "@/components/item/card/AttractionBoardArticleCard.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useMemberStore } from "@/store/member";
 import { storeToRefs } from "pinia";
-import { getAttractionReviewList } from "@/api/attraction-board/attraction-board";
+import {
+  getAttractionReviewList,
+  findAttractionBoardsByTitle,
+} from "@/api/attraction-board/attraction-board";
 
 const router = useRouter();
+const route = useRoute();
 const memberStore = useMemberStore();
 const { isLogin } = storeToRefs(memberStore);
 const attractionBoardReviews = ref([]);
 const showScrollButton = ref(false);
+
+const keyword = ref("");
+
+const callAttractionBoardByTitle = () => {
+  findAttractionBoardsByTitle(
+    keyword.value,
+    (response) => {
+      attractionBoardReviews.value = response.data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 
 const clickBoardWriteBtn = () => {
   if (isLogin.value) {
@@ -99,6 +118,18 @@ const scrollToTop = () => {
 onMounted(() => {
   getReviews();
   window.addEventListener("scroll", handleScroll);
+  console.log(route.query.sendKeyword);
+  if (route.query.sendKeyword) {
+    findAttractionBoardsByTitle(
+      route.query.sendKeyword,
+      (response) => {
+        attractionBoardReviews.value = response.data;
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 });
 
 onBeforeUnmount(() => {
@@ -124,7 +155,6 @@ body {
 
 .board-list-page {
   padding: 20px;
-  min-height: 100vh; /* 최소 높이 설정 */
 }
 
 .board-list-box {
