@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <ChatComponent v-if="isLogin" z />
+    <ChatComponent v-if="isLogin" />
     <RouterView />
     <button @click="scrollToTop" class="scroll-to-top" v-if="showScrollButton">
       ↑

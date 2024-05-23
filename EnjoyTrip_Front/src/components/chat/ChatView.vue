@@ -177,11 +177,8 @@
                 <!-- <input type="file" @change="onFileChange" accept="image/*" /> -->
               </div>
               <div>
-                <Picker @emoji-click="addEmoji" />
-                <!-- 버튼 -->
-                <button id="emoji_btn" @click="addEmoji">button</button>
-                <!-- input 상자 -->
-                <input type="text" id="message" />
+                <!-- <button id="emoji_btn" @click="addEmoji">button</button>
+                <input type="text" id="message" /> -->
               </div>
             </template>
           </div>
@@ -208,8 +205,8 @@ import { ref, watch, onMounted, nextTick } from "vue";
 import axios from "axios";
 import ChatMemberItem from "@/components/item/chat/ChatMemberItem.vue";
 import { getLocalStorage } from "@/util/localstorage/localstorage";
-import { Picker } from "emoji-mart-vue-fast";
-import "emoji-mart-vue-fast/css/emoji-mart.css"; // 이모지 선택기 스타일 가져오기
+// import { Picker } from "emoji-mart-vue-fast";
+// import "emoji-mart-vue-fast/css/emoji-mart.css";
 import {
   getUserInfomationById,
   getChattingMemberId,
@@ -378,6 +375,11 @@ socket.value.onmessage = function (e) {
   };
   console.log(parsedData);
 
+  if (parsedData.senderId == getLocalStorage("userId")) {
+    activeChat.value.messages.push(tempData);
+    return;
+  }
+
   let isMember = false;
   let preFriend = null;
   if (currentMode.value == "CHATTING") {
@@ -463,6 +465,7 @@ onMounted(() => {
 
 const toggleMinimize = () => {
   isMinimized.value = !isMinimized.value;
+  console.log(isMinimized);
 };
 
 const startDrag = (e) => {
@@ -641,9 +644,9 @@ const enterChatRoom = (friendId) => {
   receiverId.value = friendId;
 };
 
-const addEmoji = (emoji) => {
-  newMessage.value += emoji.native;
-};
+// const addEmoji = (emoji) => {
+//   newMessage.value += emoji.native;
+// };
 
 // const button = document.querySelector("#emoji_btn");
 // const picker = new EmojiButton({
