@@ -14,4 +14,5 @@ public interface AttractionBoardMapper {
     List<AttractionBoard> findAttractionBoards();
     List<AttractionBoard> findAttractionBoardsByTitle(String title);
     List<AttractionBoard> findAttractionBoardsByAttractionId(int attractionId);
+    List<AttractionBoard> findAttractionBoardsSortByLike();
 }
