@@ -5,6 +5,7 @@ import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardAdd
 import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardModifyRequestDto;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.mapper.AttractionBoardMapper;
+import com.ssafy.enjoytrip.domain.attractionboard.validator.AttractionBoardValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,14 +20,17 @@ import java.util.stream.Collectors;
 public class AttractionBoardServiceImpl implements AttractionBoardService{
     
     private final AttractionBoardMapper attractionBoardMapper;
+    private final AttractionBoardValidator attractionBoardValidator;
     
     @Override
     public int addAttractionBoard(AttractionBoardAddRequestDto attractionBoardAddRequestDto) {
+        attractionBoardValidator.validateAttractionBoardAddRequestDto(attractionBoardAddRequestDto);
         return attractionBoardMapper.insertAttractionBoard(attractionBoardAddRequestDto.transferToAttractionBoard());
     }
 
     @Override
     public int modifyAttractionBoard(AttractionBoardAddRequestDto attractionBoardAddRequestDto) {
+        attractionBoardValidator.validateAttractionBoardAddRequestDto(attractionBoardAddRequestDto);
         return attractionBoardMapper.updateAttractionBoard(attractionBoardAddRequestDto.transferToAttractionBoard());
     }
 
