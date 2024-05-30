@@ -1,7 +1,6 @@
 package com.ssafy.enjoytrip.domain.attractionboard.controller;
 
 import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardAddRequestDto;
-import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardModifyRequestDto;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.service.AttractionBoardService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +31,6 @@ public class AttractionBoardController {
     public ResponseEntity<Void> modifyAttractionBoard(@RequestBody AttractionBoardAddRequestDto attractionBoardAddRequestDto){
         log.info("[modifyAttractionBoard] attractionBoardAddRequestDto : {}",attractionBoardAddRequestDto);
         if ( attractionBoardService.modifyAttractionBoard(attractionBoardAddRequestDto) == 0 ){
-            log.info("여기왓음");
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
@@ -72,5 +70,20 @@ public class AttractionBoardController {
         return attractionBoardService.searchAttractionBoardsByAttractionId(attractionId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+    }
+
+    // 페이지에 속하는 관광지 리뷰 목록을 불러오는 API
+    @GetMapping("/page/{page}")
+    public ResponseEntity<List<AttractionBoardResponseDto>> searchAttractionBoardsByPageNumber(@PathVariable("page") int page){
+        log.info("[searchAttractionBoardsByPageNumber] page : {}",page);
+        return attractionBoardService.searchPageOfAttractionBoard(page-1)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+    }
+
+    // 전체 관광지 리뷰 개수를 불러오는 API
+    @GetMapping("/attractionboardcount")
+    public ResponseEntity<Integer> searchTotalCountOfAttractionBoards(){
+        return ResponseEntity.ok(attractionBoardService.searchTotalCountOfAttractionBoard());
     }
 }

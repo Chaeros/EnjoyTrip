@@ -8,13 +8,13 @@ import org.springframework.stereotype.Component;
 public class AttractionBoardValidator {
 
     public void validateIsNotNullTitle(String title){
-        if ( title == null ){
+        if ( title == null || title.equals("") ){
             throw new AttractionBoardException("제목을 입력해주세요!");
         }
     }
 
     public void validateIsNotNullContent(String content){
-        if ( content == null ){
+        if ( content == null || content.equals("") ){
             throw new AttractionBoardException("내용을 입력해주세요!");
         }
     }

@@ -1,25 +1,26 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue';
-import axios from 'axios';
-import Header from '@/components/Header.vue';
-import Footer from '@/components/Footer.vue';
-import Modal from '@/modal/SearchAttractionModal.vue';
-import AttractionItem from '@/components/item/AttractionItem.vue';
+import { onMounted, ref, watch } from "vue";
+import axios from "axios";
+import Header from "@/components/Header.vue";
+import Footer from "@/components/Footer.vue";
+import Modal from "@/modal/SearchAttractionModal.vue";
+import AttractionItem from "@/components/item/AttractionItem.vue";
 import {
   getListAttraction,
   getListSido,
   getListGugun,
   getListContentType,
-} from '@/api/attraction';
-import { AttractionDetailByContentId } from '@/api/attraction/attraction.js';
+} from "@/api/attraction";
+import { AttractionDetailByContentId } from "@/api/attraction/attraction.js";
 import {
   addAttractionReview,
   modifyAttractionBoard,
-} from '@/api/attraction-board/attraction-board.js';
-import { useMemberStore } from '@/store/member';
-import { storeToRefs } from 'pinia';
-import { useRoute, useRouter } from 'vue-router';
-import { getAttractionReviewArticle } from '@/api/attraction-board/attraction-board.js';
+} from "@/api/attraction-board/attraction-board.js";
+import { useMemberStore } from "@/store/member";
+import { storeToRefs } from "pinia";
+import { useRoute, useRouter } from "vue-router";
+import { getAttractionReviewArticle } from "@/api/attraction-board/attraction-board.js";
+import Swal from "sweetalert2";
 
 const router = useRouter();
 const memberStore = useMemberStore();
@@ -28,7 +29,7 @@ const showModal = ref(false);
 const selectAttractionItem = ref();
 const selectAttractTitle = ref();
 const attractions = ref([]);
-const keyword = ref('');
+const keyword = ref("");
 const sidos = ref([]);
 const guguns = ref([]);
 const contentTypes = ref([]);
@@ -37,20 +38,20 @@ const attractionBoardReviewId = ref(null);
 const isModify = ref(false);
 
 const article = ref({
-  id: '',
-  title: '',
-  content: '',
-  memberId: userInfo.value?.id || '',
-  attractionId: '',
-  imageUrl: '',
+  id: "",
+  title: "",
+  content: "",
+  memberId: userInfo.value?.id || "",
+  attractionId: "",
+  imageUrl: "",
 });
 const inputInformation = ref({
   sidoCode: 0,
   gugunCode: 0,
   contentTypeId: 0,
-  keyword: '',
+  keyword: "",
 });
-const fileName = ref('');
+const fileName = ref("");
 
 watch(userInfo, (newValue) => {
   if (newValue) {
@@ -76,7 +77,7 @@ const selectAttraction = (attractionItem) => {
 const { VITE_VUE_API_URL } = import.meta.env;
 
 onMounted(() => {
-  const editor = document.getElementById('editor');
+  const editor = document.getElementById("editor");
   attractionBoardReviewId.value = route.query.attractionBoardReviewId;
   isModify.value = route.query.isModify;
 
@@ -109,53 +110,53 @@ onMounted(() => {
   }
 
   if (editor) {
-    editor.addEventListener('paste', async (event) => {
+    editor.addEventListener("paste", async (event) => {
       const items = (event.clipboardData || event.originalEvent.clipboardData)
         .items;
 
       for (const item of items) {
-        if (item.kind === 'file') {
+        if (item.kind === "file") {
           const file = item.getAsFile();
           const formData = new FormData();
-          formData.append('file', file);
+          formData.append("file", file);
 
           // 서버에 이미지 업로드
           await axios
-            .post('http://localhost:8080/image/upload', formData, {
+            .post("http://localhost:8080/image/upload", formData, {
               headers: {
-                'Content-Type': 'multipart/form-data',
+                "Content-Type": "multipart/form-data",
               },
             })
             .then((response) => {
               const imageUrl = VITE_VUE_API_URL + response.data.url;
               document.execCommand(
-                'insertHTML',
+                "insertHTML",
                 false,
                 `<img src="${imageUrl}" class="resizable" style="max-width: 100%; overflow: auto;" />`
               );
               addImageResizeFunctionality();
             })
             .catch((error) => {
-              console.error('Error uploading image:', error);
+              console.error("Error uploading image:", error);
             });
         }
       }
     });
 
     function addImageResizeFunctionality() {
-      const imgs = editor.getElementsByTagName('img');
+      const imgs = editor.getElementsByTagName("img");
       for (const img of imgs) {
         interact(img).resizable({
           edges: { left: true, right: true, bottom: true, top: true },
           listeners: {
             move(event) {
               const { target } = event;
-              let x = parseFloat(target.getAttribute('data-x')) || 0;
-              let y = parseFloat(target.getAttribute('data-y')) || 0;
+              let x = parseFloat(target.getAttribute("data-x")) || 0;
+              let y = parseFloat(target.getAttribute("data-y")) || 0;
 
               // update the element's style
-              target.style.width = event.rect.width + 'px';
-              target.style.height = event.rect.height + 'px';
+              target.style.width = event.rect.width + "px";
+              target.style.height = event.rect.height + "px";
 
               // translate when resizing from top or left edges
               x += event.deltaRect.left;
@@ -163,13 +164,13 @@ onMounted(() => {
 
               target.style.transform = `translate(${x}px, ${y}px)`;
 
-              target.setAttribute('data-x', x);
-              target.setAttribute('data-y', y);
+              target.setAttribute("data-x", x);
+              target.setAttribute("data-y", y);
             },
           },
           modifiers: [
             interact.modifiers.restrictEdges({
-              outer: 'parent',
+              outer: "parent",
             }),
             interact.modifiers.restrictSize({
               min: { width: 50, height: 50 },
@@ -184,7 +185,7 @@ onMounted(() => {
           },
         });
 
-        img.addEventListener('mousedown', (event) => {
+        img.addEventListener("mousedown", (event) => {
           event.preventDefault();
         });
       }
@@ -192,7 +193,7 @@ onMounted(() => {
 
     addImageResizeFunctionality();
   } else {
-    console.error('Editor element not found');
+    console.error("Editor element not found");
   }
 });
 
@@ -237,18 +238,18 @@ const page = ref(1);
 const size = ref(10);
 const isLoading = ref(false);
 const hasMore = ref(true);
-const bottomElement = ref('');
+const bottomElement = ref("");
 
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        console.dir('intersecting');
+        console.dir("intersecting");
         loadMoreAttractions();
       }
     });
   },
-  { rootMargin: '0px 0px 100px 0px' }
+  { rootMargin: "0px 0px 100px 0px" }
 );
 
 async function initSearchAttractions() {
@@ -294,30 +295,34 @@ callSidos(1);
 callContentTypes();
 
 const clickReturnList = () => {
-  router.push({ name: 'reviewBoardList' });
+  router.push({ name: "reviewBoardList" });
 };
 
 const clickPostArticle = () => {
-  const editor = document.getElementById('editor');
+  const editor = document.getElementById("editor");
   article.value.content = editor.innerHTML;
   addAttractionReview(
     article.value,
     (response) => {
-      router.push({ name: 'reviewBoardList' });
+      router.push({ name: "reviewBoardList" });
     },
     (error) => {
       console.log(error);
+      Swal.fire({
+        icon: "error",
+        title: error.response.data.message,
+      });
     }
   );
 };
 
 const clickModifyArticle = () => {
-  const editor = document.getElementById('editor');
+  const editor = document.getElementById("editor");
   article.value.content = editor.innerHTML;
   modifyAttractionBoard(
     article.value,
     (response) => {
-      router.push({ name: 'reviewBoardList' });
+      router.push({ name: "reviewBoardList" });
     },
     (error) => {
       console.log(error);
@@ -330,21 +335,21 @@ const handleFileUpload = async (event) => {
   if (file) {
     fileName.value = file.name;
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
       const response = await axios.post(
-        'http://localhost:8080/image/upload',
+        "http://localhost:8080/image/upload",
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
       article.value.imageUrl = response.data.url;
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error("Error uploading file:", error);
     }
   }
 };

@@ -241,7 +241,6 @@ const checkPasswordStrength = () => {
   justify-content: center; /* 수평 중앙 정렬 */
   align-items: center; /* 수직 중앙 정렬 */
   height: 100vh; /* 전체 화면 높이 */
-  background-image: url("@/img/coldragon.png"); /* 배경 이미지 추가 */
   background-size: cover; /* 배경 이미지 크기 */
   background-position: center; /* 배경 이미지 위치 */
   background-repeat: no-repeat; /* 배경 이미지 반복 제거 */

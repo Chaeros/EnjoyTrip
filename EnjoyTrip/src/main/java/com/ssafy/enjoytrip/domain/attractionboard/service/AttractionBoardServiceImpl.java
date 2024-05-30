@@ -40,6 +40,11 @@ public class AttractionBoardServiceImpl implements AttractionBoardService{
     }
 
     @Override
+    public int searchTotalCountOfAttractionBoard() {
+        return attractionBoardMapper.findTotalCountOfAttractionBoard();
+    }
+
+    @Override
     public Optional<AttractionBoardResponseDto> searchAttractionBoard(int id) {
         return Optional.ofNullable(attractionBoardMapper.findAttractionBoard(id).transferToAttractionBoardResponseDto());
     }
@@ -65,6 +70,15 @@ public class AttractionBoardServiceImpl implements AttractionBoardService{
     @Override
     public Optional<List<AttractionBoardResponseDto>> searchAttractionBoardsByAttractionId(int attractionId) {
         List<AttractionBoard> boards = attractionBoardMapper.findAttractionBoardsByAttractionId(attractionId);
+        List<AttractionBoardResponseDto> responseDtos = boards.stream()
+                .map(AttractionBoard::transferToAttractionBoardResponseDto)
+                .collect(Collectors.toList());
+        return Optional.ofNullable(responseDtos);
+    }
+
+    @Override
+    public Optional<List<AttractionBoardResponseDto>> searchPageOfAttractionBoard(int page) {
+        List<AttractionBoard> boards = attractionBoardMapper.findPageOfAttractionBoard(page*8);
         List<AttractionBoardResponseDto> responseDtos = boards.stream()
                 .map(AttractionBoard::transferToAttractionBoardResponseDto)
                 .collect(Collectors.toList());

@@ -10,9 +10,11 @@ public interface AttractionBoardMapper {
     int insertAttractionBoard(AttractionBoard attractionBoard);
     int updateAttractionBoard(AttractionBoard attractionBoard);
     int deleteAttractionBoard(int id);
+    int findTotalCountOfAttractionBoard();
     AttractionBoard findAttractionBoard(int id);
     List<AttractionBoard> findAttractionBoards();
     List<AttractionBoard> findAttractionBoardsByTitle(String title);
     List<AttractionBoard> findAttractionBoardsByAttractionId(int attractionId);
     List<AttractionBoard> findAttractionBoardsSortByLike();
+    List<AttractionBoard> findPageOfAttractionBoard(int offset);
 }
