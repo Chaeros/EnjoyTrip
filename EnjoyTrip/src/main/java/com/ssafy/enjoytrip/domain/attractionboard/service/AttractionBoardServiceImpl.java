@@ -78,7 +78,7 @@ public class AttractionBoardServiceImpl implements AttractionBoardService{
 
     @Override
     public Optional<List<AttractionBoardResponseDto>> searchPageOfAttractionBoard(int page) {
-        List<AttractionBoard> boards = attractionBoardMapper.findPageOfAttractionBoard(page*8);
+        List<AttractionBoard> boards = attractionBoardMapper.findPageOfAttractionBoard(page*6);
         List<AttractionBoardResponseDto> responseDtos = boards.stream()
                 .map(AttractionBoard::transferToAttractionBoardResponseDto)
                 .collect(Collectors.toList());

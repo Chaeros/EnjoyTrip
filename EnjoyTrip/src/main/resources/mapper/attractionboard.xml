@@ -75,7 +75,7 @@
         select id, title, content, hit, member_id, attraction_id, image_url, regdate
           from attraction_board
          order by regdate desc
-         limit 8
+         limit 6
         offset #{offset}
     </select>
 

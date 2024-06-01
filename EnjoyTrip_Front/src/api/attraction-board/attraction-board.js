@@ -56,6 +56,17 @@ function findAttractionBoardsByTitle(title, success, fail) {
     .catch(fail);
 }
 
+function getTotalCountOfAttractionBoards(success, fail) {
+  local.get(`/attractionboard/attractionboardcount`).then(success).catch(fail);
+}
+
+function searchAttractionBoardsByPageNumber(pageNumber, success, fail) {
+  local
+    .get(`/attractionboard/page/` + pageNumber)
+    .then(success)
+    .catch(fail);
+}
+
 export {
   addAttractionReview,
   getAttractionReviewList,
@@ -64,4 +75,6 @@ export {
   modifyAttractionBoard,
   getAttractionReviewArticles,
   findAttractionBoardsByTitle,
+  getTotalCountOfAttractionBoards,
+  searchAttractionBoardsByPageNumber,
 };

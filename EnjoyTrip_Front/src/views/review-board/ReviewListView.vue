@@ -45,12 +45,22 @@
           </template>
         </div>
       </div>
+      <div class="paging-box">
+        <p
+          v-for="page in pageCount"
+          :key="page"
+          @click="clickPage(page)"
+          :class="{ 'bold-page': page == currentPage }"
+        >
+          {{ page }}
+        </p>
+      </div>
     </div>
   </div>
-  <Footer />
   <button @click="scrollToTop" class="scroll-to-top" v-if="showScrollButton">
     ↑
   </button>
+  <Footer />
 </template>
 
 <script setup>
@@ -64,6 +74,8 @@ import { storeToRefs } from "pinia";
 import {
   getAttractionReviewList,
   findAttractionBoardsByTitle,
+  getTotalCountOfAttractionBoards,
+  searchAttractionBoardsByPageNumber,
 } from "@/api/attraction-board/attraction-board";
 
 const router = useRouter();
@@ -74,6 +86,33 @@ const attractionBoardReviews = ref([]);
 const showScrollButton = ref(false);
 
 const keyword = ref("");
+const pageCount = ref(0);
+const currentPage = ref(1);
+
+getTotalCountOfAttractionBoards(
+  (response) => {
+    console.log("관광지리뷰 개수=", response.data);
+    pageCount.value = Math.floor(response.data / 6) + 1;
+    console.log("pagine count = ", pageCount.value);
+  },
+  (error) => {
+    console.log(error);
+  }
+);
+
+const clickPage = (page) => {
+  currentPage.value = page;
+  searchAttractionBoardsByPageNumber(
+    page,
+    (response) => {
+      console.log("page 기능", response.data);
+      attractionBoardReviews.value = response.data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
 
 const callAttractionBoardByTitle = () => {
   findAttractionBoardsByTitle(
@@ -116,7 +155,8 @@ const scrollToTop = () => {
 };
 
 onMounted(() => {
-  getReviews();
+  // getReviews();
+  clickPage(1);
   window.addEventListener("scroll", handleScroll);
   console.log(route.query.sendKeyword);
   if (route.query.sendKeyword) {
@@ -301,5 +341,20 @@ body {
 }
 .board-list-top-right-input-box {
   display: flex;
+}
+
+.paging-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paging-box > p {
+  font-size: 20px;
+  padding: 8px;
+}
+
+.bold-page {
+  font-weight: bold;
 }
 </style>
