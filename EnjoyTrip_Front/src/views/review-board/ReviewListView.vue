@@ -32,28 +32,33 @@
             </button>
           </div>
         </div>
-        <div class="review-card-list">
-          <template
-            v-for="attractionBoardReview in attractionBoardReviews"
-            :key="attractionBoardReview.id"
-          >
-            <AttractionBoardArticleCard
-              class="article-card"
-              :attractionBoardReview="attractionBoardReview"
-              @click="clickAttractionBoardArticleCard(attractionBoardReview)"
-            />
-          </template>
+        <div class="review-card-list-box">
+          <div class="review-card-list">
+            <template
+              v-for="attractionBoardReview in attractionBoardReviews"
+              :key="attractionBoardReview.id"
+            >
+              <AttractionBoardArticleCard
+                class="article-card"
+                :attractionBoardReview="attractionBoardReview"
+                @click="clickAttractionBoardArticleCard(attractionBoardReview)"
+              />
+            </template>
+          </div>
         </div>
       </div>
       <div class="paging-box">
+        <p class="page-move-btn" @click="clickLeftPage"><</p>
         <p
           v-for="page in pageCount"
           :key="page"
           @click="clickPage(page)"
           :class="{ 'bold-page': page == currentPage }"
+          class="page-number-btn"
         >
           {{ page }}
         </p>
+        <p class="page-move-btn" @click="clickRightPage">></p>
       </div>
     </div>
   </div>
@@ -100,12 +105,39 @@ getTotalCountOfAttractionBoards(
   }
 );
 
+const clickLeftPage = () => {
+  if (currentPage.value == 1) return;
+  currentPage.value = currentPage.value - 1;
+  searchAttractionBoardsByPageNumber(
+    currentPage.value,
+    (response) => {
+      attractionBoardReviews.value = response.data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
 const clickPage = (page) => {
   currentPage.value = page;
   searchAttractionBoardsByPageNumber(
     page,
     (response) => {
-      console.log("page 기능", response.data);
+      attractionBoardReviews.value = response.data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
+const clickRightPage = () => {
+  if (currentPage.value == pageCount.value) return;
+  currentPage.value = currentPage.value + 1;
+  searchAttractionBoardsByPageNumber(
+    currentPage.value,
+    (response) => {
       attractionBoardReviews.value = response.data;
     },
     (error) => {
@@ -238,6 +270,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 20px; /* 카드 간격 추가 */
+  /* justify-content: center; */
 }
 
 .article-card {
@@ -346,15 +379,28 @@ body {
 .paging-box {
   display: flex;
   align-items: center;
+  align-content: center;
   justify-content: center;
 }
 
-.paging-box > p {
+/* .paging-box > p {
+} */
+.page-number-btn {
   font-size: 20px;
   padding: 8px;
+  cursor: pointer;
 }
 
 .bold-page {
   font-weight: bold;
+}
+.page-move-btn {
+  border: 1px solid;
+  border-radius: 10px;
+  font-size: 13px;
+  padding: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  /* margin: 0 10px; */
 }
 </style>
