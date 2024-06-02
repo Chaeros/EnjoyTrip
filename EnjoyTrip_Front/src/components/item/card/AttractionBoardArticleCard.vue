@@ -1,5 +1,6 @@
 <template>
   <div class="card-outter-box" v-if="writerInfo">
+    <div class="attraction-explain-box">{{ attractionInfo.title }}</div>
     <div class="card-content-box">
       <div class="title-and-content-box">
         <template v-if="attractionBoardReview.imageUrl !== ''">
@@ -64,14 +65,17 @@ import { getUserInfomationById } from "@/api/member/member.js";
 import { ref, onMounted, computed } from "vue";
 import { getAttractionBoardLikeCount } from "@/api/attraction-board-like/attraction-board-like.js";
 import { getCommentCount } from "@/api/attraction-board-comment/attraction-board-comment.js";
+import { AttractionDetailByContentId } from "@/api/attraction/attraction.js";
 const imageServerURL = import.meta.env.VITE_VUE_IMAGE_SERVER_URL;
 const { attractionBoardReview } = defineProps({
   attractionBoardReview: Object,
 });
+console.log("tttt");
 console.log(attractionBoardReview);
 const writerInfo = ref(null);
 const commentCount = ref(0);
 const likeCount = ref(0);
+const attractionInfo = ref();
 
 const truncatedTitle = computed(() => {
   const title = attractionBoardReview.title;
@@ -131,6 +135,19 @@ onMounted(() => {
       console.log(error);
     }
   );
+
+  console.log(attractionBoardReview.attractionId);
+  AttractionDetailByContentId(
+    attractionBoardReview.attractionId,
+    (response) => {
+      console.log("ggggg", response.data);
+      attractionInfo.value = response.data.attractionInfo;
+      console.log(attractionInfo.value);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
 });
 </script>
 
@@ -142,6 +159,20 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  position: relative;
+}
+.attraction-explain-box {
+  position: absolute;
+  background-color: black;
+  border-radius: 10px;
+  padding: 2px 10px;
+  margin: 10px 0;
+  font-size: 15px;
+  font-weight: bold;
+  color: white;
+  right: 10px;
+  max-width: calc(100% - 20px);
+  text-align: right;
 }
 .card-content-box {
   display: flex;
