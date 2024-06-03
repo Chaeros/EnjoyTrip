@@ -166,7 +166,10 @@ import {
 } from "@/util/localstorage/localstorage.js";
 import { storeToRefs } from "pinia";
 import { useMemberStore } from "@/store/member";
-import { getAttractionReviewList } from "@/api/attraction-board/attraction-board";
+import {
+  getAttractionReviewList,
+  searchAttractionBoardSortByLike,
+} from "@/api/attraction-board/attraction-board";
 import AttractionBoardComponent from "@/components/board/AttractionBoardComponent.vue";
 
 import { getListMyTripPlan } from "@/api/plan/plan";
@@ -241,7 +244,9 @@ onMounted(() => {
 });
 
 const getReviews = () => {
-  getAttractionReviewList(
+  // getAttractionReviewList
+  searchAttractionBoardSortByLike(
+    1,
     (response) => {
       attractionBoardReviews.value = response.data;
     },

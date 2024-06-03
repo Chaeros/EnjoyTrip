@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.domain.attractionboard.mapper;
 
 import com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard;
+import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardLikeResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -16,6 +17,6 @@ public interface AttractionBoardMapper {
     List<AttractionBoard> findAttractionBoards();
     List<AttractionBoard> findAttractionBoardsByTitle(String title);
     List<AttractionBoard> findAttractionBoardsByAttractionId(int attractionId);
-    List<AttractionBoard> findAttractionBoardsSortByLike();
+    List<AttractionBoardLikeResponseDto> findAttractionBoardsSortByLike(int offset);
     List<AttractionBoard> findPageOfAttractionBoard(int offset);
 }

@@ -2,7 +2,7 @@ package com.ssafy.enjoytrip.domain.attractionboard.service;
 
 import com.ssafy.enjoytrip.domain.attractionboard.AttractionBoard;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardAddRequestDto;
-import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardModifyRequestDto;
+import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardLikeResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.mapper.AttractionBoardMapper;
 import com.ssafy.enjoytrip.domain.attractionboard.validator.AttractionBoardValidator;
@@ -88,5 +88,10 @@ public class AttractionBoardServiceImpl implements AttractionBoardService{
                 .map(AttractionBoard::transferToAttractionBoardResponseDto)
                 .collect(Collectors.toList());
         return Optional.ofNullable(responseDtos);
+    }
+
+    @Override
+    public Optional<List<AttractionBoardLikeResponseDto>> searchAttractionBoardsSortByLike(int page) {
+        return Optional.ofNullable(attractionBoardMapper.findAttractionBoardsSortByLike(page*6));
     }
 }

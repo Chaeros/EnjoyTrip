@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.domain.attractionboard.controller;
 
 import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardAddRequestDto;
+import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardLikeResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.service.AttractionBoardService;
 import lombok.RequiredArgsConstructor;
@@ -93,5 +94,13 @@ public class AttractionBoardController {
     @GetMapping("/attractionboardcount")
     public ResponseEntity<Integer> searchTotalCountOfAttractionBoards(){
         return ResponseEntity.ok(attractionBoardService.searchTotalCountOfAttractionBoard());
+    }
+
+    @GetMapping("/orderbylike/{page}")
+    public ResponseEntity<List<AttractionBoardLikeResponseDto>> searchAttractionBoardSortByLike(@PathVariable("page") int page){
+        log.info("[searchAttractionBoardSortByLike] page : {}",page);
+        return attractionBoardService.searchAttractionBoardsSortByLike(page-1)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
 }

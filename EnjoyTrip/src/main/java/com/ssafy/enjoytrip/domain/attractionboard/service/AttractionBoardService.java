@@ -2,8 +2,10 @@ package com.ssafy.enjoytrip.domain.attractionboard.service;
 
 import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardAddRequestDto;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.request.AttractionBoardModifyRequestDto;
+import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardLikeResponseDto;
 import com.ssafy.enjoytrip.domain.attractionboard.dto.response.AttractionBoardResponseDto;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,4 +20,5 @@ public interface AttractionBoardService {
     Optional<List<AttractionBoardResponseDto>> searchAttractionBoardsByTitle(String title);
     Optional<List<AttractionBoardResponseDto>> searchAttractionBoardsByAttractionId(int attractionId);
     Optional<List<AttractionBoardResponseDto>> searchPageOfAttractionBoard(int page);
+    Optional<List<AttractionBoardLikeResponseDto>> searchAttractionBoardsSortByLike(int page);
 }

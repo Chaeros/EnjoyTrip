@@ -56,14 +56,16 @@
         order by hit
     </select>
 
-    <select id="findAttractionBoardsSortByLike"  resultType="AttractionBoardLikeResponseDto">
+    <select id="findAttractionBoardsSortByLike" parameterType="int" resultType="AttractionBoardLikeResponseDto">
         select ab.id, ab.title, ab.content, ab.hit, ab.member_id, ab.attraction_id, ab.image_url, ab.regdate, abl.count
           from attraction_board ab
-          join (select attraction_board_id, count(*) as count
+          left join (select attraction_board_id, count(*) as count
                   from attraction_board_likes
                  group by attraction_board_id) abl
-            on ab.id = abl.attraction_board_id;
-         order by count desc;
+            on ab.id = abl.attraction_board_id
+         order by count desc
+         limit 6
+        offset #{offset}
     </select>
 
     <select id="findTotalCountOfAttractionBoard" resultType="int">

@@ -74,6 +74,13 @@ function searchAttractionBoardsByPageNumber(pageNumber, success, fail) {
     .catch(fail);
 }
 
+function searchAttractionBoardSortByLike(pageNumber, success, fail) {
+  local
+    .get(`/attractionboard/orderbylike/` + pageNumber)
+    .then(success)
+    .catch(fail);
+}
+
 export {
   addAttractionReview,
   getAttractionReviewList,
@@ -85,4 +92,5 @@ export {
   findAttractionBoardsByTitle,
   getTotalCountOfAttractionBoards,
   searchAttractionBoardsByPageNumber,
+  searchAttractionBoardSortByLike,
 };
