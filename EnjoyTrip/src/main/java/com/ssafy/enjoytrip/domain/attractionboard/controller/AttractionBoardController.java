@@ -44,6 +44,14 @@ public class AttractionBoardController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/hit/{attractionBoardId}")
+    public ResponseEntity<Void> addHitCount(@PathVariable("attractionBoardId") int attractionBoardId){
+        if ( attractionBoardService.addHitCount(attractionBoardId) == 0 ){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping
     public ResponseEntity<List<AttractionBoardResponseDto>> searchAttractionBoards(){
         return attractionBoardService.searchAttractionBoards()

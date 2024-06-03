@@ -79,4 +79,10 @@
         offset #{offset}
     </select>
 
+    <update id="updateHitCount" parameterType="int">
+        update attraction_board
+           set hit = hit +1
+         where id = #{id}
+    </update>
+
 </mapper>

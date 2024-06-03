@@ -12,6 +12,7 @@ public interface AttractionBoardService {
     int modifyAttractionBoard(AttractionBoardAddRequestDto attractionBoardAddRequestDto);
     int removeAttractionBoard(int id);
     int searchTotalCountOfAttractionBoard();
+    int addHitCount(int id);
     Optional<AttractionBoardResponseDto> searchAttractionBoard(int id);
     Optional<List<AttractionBoardResponseDto>> searchAttractionBoards();
     Optional<List<AttractionBoardResponseDto>> searchAttractionBoardsByTitle(String title);

@@ -81,6 +81,7 @@ import {
   findAttractionBoardsByTitle,
   getTotalCountOfAttractionBoards,
   searchAttractionBoardsByPageNumber,
+  addHitCount,
 } from "@/api/attraction-board/attraction-board";
 
 const router = useRouter();
@@ -213,6 +214,14 @@ const clickAttractionBoardArticleCard = (attractionBoardReview) => {
     name: "reviewBoardDetail",
     params: { attractionBoardReviewId: attractionBoardReview.id },
   });
+
+  addHitCount(
+    attractionBoardReview.id,
+    (response) => {},
+    (error) => {
+      console.log(error);
+    }
+  );
 };
 </script>
 

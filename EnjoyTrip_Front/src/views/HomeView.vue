@@ -116,7 +116,7 @@
         <div class="y-diff" v-if="isOpenMyPlanComponent"></div>
       </div>
 
-      <div class="board-list-top-bar">
+      <!-- <div class="board-list-top-bar">
         <div class="board-list-top-bar-left">
           <img src="@/img/coldragon2-removebg.png" class="main-sub-title-img" />
           <div class="main-sub-title-font">찬곤이 소개</div>
@@ -138,14 +138,14 @@
             <div class="moreInfoButton">더보기</div>
           </button>
         </div>
-      </div>
+      </div> -->
       <!-- 찬곤이 소개 Component 장착 -->
-      <div class="changon-introduce">
+      <!-- <div class="changon-introduce">
         <img
           class="changon-dance"
           src="https://github.com/Chaeros/Problem_Solved/assets/91451735/7fe87e5b-e33a-4111-bfec-1d7831f16604"
         />
-      </div>
+      </div> -->
     </div>
     <Footer></Footer>
   </div>

@@ -41,6 +41,13 @@ function modifyAttractionBoard(article, success, fail) {
   local.patch(`/attractionboard`, article, headers).then(success).catch(fail);
 }
 
+function addHitCount(id, success, fail) {
+  local
+    .get(`/attractionboard/hit/` + id)
+    .then(success)
+    .catch(fail);
+}
+
 function getAttractionReviewArticles(id, success, fail) {
   local
     .get(`/attractionboard/attractionId/` + id)
@@ -73,6 +80,7 @@ export {
   getAttractionReviewArticle,
   removeAttractionBoard,
   modifyAttractionBoard,
+  addHitCount,
   getAttractionReviewArticles,
   findAttractionBoardsByTitle,
   getTotalCountOfAttractionBoards,

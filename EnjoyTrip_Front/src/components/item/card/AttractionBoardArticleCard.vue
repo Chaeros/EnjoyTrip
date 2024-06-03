@@ -1,5 +1,5 @@
 <template>
-  <div class="card-outter-box" v-if="writerInfo">
+  <div class="card-outter-box" v-if="writerInfo && attractionInfo">
     <div class="attraction-explain-box">{{ attractionInfo.title }}</div>
     <div class="card-content-box">
       <div class="title-and-content-box">
@@ -49,6 +49,11 @@
             src="@/img/comment/comment.png"
           />
           <div class="indicator">{{ commentCount }}</div>
+          <img
+            class="writer-info-box-right-comment-img"
+            src="@/img/attractionboard/eye_icon.png"
+          />
+          <div class="indicator">{{ attractionBoardReview.hit }}</div>
         </div>
       </div>
       <div class="card-writer">{{ attractionBoardReview.writer }}</div>

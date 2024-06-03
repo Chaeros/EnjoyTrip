@@ -45,6 +45,11 @@ public class AttractionBoardServiceImpl implements AttractionBoardService{
     }
 
     @Override
+    public int addHitCount(int id){
+        return attractionBoardMapper.updateHitCount(id);
+    }
+
+    @Override
     public Optional<AttractionBoardResponseDto> searchAttractionBoard(int id) {
         return Optional.ofNullable(attractionBoardMapper.findAttractionBoard(id).transferToAttractionBoardResponseDto());
     }

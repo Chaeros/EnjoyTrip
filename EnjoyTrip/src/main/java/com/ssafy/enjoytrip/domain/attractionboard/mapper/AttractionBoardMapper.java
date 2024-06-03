@@ -11,6 +11,7 @@ public interface AttractionBoardMapper {
     int updateAttractionBoard(AttractionBoard attractionBoard);
     int deleteAttractionBoard(int id);
     int findTotalCountOfAttractionBoard();
+    int updateHitCount(int id);
     AttractionBoard findAttractionBoard(int id);
     List<AttractionBoard> findAttractionBoards();
     List<AttractionBoard> findAttractionBoardsByTitle(String title);

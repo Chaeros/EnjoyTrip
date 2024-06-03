@@ -15,6 +15,7 @@
 
 <script setup>
 import { useRoute, useRouter } from "vue-router";
+import { addHitCount } from "@/api/attraction-board/attraction-board.js";
 import AttractionBoardArticleCard from "@/components/item/card/AttractionBoardArticleCard.vue";
 import { ref } from "vue";
 const router = useRouter();
@@ -30,6 +31,14 @@ const clickAttractionBoardArticleCard = (attractionBoardReview) => {
     name: "reviewBoardDetail",
     params: { attractionBoardReviewId: attractionBoardReview.id },
   });
+
+  addHitCount(
+    attractionBoardReview.id,
+    (response) => {},
+    (error) => {
+      console.log("관광지 조회수 증가시 오류", error);
+    }
+  );
 };
 </script>
 
