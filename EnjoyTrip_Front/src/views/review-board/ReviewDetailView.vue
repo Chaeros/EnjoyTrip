@@ -33,6 +33,7 @@
                   {{ writerInfo.nickname }}
                 </div>
                 <div class="regdate">{{ formattedRegdate }}</div>
+                <div class="board-detail-hit-box">조회 {{ article.hit }}</div>
               </div>
             </div>
             <div class="post-detail-info-right">
@@ -387,6 +388,12 @@ const getWriterInfo = () => {
   overflow-wrap: break-word;
   padding: 0;
   margin-bottom: 20px;
+}
+
+.board-detail-hit-box {
+  margin-left: 20px;
+  font-size: 15px;
+  color: #777;
 }
 
 .board-post-detail-info {

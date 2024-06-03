@@ -74,9 +74,13 @@ import { normalLogin } from "@/api/member/member.js";
 import { getCookie, setCookie } from "@/util/cookie";
 import { useRouter } from "vue-router";
 import { useMemberStore } from "@/store/member";
+import { getUserInfomation } from "@/api/member/member.js";
 import { useFriendManagementStore } from "@/store/friend-management/friend-management.js";
 import { storeToRefs } from "pinia";
-import { setLocalStorage } from "@/util/localstorage/localstorage.js";
+import {
+  setLocalStorage,
+  getLocalStorage,
+} from "@/util/localstorage/localstorage.js";
 import Swal from "sweetalert2";
 
 const router = useRouter();
@@ -119,6 +123,7 @@ const clickNormalLogin = () => {
     loginInfo.value,
     (response) => {
       if (response.status === 200) {
+        console.log("일반 로그인 성공", response.data);
         let accessToken = response.headers["authorization"];
         let refreshToken = response.headers["authorization-refresh"];
         console.log("refresh 토큰 :", refreshToken);
@@ -139,9 +144,18 @@ const clickNormalLogin = () => {
         console.info(isLogin);
         console.log(getCookie("accessToken"));
         isLogin.value = true;
+        getUserInfomation(
+          loginInfo.value.email,
+          (response2) => {
+            setLocalStorage("userId", response2.data.id);
+            console.log("##user정보 받아오기", getLocalStorage("userId"));
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
         bringMyFriendsList();
       }
-      // navigate('/');
     },
     (error) => {
       Swal.fire({

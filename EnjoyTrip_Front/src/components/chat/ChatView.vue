@@ -150,7 +150,9 @@
               <div
                 :class="[
                   'message',
-                  message.memberId == userId ? 'sent' : 'received',
+                  message.memberId == getLocalStorage('userId')
+                    ? 'sent'
+                    : 'received',
                 ]"
               >
                 <div class="message-text">{{ message.message }}</div>
@@ -237,7 +239,7 @@ const { friends } = storeToRefs(friendManagementStore);
 const { bringMyFriendsList } = friendManagementStore;
 
 // Pinia 스토어 사용
-const userId = getLocalStorage("userId");
+const userId = ref(getLocalStorage("userId"));
 const chatStore = useChatStore();
 const webSocketChat = useWebSocketChatStore();
 const { chatRoom, currentSelectedRoomId } = storeToRefs(chatStore);
@@ -375,6 +377,13 @@ socket.value.onmessage = function (e) {
   };
   console.log(parsedData);
 
+  console.log(
+    "송수신자 확인",
+    parsedData.senderId,
+    getLocalStorage("userId"),
+    userId
+  );
+
   if (parsedData.senderId == getLocalStorage("userId")) {
     activeChat.value.messages.push(tempData);
     return;
@@ -394,7 +403,6 @@ socket.value.onmessage = function (e) {
     });
     console.log("결과", isMember);
     if (isMember == false) {
-      console.log("여긴옴?");
       searchPrivateChatRoom(
         getLocalStorage("userId"),
         parsedData.senderId,
@@ -461,6 +469,7 @@ onMounted(() => {
   chatContainer.value = document.querySelector(".chat-container");
   minimizedButton.value = document.querySelector(".chat-minimized");
   clickCallMyFriendList();
+  userId.value = getLocalStorage("userId");
 });
 
 const toggleMinimize = () => {
