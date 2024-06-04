@@ -1,11 +1,14 @@
 import { localAxios } from "@/util/http-commons";
 import { storeToRefs } from "pinia";
 import { useChatStore } from "@/store/chat/chat";
+import { getLocalStorage } from "@/util/localstorage/localstorage";
 
 const local = localAxios();
 const headers = {
   "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
 };
+let accessToken = getLocalStorage("access_token");
+local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 function enterOrRegistPrivateChatRoom(privateChatRoom, success, fail) {
   local.post(`/privatechatroom`, privateChatRoom).then(success).catch(fail);

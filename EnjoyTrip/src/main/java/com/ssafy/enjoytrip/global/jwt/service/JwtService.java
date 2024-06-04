@@ -91,8 +91,8 @@ public class JwtService {
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
         response.setStatus(HttpServletResponse.SC_OK);
 
-//        setAccessTokenHeader(response, accessToken);
-//        setRefreshTokenHeader(response, refreshToken);
+        setAccessTokenHeader(response, accessToken);
+        setRefreshTokenHeader(response, refreshToken);
         log.info("Access Token, Refresh Token 헤더 설정 완료");
     }
 
@@ -146,7 +146,7 @@ public class JwtService {
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setMaxAge(10 * 60); // 쿠키 유효 시간 설정 (예: 10분)
         accessTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정
-        accessTokenCookie.setHttpOnly(true);
+//        accessTokenCookie.setHttpOnly(true);
         response.addCookie(accessTokenCookie);
         response.setHeader(accessHeader, accessToken);
     }
@@ -158,7 +158,7 @@ public class JwtService {
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
         refreshTokenCookie.setMaxAge(60 * 60); // 쿠키 유효 시간 설정 (예: 1시간)
         refreshTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정
-        refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setHttpOnly(true);
         response.addCookie(refreshTokenCookie);
         response.setHeader(refreshHeader, refreshToken);
     }

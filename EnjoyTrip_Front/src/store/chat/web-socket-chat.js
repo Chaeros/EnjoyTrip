@@ -11,7 +11,12 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
   let socket = ref(null);
 
   const connect = () => {
-    socket.value = new WebSocket(webSocketURL + "/chat");
+    if (socket.value) {
+      socket.value.close();
+    }
+    socket.value = new WebSocket(
+      webSocketURL + "/chat?token=" + getLocalStorage("access_token")
+    );
 
     socket.value.onopen = function (e) {
       console.log("채팅 서버와 연결되었습니다!");
@@ -20,6 +25,10 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
     socket.value.onerror = function (e) {
       console.log("채팅 서버 연결 오류 발생");
       console.log(e);
+    };
+
+    socket.value.onclose = function (e) {
+      console.log("WebSocket 연결이 닫혔습니다.", e);
     };
 
     socket.value.onmessage = function (e) {
@@ -48,7 +57,7 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
   };
 
   const sendEnterMsg = () => {
-    if (socket.value) {
+    if (socket.value && socket.value.readyState === WebSocket.OPEN) {
       let payload = {
         messageType: "ENTER",
         senderId: getLocalStorage("userId"),
@@ -57,6 +66,7 @@ export const useWebSocketChatStore = defineStore("webSocketChatStore", () => {
       };
       console.log(payload);
       socket.value.send(JSON.stringify(payload));
+      console.log("에러확인용");
     } else {
       console.log("WebSocket 연결이 열리지 않았습니다.");
     }

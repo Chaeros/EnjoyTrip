@@ -8,6 +8,8 @@ export const sendImage = async () => {
   formData.append("senderId", userId); // 필요한 경우 추가 데이터
 
   try {
+    let accessToken = getLocalStorage("access_token");
+    axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     const response = await axios.post(
       "http://localhost:8080/image/upload",
       formData,

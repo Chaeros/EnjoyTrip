@@ -1,7 +1,10 @@
 import { localAxios } from "@/util/http-commons";
+import { getLocalStorage } from "@/util/localstorage/localstorage";
 const kakaoRestAPIKey = import.meta.env.VITE_KAKAO_REST_API_KEY;
 const local = localAxios();
 local.defaults.withCredentials = true; // 사용자 설정 쿠키를 넣을 때 사용해야함.
+let accessToken = getLocalStorage("access_token");
+local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 const headers2 = {
   "Content-Type": "application/json",

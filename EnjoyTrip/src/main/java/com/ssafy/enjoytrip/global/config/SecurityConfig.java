@@ -76,12 +76,14 @@ public class SecurityConfig {
                         FrameOptionsConfig::disable).disable()) // X-Frame-Options 비활성화
                 .sessionManagement(c ->
                         c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용하지 않음
-//                .authorizeRequests(authorize -> authorize
-//                        .requestMatchers(HttpMethod.GET, "/", "/oauth2/sign-up", "/oauth2/authorization/*",
-//                                "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/sign-up", "/*").permitAll()
-//                        .anyRequest().authenticated()
-//                )
+                .authorizeRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "/", "/oauth2/sign-up", "/oauth2/authorization/*",
+                                "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/sign-up", "/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/attractionboard/**","/attractionboardimage/**","/image/**",
+                        "/attractionboardlike/**","/attractionboardcommnet/**","/member/**","/attraction/**","/ws/chat").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(c -> c.userService(customOAuth2UserService))
                         .successHandler(oAuth2LoginSuccessHandler)

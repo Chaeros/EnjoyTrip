@@ -1,8 +1,12 @@
 import { localAxios } from "@/util/http-commons";
+import { getLocalStorage } from "@/util/localstorage/localstorage";
+
 const local = localAxios();
 const headers = {
   "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
 };
+let accessToken = getLocalStorage("access_token");
+local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 function clickAttractionBoardLikeBtn(likeDto, success, fail) {
   console.log(likeDto);

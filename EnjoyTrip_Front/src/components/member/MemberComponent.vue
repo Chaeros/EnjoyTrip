@@ -163,6 +163,8 @@ const onImageChange = async (event) => {
     formData.append("file", file);
 
     try {
+      let accessToken = getLocalStorage("access_token");
+      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
       const response = await axios.post(
         VITE_VUE_IMAGE_SERVER_URL + "/image/upload",
         formData,

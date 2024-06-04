@@ -49,7 +49,7 @@ export default {
     };
 
     watch(isLogin, (newVal) => {
-      if (newVal) {
+      if (newVal === true) {
         connect();
       }
     });

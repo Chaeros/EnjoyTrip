@@ -338,6 +338,8 @@ const handleFileUpload = async (event) => {
     formData.append("file", file);
 
     try {
+      let accessToken = getLocalStorage("access_token");
+      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
       const response = await axios.post(
         "http://localhost:8080/image/upload",
         formData,

@@ -124,17 +124,19 @@ const clickNormalLogin = () => {
     (response) => {
       if (response.status === 200) {
         console.log("일반 로그인 성공", response.data);
-        let accessToken = response.headers["authorization"];
-        let refreshToken = response.headers["authorization-refresh"];
-        console.log("refresh 토큰 :", refreshToken);
+        let accessToken = response.headers["Authorization"];
+        let refreshToken = response.headers["Authorization-refresh"];
         console.log("access 토큰 :", accessToken);
+        console.log("refresh 토큰 :", refreshToken);
+        console.log("access 토큰 by 쿠키:", getCookie("accessToken"));
+        console.log("refresh 토큰 by 쿠키:", getCookie("refreshToken"));
         // 토큰 localStorage에 저장
-        setLocalStorage("access_token", accessToken);
-        setLocalStorage("refresh_token", refreshToken);
+        setLocalStorage("access_token", getCookie("accessToken"));
+        setLocalStorage("refresh_token", getCookie("refreshToken"));
         // setLocalStorage("myId",myId)
-        // axios.defaults.headers.common[
-        //   "Authorization"
-        // ] = `Bearer ${accessToken}`;
+        //axios.defaults.headers.common[
+        //  "Authorization"
+        //] = `Bearer ${accessToken}`;
         console.log(getCookie("email"));
         remakeIdCheckCookie();
         console.log("!!", loginInfo.value.email);

@@ -1,6 +1,6 @@
 <script setup>
-import { ref, defineEmits, defineProps, watch } from 'vue';
-import axios from 'axios';
+import { ref, defineEmits, defineProps, watch } from "vue";
+import axios from "axios";
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
 
 const props = defineProps({
@@ -10,10 +10,10 @@ const props = defineProps({
   fileName: String,
 });
 
-const emit = defineEmits(['showPlanDetailModalToggle', 'updateTripPlan']);
+const emit = defineEmits(["showPlanDetailModalToggle", "updateTripPlan"]);
 
 const showPlanDetailModalToggle = () => {
-  emit('showPlanDetailModalToggle');
+  emit("showPlanDetailModalToggle");
 };
 
 const localFileName = ref(props.fileName);
@@ -52,24 +52,24 @@ watch(
 );
 
 const updateTripPlan = (event) => {
-  if (localTitle.value === '') {
-    window.alert('이름을 설정해주세요');
+  if (localTitle.value === "") {
+    window.alert("이름을 설정해주세요");
     return;
   }
 
-  if (localContent.value === '') {
-    window.alert('내용을 설정해주세요');
+  if (localContent.value === "") {
+    window.alert("내용을 설정해주세요");
     return;
   }
 
   emit(
-    'updateTripPlan',
+    "updateTripPlan",
     localTitle.value,
     localContent.value,
     localImage.value
   );
-  window.alert('일정이 업데이트 되었습니다.');
-  emit('showPlanDetailModalToggle');
+  window.alert("일정이 업데이트 되었습니다.");
+  emit("showPlanDetailModalToggle");
 };
 
 const handleFileUpload = async (event) => {
@@ -77,25 +77,27 @@ const handleFileUpload = async (event) => {
   if (file) {
     localFileName.value = file.name;
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
+      let accessToken = getLocalStorage("access_token");
+      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
       const response = await axios.post(
-        VITE_VUE_IMAGE_SERVER_URL + '/image/upload',
+        VITE_VUE_IMAGE_SERVER_URL + "/image/upload",
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
           },
         }
       );
-      console.log('File uploaded successfully:', response.data);
+      console.log("File uploaded successfully:", response.data);
       localImage.value = response.data.url;
       console.log(localImage.value);
       console.log(response.data.url);
-      event.target.value = '';
+      event.target.value = "";
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error("Error uploading file:", error);
     }
   }
 };
