@@ -12,6 +12,8 @@ const headers2 = {
 
 function addUserInformation(param, success, fail) {
   console.log(param);
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local
     .post(`/oauth2/sign-up`, JSON.stringify(param), { headers: headers2 })
     .then(success)
@@ -19,6 +21,8 @@ function addUserInformation(param, success, fail) {
 }
 
 function kakaoLogin(success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local.get(`/oauth2/authorization/kakao`).then(success).catch(fail);
 }
 
@@ -36,6 +40,8 @@ function sendKakaoLoginCode(code, success, fail) {
     client_secret: "FlbsB7u1AzcpV2eSLUYxbl84qGioY1L6",
   }).toString();
   console.log(data);
+  let accessToken = getLocalStorage("access_token");
+  axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   axios
     .post(`https://kauth.kakao.com/oauth/token`, data, { headers })
     .then(success)
@@ -43,6 +49,8 @@ function sendKakaoLoginCode(code, success, fail) {
 }
 
 function updateUserInfomation(data, success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local.post(`/oauth2/sign-up`, data).then(success).catch(fail);
 }
 
@@ -50,15 +58,20 @@ function normalLogin(loginInfo, success, fail) {
   const headers = {
     "Content-Type": "application/json",
   };
-  // local.post(`/login`,loginInfo,{headers}).then(success).catch(fail);
+  let accessToken = getLocalStorage("access_token");
+  // local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local.post(`/login`, loginInfo, { headers }).then(success).catch(fail);
 }
 
 function normalSignUp(memberInfo, success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local.post(`/sign-up`, memberInfo).then(success).catch(fail);
 }
 
 function getUserInfomation(email, success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local
     .get(`/member/` + email)
     .then(success)
@@ -66,6 +79,8 @@ function getUserInfomation(email, success, fail) {
 }
 
 function getUserInfomationById(id, success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local
     .get(`/member/id/` + id)
     .then(success)
@@ -73,6 +88,8 @@ function getUserInfomationById(id, success, fail) {
 }
 
 function searchMemberByKeyNicknameKeword(keyword, userId, success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local
     .get(`/member/keyword`, { params: { keyword, userId } })
     .then(success)
@@ -80,6 +97,8 @@ function searchMemberByKeyNicknameKeword(keyword, userId, success, fail) {
 }
 
 function getChattingMemberId(memberId, success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local
     .get(`/member/chat/` + memberId)
     .then(success)
@@ -87,6 +106,8 @@ function getChattingMemberId(memberId, success, fail) {
 }
 
 function updateMember(memberDto, success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local.patch(`/member`, memberDto).then(success).catch(fail);
 }
 

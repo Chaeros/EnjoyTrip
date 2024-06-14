@@ -20,6 +20,7 @@ import { useMemberStore } from "@/store/member";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";
 import { getAttractionReviewArticle } from "@/api/attraction-board/attraction-board.js";
+import { getLocalStorage } from "@/util/localstorage/localstorage";
 import Swal from "sweetalert2";
 
 const router = useRouter();

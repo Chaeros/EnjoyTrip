@@ -147,6 +147,7 @@ public class JwtService {
         accessTokenCookie.setMaxAge(10 * 60); // 쿠키 유효 시간 설정 (예: 10분)
         accessTokenCookie.setPath("/"); // 쿠키의 유효 경로 설정
 //        accessTokenCookie.setHttpOnly(true);
+
         response.addCookie(accessTokenCookie);
         response.setHeader(accessHeader, accessToken);
     }

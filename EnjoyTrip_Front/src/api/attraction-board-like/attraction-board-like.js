@@ -5,16 +5,20 @@ const local = localAxios();
 const headers = {
   "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
 };
-let accessToken = getLocalStorage("access_token");
-local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+// let accessToken = getLocalStorage("access_token");
+// local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
 
 function clickAttractionBoardLikeBtn(likeDto, success, fail) {
   console.log(likeDto);
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local.post(`/attractionboardlike`, likeDto).then(success).catch(fail);
 }
 
 function removeAttractionBoardLike(memberId, attractionBoardId, success, fail) {
   console.log(memberId, attractionBoardId);
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local
     .delete(`/attractionboardlike`, {
       params: { memberId: memberId, attractionBoardId: attractionBoardId },
@@ -24,6 +28,8 @@ function removeAttractionBoardLike(memberId, attractionBoardId, success, fail) {
 }
 
 function getAttractionBoardLikeCount(attractionBoardId, success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local
     .get(`/attractionboardlike/count/` + attractionBoardId, { headers })
     .then(success)
@@ -31,6 +37,8 @@ function getAttractionBoardLikeCount(attractionBoardId, success, fail) {
 }
 
 function isMyLikeReview(memberId, attractionBoardId, success, fail) {
+  let accessToken = getLocalStorage("access_token");
+  local.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
   local
     .get(`/attractionboardlike/isLikeReview`, {
       params: { memberId, attractionBoardId },

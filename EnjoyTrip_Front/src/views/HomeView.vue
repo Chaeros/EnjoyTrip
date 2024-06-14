@@ -157,6 +157,7 @@ import Footer from "@/components/Footer.vue";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { getUserInfomation } from "@/api/member/member.js";
+import { getCookie, setCookie } from "@/util/cookie";
 
 // 'default' 대신 '*'를 사용하여 CommonJS 형식으로 가져오기
 import VueJwtDecode from "vue-jwt-decode";
@@ -210,10 +211,15 @@ const moveReviewList = () => {
 };
 
 onMounted(() => {
-  accessToken.value = route.query.accessToken;
   console.log(accessToken.value);
   getReviews();
   getMyPlans();
+  console.log("access 토큰 by 쿠키:", getCookie("accessToken"));
+  console.log("refresh 토큰 by 쿠키:", getCookie("refreshToken"));
+  // 토큰 localStorage에 저장
+  setLocalStorage("access_token", getCookie("accessToken"));
+  setLocalStorage("refresh_token", getCookie("refreshToken"));
+  accessToken.value = getCookie("accessToken");
   if (accessToken.value) {
     try {
       // CommonJS 형식으로 가져온 모듈에서 함수를 호출
@@ -226,7 +232,6 @@ onMounted(() => {
         (response) => {
           console.log(response.data);
           setLocalStorage("userId", response.data.id);
-          setLocalStorage("access_token", accessToken.value);
           console.log(getLocalStorage("userId"));
           isLogin.value = true;
           userInfo.value = response.data;
