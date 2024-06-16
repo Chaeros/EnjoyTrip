@@ -64,6 +64,11 @@
         @click="clickKakaoLogin"
         src="@/img/kakao_login_medium_wide.png"
       />
+      <img
+        class="social-login-btn"
+        @click="clickNaverLogin"
+        src="@/img/login/naver_login_medium_wide2.png"
+      />
     </div>
   </div>
 </template>
@@ -97,6 +102,10 @@ const { getUserInfo } = memberStore;
 
 const clickKakaoLogin = () => {
   window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;
+};
+
+const clickNaverLogin = () => {
+  window.location.href = `http://localhost:8080/oauth2/authorization/naver`;
 };
 
 function isSavedId() {
@@ -289,6 +298,8 @@ console.log(isIdChecked.value);
 
 .social-login-btn {
   width: 100%;
+  height: 63px;
   cursor: pointer;
+  margin-bottom: 5px;
 }
 </style>
