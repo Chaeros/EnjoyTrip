@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { defineEmits } from 'vue';
-import AccomodationItem from '@/components/item/AccomodationItem.vue';
+import AccomodationItem from '@/components/item/accomodation/AccomodationItem.vue';
 const emit = defineEmits([
   'clickAccomodationAdd',
   'modalAccomodationAdd',
@@ -13,7 +13,7 @@ import {
   getListAccomodation,
   getListSido,
   getListGugun,
-} from '@/api/attraction';
+} from '@/api/attraction/attraction';
 
 const sidos = ref([]);
 const guguns = ref([]);

@@ -55,14 +55,6 @@ watch(
   { immediate: true }
 );
 
-// watch(
-//   () => props.fillDetailPlanModalOpen,
-//   (newVal) => {
-//     resetLocalState();
-//   },
-//   { immediate: true }
-// );
-
 const submitPlanDetail = () => {
   emit(
     'submitPlanDetail',

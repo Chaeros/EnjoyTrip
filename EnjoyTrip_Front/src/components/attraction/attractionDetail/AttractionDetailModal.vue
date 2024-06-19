@@ -1,9 +1,9 @@
 <script setup>
 import { ref, defineProps, defineEmits, watch } from 'vue';
-import { getAttractionDetailByContentId } from '@/api/attraction';
+import { getAttractionDetailByContentId } from '@/api/attraction/attraction.js';
 import { getAttractionReviewArticles } from '@/api/attraction-board/attraction-board';
 
-import AttractionBoardItem from '@/components/item/AttractionBoardItem.vue';
+import AttractionBoardItem from '@/components/item/attractionboard/AttractionBoardItem.vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();

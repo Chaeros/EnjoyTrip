@@ -1,6 +1,6 @@
 <script setup>
 import { defineEmits } from 'vue';
-import AccomodationSearch from '@/components/AccomodationSearch.vue';
+import AccomodationSearch from '@/components/accomodation/accomodationSearch/AccomodationSearch.vue';
 
 const emit = defineEmits([
   'accomodationAddModalToggle',

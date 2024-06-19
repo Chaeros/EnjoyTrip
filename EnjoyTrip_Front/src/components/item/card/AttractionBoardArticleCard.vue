@@ -66,16 +66,16 @@
 </template>
 
 <script setup>
-import { getUserInfomationById } from "@/api/member/member.js";
-import { ref, onMounted, computed } from "vue";
-import { getAttractionBoardLikeCount } from "@/api/attraction-board-like/attraction-board-like.js";
-import { getCommentCount } from "@/api/attraction-board-comment/attraction-board-comment.js";
-import { AttractionDetailByContentId } from "@/api/attraction/attraction.js";
+import { getUserInfomationById } from '@/api/member/member.js';
+import { ref, onMounted, computed } from 'vue';
+import { getAttractionBoardLikeCount } from '@/api/attraction-board-like/attraction-board-like.js';
+import { getCommentCount } from '@/api/attraction-board-comment/attraction-board-comment.js';
+import { getAttractionDetailByContentId } from '@/api/attraction/attraction';
 const imageServerURL = import.meta.env.VITE_VUE_IMAGE_SERVER_URL;
 const { attractionBoardReview } = defineProps({
   attractionBoardReview: Object,
 });
-console.log("tttt");
+console.log('tttt');
 console.log(attractionBoardReview);
 const writerInfo = ref(null);
 const commentCount = ref(0);
@@ -84,22 +84,22 @@ const attractionInfo = ref();
 
 const truncatedTitle = computed(() => {
   const title = attractionBoardReview.title;
-  return title.length > 10 ? title.slice(0, 10) + "..." : title;
+  return title.length > 10 ? title.slice(0, 10) + '...' : title;
 });
 
 const truncatedContent = computed(() => {
   const content = attractionBoardReview.content;
-  return content.length > 20 ? content.slice(0, 20) + "..." : content;
+  return content.length > 20 ? content.slice(0, 20) + '...' : content;
 });
 
 const formattedRegdate = computed(() => {
   const date = new Date(attractionBoardReview.regdate);
-  return date.toLocaleString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
+  return date.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
   });
 });
 
@@ -122,7 +122,7 @@ onMounted(() => {
   getAttractionBoardLikeCount(
     attractionBoardReview.id,
     (response) => {
-      console.log("dddddddddddddddddddddddddd");
+      console.log('dddddddddddddddddddddddddd');
       console.log(response.data);
       likeCount.value = response.data;
     },
@@ -142,10 +142,10 @@ onMounted(() => {
   );
 
   console.log(attractionBoardReview.attractionId);
-  AttractionDetailByContentId(
+  getAttractionDetailByContentId(
     attractionBoardReview.attractionId,
     (response) => {
-      console.log("ggggg", response.data);
+      console.log('ggggg', response.data);
       attractionInfo.value = response.data.attractionInfo;
       console.log(attractionInfo.value);
     },

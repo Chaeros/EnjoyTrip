@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { defineEmits } from 'vue';
-import AttractionItem from '@/components/item/AttractionItem.vue';
+import AttractionItem from '@/components/item/attraction/AttractionItem.vue';
 const emit = defineEmits([
   'clickAttractionAdd',
   'modalAttractionAdd',
@@ -14,7 +14,7 @@ import {
   getListSido,
   getListGugun,
   getListContentType,
-} from '@/api/attraction';
+} from '@/api/attraction/attraction';
 
 const sidos = ref([]);
 const guguns = ref([]);

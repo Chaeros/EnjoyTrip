@@ -1,6 +1,6 @@
 <script setup>
 import { defineEmits } from 'vue';
-import AttractionSearch from '@/components/AttractionSearch.vue';
+import AttractionSearch from '@/components/attraction/attractionSearch/AttractionSearch.vue';
 
 const emit = defineEmits([
   'attractionAddModalToggle',
