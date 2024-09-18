@@ -6,6 +6,7 @@
 - **Back-end**: Spring Boot 3.2.5
 - **Front-end**: Vue.js
 - **Database**: MySQL 8.0.33
+- **SQL Mapper**: MyBatis
 <br><br>
 
 ## 주요 기능
