@@ -1,15 +1,15 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits } from "vue";
 
 const { attraction } = defineProps({ attraction: Object });
-const emit = defineEmits(['clickAttractionAdd', 'openAttractionDetailModal']);
+const emit = defineEmits(["clickAttractionAdd", "openAttractionDetailModal"]);
 
 const clickAttractionAdd = () => {
-  emit('clickAttractionAdd', attraction);
+  emit("clickAttractionAdd", attraction);
 };
 
 const openAttractionDetailModal = (contentId) => {
-  emit('openAttractionDetailModal', contentId);
+  emit("openAttractionDetailModal", contentId);
 };
 
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
@@ -30,13 +30,7 @@ const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
         />
       </div>
       <div v-else>
-        <img
-          class="attraction-img"
-          :src="
-            VITE_VUE_IMAGE_SERVER_URL +
-            '/image/uploads/1716297494437_colddragon.png'
-          "
-        />
+        <img class="attraction-img" :src="'/images/colddragon.png'" />
       </div>
       <div class="attraction-content">
         <div class="attraction-title">

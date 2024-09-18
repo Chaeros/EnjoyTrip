@@ -67,7 +67,7 @@
       <img
         class="social-login-btn"
         @click="clickNaverLogin"
-        src="@/img/login/naver_login_medium_wide2.png"
+        src="@/img/login/naver_login_medium_wide3.png"
       />
     </div>
   </div>
@@ -248,7 +248,7 @@ console.log(isIdChecked.value);
   height: 50px; /* 버튼 높이 */
   font-weight: bold;
   margin-bottom: 20px; /* 버튼 간격 */
-  background-color: #007bff; /* 버튼 배경색 */
+  background-color: #0056b3; /* 버튼 배경색 */
   border: none; /* 버튼 테두리 제거 */
   border-radius: 5px; /* 버튼 둥근 모서리 */
   color: white; /* 버튼 텍스트 색상 */
@@ -257,7 +257,7 @@ console.log(isIdChecked.value);
 }
 
 .normal-login-btn:hover {
-  background-color: #0056b3; /* 호버 시 버튼 배경색 */
+  background-color: #007bff; /* 호버 시 버튼 배경색 */
 }
 
 .user-management {

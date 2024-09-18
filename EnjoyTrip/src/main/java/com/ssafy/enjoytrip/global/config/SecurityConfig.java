@@ -73,6 +73,7 @@ public class SecurityConfig {
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/api/test").permitAll()
+                        .requestMatchers("/loginuser").permitAll()
                         .requestMatchers(HttpMethod.GET, "/", "/oauth2/sign-up", "/oauth2/authorization/*",
                                 "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/sign-up", "/*").permitAll()

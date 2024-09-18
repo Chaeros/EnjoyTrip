@@ -1,6 +1,7 @@
 <script setup>
 import { ref, defineEmits, defineProps, watch } from "vue";
 import axios from "axios";
+import { getLocalStorage } from "@/util/localstorage/localstorage";
 const { VITE_VUE_API_URL, VITE_VUE_IMAGE_SERVER_URL } = import.meta.env;
 
 const props = defineProps({
