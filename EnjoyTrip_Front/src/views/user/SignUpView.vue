@@ -82,13 +82,19 @@
         </div>
         <div>
           <p
-            v-if="signUpInfo.password !== signUpInfo.passwordConfirm"
+            v-if="
+              signUpInfo.password !== signUpInfo.passwordConfirm &&
+              signUpInfo.password !== ``
+            "
             class="password-confirm-notsame"
           >
             비밀번호가 일치하지 않습니다
           </p>
           <p
-            v-if="signUpInfo.password === signUpInfo.passwordConfirm"
+            v-if="
+              signUpInfo.password === signUpInfo.passwordConfirm &&
+              signUpInfo.password !== ``
+            "
             class="password-confirm-issame"
           >
             비밀번호가 일치합니다!
@@ -121,6 +127,11 @@
         class="social-login-btn"
         @click="clickKakaoLogin"
         src="@/img/kakao_login_medium_wide.png"
+      />
+      <img
+        class="social-login-btn"
+        @click="clickNaverLogin"
+        src="@/img/login/naver_login_medium_wide3.png"
       />
     </div>
   </div>
@@ -287,7 +298,8 @@ const checkPasswordStrength = () => {
   height: 50px; /* 버튼 높이 */
   font-weight: bold;
   margin-bottom: 20px; /* 버튼 간격 */
-  background-color: #007bff; /* 버튼 배경색 */
+  background-color: #0056b3; /* 버튼 배경색 */
+
   border: none; /* 버튼 테두리 제거 */
   border-radius: 5px; /* 버튼 둥근 모서리 */
   color: white; /* 버튼 텍스트 색상 */
@@ -296,7 +308,7 @@ const checkPasswordStrength = () => {
 }
 
 .normal-sign-up-btn:hover {
-  background-color: #0056b3; /* 호버 시 버튼 배경색 */
+  background-color: #007bff; /* 호버 시 버튼 배경색 */
 }
 
 .hr-with-text {
@@ -320,7 +332,9 @@ const checkPasswordStrength = () => {
 
 .social-login-btn {
   width: 100%;
+  height: 63px;
   cursor: pointer;
+  margin-bottom: 5px;
 }
 
 .password-length-message,
